@@ -1,0 +1,58 @@
+CC HAIR & BEAUTY SMART CONTENT GENERATOR
+=========================================
+HOW TO GET THIS WORKING IN 5 MINUTES
+
+THE PROBLEM YOU SAW:
+When you open the HTML file directly from your Downloads folder, 
+the browser blocks API calls (CORS error). This is normal browser security.
+You need to host it on a web server. Here are 3 options:
+
+OPTION 1 — VERCEL (recommended, free, 2 minutes)
+================================================
+1. Go to vercel.com and sign in (you already have an account)
+2. Click "Add New" → "Project"
+3. Click "Deploy without Git" or drag the folder
+4. Upload these files keeping the same structure:
+   - index.html  (the main tool)
+   - api/claude.js  (the proxy file — MUST be in a folder called "api")
+   - vercel.json
+5. Click Deploy
+6. You get a URL like: https://cc-content-tool.vercel.app
+7. Bookmark that URL and share with your staff
+
+OPTION 2 — RUN LOCALLY (works right now, no internet needed)
+============================================================
+1. Make sure Python is installed on your Mac (it already is)
+2. Open Terminal
+3. Type: cd ~/Downloads/cc-content-tool
+4. Type: python3 -m http.server 8080
+5. Open your browser and go to: http://localhost:8080
+6. The tool works! (Only works while Terminal is open)
+
+OPTION 3 — SHOPIFY (host it as a page on your own site)
+=======================================================
+1. In Shopify Admin → Online Store → Pages → Add Page
+2. Click the <> HTML editor button
+3. Paste the contents of index.html
+4. Save and publish
+Note: Shopify may strip some code — Vercel is better.
+
+FOLDER STRUCTURE NEEDED FOR VERCEL:
+====================================
+cc-content-tool/
+├── index.html          ← main tool
+├── vercel.json         ← settings (create this)
+└── api/
+    └── claude.js       ← proxy (MUST be in api/ folder)
+
+VERCEL.JSON CONTENTS (create this file):
+{
+  "version": 2
+}
+
+ONCE DEPLOYED:
+- Go to Settings tab in the tool
+- Paste your Anthropic API key (sk-ant-...)
+- Everything works — no more CORS errors!
+
+Your Vercel account: mohammed-adris-projects
