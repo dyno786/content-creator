@@ -153,6 +153,35 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 
 <!-- GENERATE -->
 <div class="sc on" id="sc-gen">
+  <!-- STEP BY STEP GUIDE -->
+  <div id="how-to" style="background:#fff;border-radius:14px;border:1px solid #e0ddf0;padding:20px;margin-bottom:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="font-size:14px;font-weight:700;color:#3D1A6E">How to use this tool — 3 steps</div>
+      <button onclick="document.getElementById('how-to').style.display='none'" style="background:none;border:none;color:#aaa;cursor:pointer;font-size:18px;line-height:1">×</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+      <div style="background:#f5f3fb;border-radius:10px;padding:14px">
+        <div style="width:28px;height:28px;background:#3D1A6E;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-bottom:8px">1</div>
+        <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px">Settings (first time only)</div>
+        <div style="font-size:12px;color:#666;line-height:1.6">Click Settings tab → add your Anthropic API key (sk-ant-...) → add Shopify domain + token → Save both</div>
+      </div>
+      <div style="background:#f5f3fb;border-radius:10px;padding:14px">
+        <div style="width:28px;height:28px;background:#3D1A6E;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-bottom:8px">2</div>
+        <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px">Choose a product</div>
+        <div style="font-size:12px;color:#666;line-height:1.6">Click "Load Products" to see your live Shopify store. Click any product to select it. Pick a content type (New Arrival, Blog Guide etc)</div>
+      </div>
+      <div style="background:#f5f3fb;border-radius:10px;padding:14px">
+        <div style="width:28px;height:28px;background:#3D1A6E;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-bottom:8px">3</div>
+        <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px">Click Generate</div>
+        <div style="font-size:12px;color:#666;line-height:1.6">Blog, Facebook, Instagram, Story, Reel, all Shopify fields and Canva prompt are created. Copy each one with the Copy button.</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;background:#EAF3DE;border-radius:8px;padding:10px 14px;font-size:12px;color:#27500A;line-height:1.6">
+      <strong>After generating:</strong> SEO Blog tab has all your Shopify fields (Meta Title, Meta Description, Excerpt, Tags, Alt Text) — copy each one and paste into Shopify blog editor → SEO section at the bottom.
+      Social Posts tab has Facebook, Instagram, Hashtags, Story and Reel script — all separate with copy buttons.
+    </div>
+  </div>
+
   <div class="card" id="input-card">
     <h2>What do you want to promote?</h2>
     <div class="sub">Choose a product from your Shopify store, pick a content type — everything else is automatic.</div>
@@ -448,44 +477,58 @@ function ss(id,st){document.getElementById(id).className='si '+st;}
 function sp(p){document.getElementById('pf').style.width=p+'%';}
 
 async function loadShopifyProducts(){
-  // Read directly from inputs AND localStorage - use whichever has a value
   const domainInput=document.getElementById('sh-domain').value.trim();
   const tokenInput=document.getElementById('sh-token').value.trim();
   const domain=domainInput||localStorage.getItem('shDomain')||'';
   const token=tokenInput||localStorage.getItem('shToken')||'';
-  // Save whatever we have back to localStorage
   if(domain)localStorage.setItem('shDomain',domain);
   if(token)localStorage.setItem('shToken',token);
   if(!domain||!token){
-    alert('Please go to Settings, enter your Shopify domain and API token, then click Save Shopify Settings — then try Load Products again.');
+    alert('Please go to Settings, enter your Shopify domain and API token, then click Save Shopify Settings.');
     showSc('settings',document.querySelectorAll('.nb')[2]);
     return;
   }
   const btn=document.getElementById('load-btn');
   btn.textContent='Loading...';btn.disabled=true;
+  allProducts=[];
   try{
-    const r=await fetch('/api/shopify',{headers:{'x-shopify-token':token,'x-shopify-store':domain}});
-    const d=await r.json();
-    if(d.error)throw new Error(d.error);
-    allProducts=d.products||[];
+    // Load ALL products using Shopify cursor pagination - handles 9000+ products
+    let pageInfo=null;
+    let page=1;
+    while(true){
+      const url=pageInfo?'/api/shopify?page_info='+encodeURIComponent(pageInfo):'/api/shopify';
+      btn.textContent='Loading page '+page+'... ('+allProducts.length+' so far)';
+      const r=await fetch(url,{headers:{'x-shopify-token':token,'x-shopify-store':domain}});
+      const d=await r.json();
+      if(d.error)throw new Error(d.error);
+      const batch=d.products||[];
+      allProducts=allProducts.concat(batch);
+      // Check for next page in Link header
+      const link=d._link||'';
+      const nextMatch=link.match(/page_info=([^&>]+)[^>]*>; rel="next"/);
+      if(nextMatch&&batch.length===250){
+        pageInfo=nextMatch[1];
+        page++;
+      }else{
+        break; // No more pages
+      }
+      // Safety limit - stop at 5000 products to avoid hanging
+      if(allProducts.length>=5000)break;
+    }
     filteredProducts=[...allProducts];
     renderProductList(filteredProducts);
     renderCatFilter();
     document.getElementById('prod-list').style.display='block';
-    btn.textContent='✓ Loaded '+allProducts.length+' products';
+    btn.textContent='✓ '+allProducts.length+' products loaded';
     btn.disabled=false;
   }catch(err){
     btn.textContent='Retry';btn.disabled=false;
-    if(err.message.includes('fetch')){
-      alert('Could not connect to Shopify. Make sure:\n1. Your store domain is correct (e.g. cchairandbeauty.myshopify.com)\n2. Your API token starts with shpat_\n3. The token has read_products permission');
-    }else{
-      alert('Error: '+err.message);
-    }
+    alert('Error loading products: '+err.message+'\n\nCheck your Shopify domain and API token in Settings.');
   }
 }
 
 function renderCatFilter(){
-  const types=[...new Set(allProducts.map(p=>p.product_type).filter(Boolean))].slice(0,8);
+  const types=[...new Set(allProducts.map(p=>p.product_type).filter(Boolean))].sort();
   const el=document.getElementById('cat-filter');
   el.innerHTML='<div class="cat-pill on" onclick="filterByCat(null,this)">All</div>'+
     types.map(t=>`<div class="cat-pill" onclick="filterByCat('${t}',this)">${t}</div>`).join('');
@@ -509,7 +552,7 @@ function filterProducts(q){
 function renderProductList(prods){
   const el=document.getElementById('prod-list');
   if(prods.length===0){el.innerHTML='<div style="padding:12px;font-size:13px;color:#888;text-align:center">No products found</div>';return;}
-  el.innerHTML=prods.slice(0,50).map(p=>{
+  el.innerHTML=prods.slice(0,100).map(p=>{
     const price=p.variants&&p.variants[0]?'£'+parseFloat(p.variants[0].price).toFixed(2):'';
     const img=p.images&&p.images[0]?p.images[0].src:'';
     return`<div class="prod-item" onclick="selectProduct(${p.id})">
@@ -658,10 +701,10 @@ Slide 3: (call to action + URL: ${productUrl})
 [26-30s] Call to action (where to buy)
 
 ---META_TITLE---
-Exactly 1 line. Max 60 characters. Include main keyword + ${STORE_NAME()}. No quotes.
+IMPORTANT: Write ONLY the meta title text here, nothing else. Max 60 characters. Include main keyword + ${STORE_NAME()}. Example: "BioSilk Silk Therapy Heat Protectant | CC Hair & Beauty"
 
 ---META_DESC---
-Exactly 1 line. 120-155 characters. Include keyword, benefit, Leeds/UK. No quotes.
+IMPORTANT: Write ONLY the meta description text here, nothing else. 120-155 characters. Include keyword, benefit, buy from CC Hair & Beauty Leeds. Example: "Shop BioSilk Silk Therapy Thermal Shield at CC Hair & Beauty, Leeds. Protects hair up to 450F with silk proteins. Free UK delivery over £50." 
 
 ---EXCERPT---
 2-3 sentences (max 160 words) for Shopify blog listing page. Engaging, keyword-rich, ends with a reason to click.
@@ -695,8 +738,11 @@ One SEO sentence for the blog header image alt text. Include product name, brand
     const tags=sec(text,'HASHTAGS','STORY');
     const story=sec(text,'STORY','REEL');
     const reel=sec(text,'REEL','META_TITLE');
-    const mt=extr(text,'META_TITLE');
-    const md=extr(text,'META_DESC');
+    // Meta fields - use sec() since they are between --- markers, fallback to extr()
+    let mt=sec(text,'META_TITLE','META_DESC').split('\n')[0].trim();
+    if(!mt)mt=extr(text,'META_TITLE');
+    let md=sec(text,'META_DESC','EXCERPT').split('\n')[0].trim();
+    if(!md)md=extr(text,'META_DESC');
     const excerpt=sec(text,'EXCERPT','SHOPIFY_TAGS');
     const shopifyTags=sec(text,'SHOPIFY_TAGS','FOCUS_KW');
     const fkw=extr(text,'FOCUS_KW');
