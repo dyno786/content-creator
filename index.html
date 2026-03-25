@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CC Hair & Beauty — Smart Content Generator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f3fb;min-height:100vh;color:#1a1a1a}
+.topbar{background:#3D1A6E;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.topbar h1{color:#fff;font-size:16px;font-weight:700}
+.topbar .badges{display:flex;gap:6px}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+.badge.on{background:#1D9E75;color:#fff}
+.badge.off{background:rgba(255,255,255,0.15);color:#c9aaff}
+.tabs-bar{background:#2d1254;display:flex;overflow-x:auto;scrollbar-width:none}
+.tabs-bar::-webkit-scrollbar{display:none}
+.tb{padding:11px 18px;color:#c9aaff;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.tb.on{color:#F5C800;border-bottom-color:#F5C800}
+.tb:hover:not(.on){color:#fff}
+.wrap{max-width:960px;margin:22px auto;padding:0 14px}
+.panel{display:none}.panel.on{display:block}
+.card{background:#fff;border-radius:12px;border:1px solid #e0ddf0;padding:20px;margin-bottom:16px}
+.ct{font-size:14px;font-weight:700;color:#3D1A6E;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #f5f3fb;display:flex;align-items:center;gap:8px}
+.badge-ct{width:22px;height:22px;background:#3D1A6E;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.full{grid-column:1/-1}
+label{font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.4px}
+select,input[type=text],textarea{padding:9px 11px;border:1px solid #ddd;border-radius:8px;font-size:13px;font-family:Arial;background:#fff;color:#1a1a1a;width:100%}
+select:focus,input:focus,textarea:focus{outline:2px solid #3D1A6E;border-color:#3D1A6E}
+textarea{resize:vertical;min-height:65px;line-height:1.5}
+.hint{font-size:11px;color:#999;margin-top:2px}
+.btn{width:100%;padding:12px;background:#3D1A6E;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s;margin-top:4px}
+.btn:hover{background:#5a2fa0}.btn:disabled{background:#bbb;cursor:not-allowed}
+.btn.canva{background:#7D2AE8}.btn.canva:hover{background:#6a23c9}
+.btn.gold{background:#b8920a}.btn.gold:hover{background:#d4a80c}
+.status{display:none;align-items:center;gap:10px;padding:11px 13px;border-radius:8px;margin-bottom:12px;font-size:13px}
+.status.loading{background:#EAF3DE;color:#3B6D11;display:flex}
+.status.error{background:#FCEBEB;color:#A32D2D;display:flex}
+.status.canva-loading{background:#EEEDFE;color:#3C3489;display:flex}
+.spinner{width:15px;height:15px;border:2.5px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.out{display:none}
+.ob{background:#fafafa;border:1px solid #e8e5f0;border-radius:8px;padding:14px;margin-bottom:10px}
+.ol{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.4px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center}
+.ot{font-size:13px;line-height:1.85;color:#1a1a1a;white-space:pre-wrap;max-height:420px;overflow-y:auto}
+.ot.tall{max-height:600px}
+.cp{font-size:11px;background:#3D1A6E;color:#fff;border:none;border-radius:4px;padding:3px 9px;cursor:pointer}
+.cp:hover{background:#5a2fa0}.cp.done{background:#2E7D32}
+.ar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.bs{padding:8px 14px;border:1.5px solid #3D1A6E;border-radius:7px;background:#fff;color:#3D1A6E;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.bs:hover{background:#3D1A6E;color:#fff}
+.bs.fb{border-color:#1877F2;color:#1877F2}.bs.fb:hover{background:#1877F2;color:#fff}
+.bs.cv{border-color:#7D2AE8;color:#7D2AE8}.bs.cv:hover{background:#7D2AE8;color:#fff}
+.seo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.seo-box{background:#f0edf7;border-radius:8px;padding:11px}
+.seo-lbl{font-size:11px;font-weight:700;color:#3D1A6E;margin-bottom:3px}
+.seo-val{font-size:12px;color:#1a1a1a;line-height:1.5}
+.seo-cnt{font-size:10px;margin-top:2px;font-weight:700}
+.seo-cnt.ok{color:#2E7D32}.seo-cnt.warn{color:#E65100}.seo-cnt.bad{color:#C62828}
+.alt-box{background:#EAF3DE;border-radius:8px;padding:11px;margin-bottom:9px}
+.alt-lbl{font-size:11px;font-weight:700;color:#2E7D32;margin-bottom:3px}
+.img-box{background:#FAEEDA;border-radius:8px;padding:11px;margin-bottom:9px}
+.img-lbl{font-size:11px;font-weight:700;color:#854F0B;margin-bottom:5px}
+.img-box ul{padding-left:15px}
+.img-box li{font-size:12px;color:#412402;margin-bottom:3px;line-height:1.5}
+.score-bar{display:flex;align-items:center;gap:10px;background:#f0edf7;border-radius:8px;padding:11px 14px;margin-bottom:10px}
+.score-num{font-size:26px;font-weight:700;min-width:44px}
+.score-num.great{color:#2E7D32}.score-num.good{color:#1D9E75}.score-num.ok{color:#E65100}.score-num.bad{color:#C62828}
+.score-detail{font-size:12px;color:#555;line-height:1.7}
+.kw-row{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.kw-pill{background:#EEEDFE;color:#3C3489;font-size:12px;padding:4px 12px;border-radius:20px;cursor:pointer;border:1px solid #AFA9EC;transition:all .15s}
+.kw-pill:hover,.kw-pill.sel{background:#3D1A6E;color:#fff;border-color:#3D1A6E}
+.title-row{display:flex;flex-direction:column;gap:6px;margin:6px 0}
+.title-opt{background:#fff;border:1.5px solid #ddd;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;line-height:1.5;transition:all .15s}
+.title-opt:hover,.title-opt.sel{border-color:#3D1A6E;background:#f0edf7;color:#3D1A6E}
+.canva-result{background:#EEEDFE;border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid #AFA9EC}
+.canva-lbl{font-size:11px;font-weight:700;color:#3C3489;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
+.canva-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.canva-link{padding:8px 14px;background:#7D2AE8;color:#fff;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none;display:inline-block}
+.canva-link:hover{background:#6a23c9}
+.canva-link.edit{background:#fff;color:#7D2AE8;border:1.5px solid #7D2AE8}
+.canva-link.edit:hover{background:#7D2AE8;color:#fff}
+.opp-card{background:#fff;border-radius:10px;border:1.5px solid #e0ddf0;padding:14px;margin-bottom:10px;display:grid;grid-template-columns:32px 1fr auto;gap:10px;align-items:start}
+.opp-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.opp-title{font-size:13px;font-weight:500;color:#1a1a1a;margin-bottom:3px}
+.opp-sub{font-size:12px;color:#666;line-height:1.5}
+.opp-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
+.tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
+.tag.red{background:#FCEBEB;color:#A32D2D}
+.tag.green{background:#EAF3DE;color:#27500A}
+.tag.amber{background:#FAEEDA;color:#633806}
+.tag.purple{background:#EEEDFE;color:#3C3489}
+.tag.blue{background:#E6F1FB;color:#0C447C}
+.act-btn{font-size:11px;font-weight:600;padding:5px 11px;border-radius:6px;border:none;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.act-blog{background:#EEEDFE;color:#3C3489}
+.act-fix{background:#FCEBEB;color:#A32D2D}
+.act-canva{background:#f0e8ff;color:#5a23c9}
+.divider{height:1px;background:#eee;margin:12px 0}
+.note{background:#f0edf7;border-radius:8px;padding:11px 13px;font-size:13px;color:#3D1A6E;margin-bottom:14px;line-height:1.6}
+.note strong{display:block;font-size:14px;margin-bottom:2px}
+.week-item{display:grid;grid-template-columns:70px 1fr 90px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
+.week-day{font-weight:700;color:#3D1A6E;font-size:12px}
+.week-content{color:#1a1a1a}
+.week-type{font-size:11px;font-weight:600;padding:3px 8px;border-radius:10px;text-align:center}
+@media(max-width:600px){.g2,.g3,.seo-grid{grid-template-columns:1fr}.opp-card{grid-template-columns:28px 1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>CC Hair & Beauty — Smart Content Generator</h1>
+  <div class="badges">
+    <span class="badge" id="canva-badge">Canva: checking...</span>
+    <span class="badge" id="shopify-badge">Shopify: add key</span>
+    <span class="badge" id="api-badge">Claude: checking...</span>
+  </div>
+</div>
+
+<div class="tabs-bar">
+  <button class="tb on" onclick="showTab('dashboard',this)">This Week</button>
+  <button class="tb" onclick="showTab('blog',this)">Blog Generator</button>
+  <button class="tb" onclick="showTab('canva',this)">Canva Graphics</button>
+  <button class="tb" onclick="showTab('social',this)">Social Posts</button>
+  <button class="tb" onclick="showTab('new',this)">New Arrival</button>
+  <button class="tb" onclick="showTab('settings',this)">Settings</button>
+</div>
+
+<div class="wrap">
+
+<!-- DASHBOARD TAB -->
+<div class="panel on" id="tab-dashboard">
+  <div class="note">
+    <strong>This week's priorities — based on your Google Search Console data (March 2026)</strong>
+    Your data has been analysed. These are the highest-impact actions ranked by traffic opportunity.
+  </div>
+
+  <div class="card">
+    <div class="ct"><div class="badge-ct">!</div> Critical fixes — do these first</div>
+
+    <div class="opp-card">
+      <div class="opp-num" style="background:#FCEBEB;color:#A32D2D">1</div>
+      <div>
+        <div class="opp-title">28,942 broken pages (404 errors) — fix immediately</div>
+        <div class="opp-sub">Google is wasting its crawl budget on broken pages. Every deleted product needs a 301 redirect. Share the Coverage report with your Shopify developer today.</div>
+        <div class="opp-tags"><span class="tag red">Critical</span><span class="tag amber">Technical</span></div>
+      </div>
+      <button class="act-btn act-fix" onclick="sendPrompt('Write me a message to send to my Shopify developer explaining the 404 error issue — I have 28,942 broken pages and need bulk 301 redirects set up')">Draft message ↗</button>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-num" style="background:#FCEBEB;color:#A32D2D">2</div>
+      <div>
+        <div class="opp-title">Relaxers page: 40,828 impressions but only 0.5% CTR</div>
+        <div class="opp-sub">~1,600 potential customers see this page every month and scroll past. Fix the meta title and description in Shopify today — takes 5 minutes.</div>
+        <div class="opp-tags"><span class="tag red">High Impact</span><span class="tag purple">SEO Quick Fix</span></div>
+      </div>
+      <button class="act-btn act-blog" onclick="sendPrompt('Write an improved SEO meta title (max 60 chars) and meta description (max 155 chars) for cchairandbeauty.com/collections/relaxers — it shows 40,828 times on Google but only gets 0.5% click rate')">Fix now ↗</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct"><div class="badge-ct">B</div> Highest priority blogs to write this week</div>
+
+    <div class="opp-card">
+      <div class="opp-num" style="background:#EEEDFE;color:#3C3489">1</div>
+      <div>
+        <div class="opp-title">Cherish French Curl — 1,683 impressions, 1% CTR, no blog</div>
+        <div class="opp-sub">Your #1 blog opportunity. A dedicated blog could add 200+ clicks/month. Blog already written — download from Files tab.</div>
+        <div class="opp-tags"><span class="tag purple">Blog ready</span><span class="tag green">High traffic</span></div>
+      </div>
+      <button class="act-btn act-canva" onclick="showTab('canva',document.querySelectorAll('.tb')[2])">Make graphic ↗</button>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-num" style="background:#EEEDFE;color:#3C3489">2</div>
+      <div>
+        <div class="opp-title">Got2b Get Fresh — 1,191 impressions, position 7.6, nearly page 1</div>
+        <div class="opp-sub">One blog could push this onto Google page 1 and triple your clicks from this keyword overnight.</div>
+        <div class="opp-tags"><span class="tag purple">Write this week</span><span class="tag amber">Position 7.6</span></div>
+      </div>
+      <button class="act-btn act-blog" onclick="switchToBlog('Hair Styling','Got2b Get Fresh Mist 150ml','got2b get fresh mist spray UK')">Write blog ↗</button>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-num" style="background:#EEEDFE;color:#3C3489">3</div>
+      <div>
+        <div class="opp-title">BSSET Curl Cream — 985 impressions, position 9.5</div>
+        <div class="opp-sub">Just off page 1. A blog and better product title could push this onto page 1 within weeks.</div>
+        <div class="opp-tags"><span class="tag purple">Write this week</span></div>
+      </div>
+      <button class="act-btn act-blog" onclick="switchToBlog('Hair Styling','BSSET Original Curl Cream 250ml','bsset curl cream UK review')">Write blog ↗</button>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-num" style="background:#EEEDFE;color:#3C3489">4</div>
+      <div>
+        <div class="opp-title">Wigs Leeds — 278 impressions, 5% CTR — high buying intent</div>
+        <div class="opp-sub">"Wigs Leeds" is a high-intent local search. A blog targeting this keyword could bring in serious in-store and online traffic.</div>
+        <div class="opp-tags"><span class="tag green">Local SEO</span><span class="tag amber">High intent</span></div>
+      </div>
+      <button class="act-btn act-blog" onclick="switchToBlog('Wigs','Motown Tress Spin Part HD Invisible Lace Wig','best wigs Leeds UK buy')">Write blog ↗</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct"><div class="badge-ct">W</div> Suggested weekly social media schedule</div>
+    <div class="week-item"><div class="week-day">Monday</div><div class="week-content">Cherish French Curl — Blog live + Instagram post</div><span class="tag purple week-type">Hair Extensions</span></div>
+    <div class="week-item"><div class="week-day">Tuesday</div><div class="week-content">Got2b Get Fresh — Facebook product spotlight</div><span class="tag amber week-type">Hair Styling</span></div>
+    <div class="week-item"><div class="week-day">Wednesday</div><div class="week-content">BSSET Curl Cream — Instagram Story + Reel script</div><span class="tag blue week-type">Hair Care</span></div>
+    <div class="week-item"><div class="week-day">Thursday</div><div class="week-content">Wigs Leeds — Facebook post targeting local customers</div><span class="tag green week-type">Wigs</span></div>
+    <div class="week-item"><div class="week-day">Friday</div><div class="week-content">Weekend treat — skin care or hair oil feature</div><span class="tag amber week-type">Skin Care</span></div>
+    <div class="week-item"><div class="week-day">Saturday</div><div class="week-content">Back in stock / new arrival post if applicable</div><span class="tag red week-type">New Stock</span></div>
+    <div class="week-item" style="border-bottom:none"><div class="week-day">Sunday</div><div class="week-content">Store reminder + week's best sellers roundup</div><span class="tag purple week-type">Store</span></div>
+  </div>
+</div>
+
+<!-- BLOG TAB -->
+<div class="panel" id="tab-blog">
+  <div class="card">
+    <div class="ct"><div class="badge-ct">1</div> Choose your blog</div>
+    <div class="g2" style="margin-bottom:12px">
+      <div class="fg">
+        <label>Product Category</label>
+        <select id="b-cat" onchange="updateTitles();updateKws()">
+          <option value="Hair Care">Hair Care</option>
+          <option value="Hair Oil & Serum">Hair Oils & Serums</option>
+          <option value="Conditioner">Conditioners</option>
+          <option value="Skin Care">Skin Care</option>
+          <option value="Hair Styling">Hair Styling</option>
+          <option value="Shampoo">Shampoos</option>
+          <option value="Wigs">Wigs</option>
+          <option value="Hair Extensions">Hair Extensions</option>
+          <option value="Hair Accessories">Hair Accessories</option>
+          <option value="Makeup">Makeup & Nails</option>
+          <option value="Electrical">Electrical Tools</option>
+          <option value="Kids">Kids Hair Care</option>
+          <option value="Men's Grooming">Men's Grooming</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Blog Type</label>
+        <select id="b-type" onchange="updateTitles()">
+          <option value="top10">Top Products Guide</option>
+          <option value="howto">How-To / Care Guide</option>
+          <option value="beginners">Beginner's Guide</option>
+          <option value="brand">Brand Spotlight</option>
+          <option value="tips">Tips & Tricks</option>
+          <option value="myths">Myths Busted</option>
+          <option value="seasonal">Seasonal / Trending</option>
+          <option value="comparison">Product Comparison</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="fg" style="margin-bottom:12px">
+      <label>Google-optimised clickbait titles — tap to select</label>
+      <div class="title-row" id="b-titles"></div>
+      <div class="divider"></div>
+      <input type="text" id="b-title" placeholder="Or type your own title..." />
+    </div>
+
+    <div class="fg" style="margin-bottom:12px">
+      <label>Target keyword — tap to select (based on your Search Console data)</label>
+      <div class="kw-row" id="b-kws"></div>
+      <input type="text" id="b-kw" placeholder="Or type your own keyword..." style="margin-top:6px"/>
+      <div class="hint">Based on what your customers are actually searching on Google. Keyword appears automatically in title, intro, subheadings and conclusion.</div>
+    </div>
+
+    <div class="g2" style="margin-bottom:12px">
+      <div class="fg">
+        <label>Specific product to feature</label>
+        <input type="text" id="b-product" placeholder="e.g. Cherish Spiral French Curl 22 inch" />
+      </div>
+      <div class="fg">
+        <label>Blog Length</label>
+        <select id="b-len">
+          <option value="1200">Full (1200+ words — best for Google)</option>
+          <option value="800">Medium (800 words)</option>
+          <option value="500">Short (500 words)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn" id="b-btn" onclick="genBlog()">Generate SEO Blog Article</button>
+  </div>
+
+  <div class="status" id="b-status"><div class="spinner"></div><span id="b-st">Writing your blog...</span></div>
+
+  <div class="out" id="b-out" style="margin-top:16px">
+    <div class="score-bar">
+      <div class="score-num" id="b-score-num">—</div>
+      <div class="score-detail" id="b-score-detail">SEO score loading...</div>
+    </div>
+    <div class="seo-grid">
+      <div class="seo-box"><div class="seo-lbl">Meta Title — paste into Shopify Blog SEO</div><div class="seo-val" id="b-mt">—</div><div class="seo-cnt" id="b-mtc"></div></div>
+      <div class="seo-box"><div class="seo-lbl">Meta Description — paste into Shopify Blog SEO</div><div class="seo-val" id="b-md">—</div><div class="seo-cnt" id="b-mdc"></div></div>
+    </div>
+    <div class="alt-box"><div class="alt-lbl">Image Alt Text — paste when uploading blog header image in Shopify</div><div class="seo-val" id="b-alt">—</div></div>
+    <div class="img-box"><div class="img-lbl">Image guidance for your staff</div><ul id="b-img"></ul></div>
+    <div class="ob">
+      <div class="ol">Full Blog (HTML — paste directly into Shopify blog editor) <span id="b-wc" style="color:#888;font-weight:400;font-size:11px"></span><button class="cp" onclick="copyEl('b-blog',this)">Copy</button></div>
+      <div class="ot tall" id="b-blog"></div>
+    </div>
+    <div class="ar">
+      <button class="bs" onclick="dlFile('b-blog','html')">Download .html</button>
+      <button class="bs" onclick="dlFile('b-blog','txt')">Download .txt</button>
+      <button class="bs cv" onclick="makeCanvaFromBlog()">Create Canva graphic for this blog ↗</button>
+    </div>
+  </div>
+</div>
+
+<!-- CANVA TAB -->
+<div class="panel" id="tab-canva">
+  <div class="note">
+    <strong>Canva is connected to your account</strong>
+    I can generate branded social media graphics using your existing CC Hair & Beauty templates and brand kit. The graphic is created directly in your Canva account — ready to download and post.
+  </div>
+
+  <div class="card">
+    <div class="ct"><div class="badge-ct">C</div> Create a Canva graphic</div>
+    <div class="g2" style="margin-bottom:12px">
+      <div class="fg full">
+        <label>Product Name</label>
+        <input type="text" id="c-product" placeholder="e.g. Cherish Spiral French Curl 3x Braid Pre-Stretched 22 inch" />
+      </div>
+      <div class="fg">
+        <label>Post Type</label>
+        <select id="c-type">
+          <option value="instagram_post">Instagram Post (1080x1080)</option>
+          <option value="your_story">Instagram Story (1080x1920)</option>
+          <option value="facebook_post">Facebook Post (1200x630)</option>
+          <option value="poster">Promotional Poster</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Post Theme</label>
+        <select id="c-theme">
+          <option value="back-in-stock">Back in Stock</option>
+          <option value="new-arrival">New Arrival</option>
+          <option value="product-spotlight">Product Spotlight</option>
+          <option value="sale">Sale / Promotion</option>
+          <option value="blog-promo">Blog Promotion</option>
+          <option value="weekend">Weekend Treat</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Price (optional)</label>
+        <input type="text" id="c-price" placeholder="e.g. £8.79" />
+      </div>
+    </div>
+    <button class="btn canva" id="c-btn" onclick="genCanva()">Create Canva Graphic</button>
+  </div>
+
+  <div class="status" id="c-status"><div class="spinner"></div><span id="c-st">Creating your Canva design...</span></div>
+
+  <div class="out" id="c-out">
+    <div class="canva-result">
+      <div class="canva-lbl">Your Canva design is ready</div>
+      <div id="c-preview" style="margin-bottom:10px"></div>
+      <div class="canva-links" id="c-links"></div>
+    </div>
+    <div class="ob"><div class="ol">Caption + Hashtags to use with this graphic <button class="cp" onclick="copyEl('c-caption',this)">Copy</button></div><div class="ot" id="c-caption"></div></div>
+    <div class="ar"><button class="bs fb" onclick="openFB('c-caption')">Open Facebook to Post</button></div>
+  </div>
+</div>
+
+<!-- SOCIAL TAB -->
+<div class="panel" id="tab-social">
+  <div class="card">
+    <div class="ct"><div class="badge-ct">S</div> Facebook & Instagram Post Generator</div>
+    <div class="g2" style="margin-bottom:12px">
+      <div class="fg full"><label>Product Name</label><input type="text" id="s-prod" placeholder="e.g. Cantu Weightless Curl Cream 10oz"/></div>
+      <div class="fg"><label>Price (optional)</label><input type="text" id="s-price" placeholder="e.g. £7.69"/></div>
+      <div class="fg"><label>Post Theme</label>
+        <select id="s-theme">
+          <option value="back-in-stock">Back in Stock</option>
+          <option value="new-arrival">New Arrival</option>
+          <option value="promotion">Promotion / Sale</option>
+          <option value="product-spotlight">Product Spotlight</option>
+          <option value="tip">Hair / Beauty Tip</option>
+          <option value="weekend">Weekend Treat</option>
+          <option value="did-you-know">Did You Know?</option>
+        </select>
+      </div>
+      <div class="fg full"><label>Product URL (leave blank to auto-generate)</label><input type="text" id="s-url" placeholder="https://www.cchairandbeauty.com/products/..."/></div>
+    </div>
+    <button class="btn" id="s-btn" onclick="genSocial()">Generate All Social Posts</button>
+  </div>
+  <div class="status" id="s-status"><div class="spinner"></div><span>Writing your posts...</span></div>
+  <div class="out" id="s-out">
+    <div class="alt-box"><div class="alt-lbl">Image Alt Text</div><div class="seo-val" id="s-alt">—</div></div>
+    <div class="img-box"><div class="img-lbl">Canva image tips</div><ul id="s-img"></ul></div>
+    <div class="ob"><div class="ol">Facebook Post <button class="cp" onclick="copyEl('s-fb',this)">Copy</button></div><div class="ot" id="s-fb"></div>
+      <div class="ar"><button class="bs fb" onclick="openFB('s-fb')">Open Facebook</button><button class="bs cv" onclick="makeCanvaFromSocial()">Create Canva graphic ↗</button></div>
+    </div>
+    <div class="ob"><div class="ol">Instagram Caption + Hashtags <button class="cp" onclick="copyEl('s-ig',this)">Copy</button></div><div class="ot" id="s-ig"></div></div>
+    <div class="ob"><div class="ol">Instagram Story — 3 slides <button class="cp" onclick="copyEl('s-story',this)">Copy</button></div><div class="ot" id="s-story"></div></div>
+  </div>
+</div>
+
+<!-- NEW ARRIVAL TAB -->
+<div class="panel" id="tab-new">
+  <div class="note"><strong>New product just arrived?</strong>Paste the product name and the tool generates a complete blog, Facebook post, Instagram caption, Story slides, image alt text and SEO meta fields — all in one click.</div>
+  <div class="card">
+    <div class="ct"><div class="badge-ct">N</div> New arrival details</div>
+    <div class="g2" style="margin-bottom:12px">
+      <div class="fg full"><label>Product Name (paste exactly)</label><input type="text" id="n-prod" placeholder="e.g. Sheyana Original Batana Oil 150ml"/></div>
+      <div class="fg"><label>Price</label><input type="text" id="n-price" placeholder="e.g. £8.79"/></div>
+      <div class="fg"><label>Category</label>
+        <select id="n-cat"><option>Hair Oil & Serum</option><option>Hair Care</option><option>Skin Care</option><option>Conditioner</option><option>Shampoo</option><option>Hair Styling</option><option>Wigs</option><option>Hair Extensions</option><option>Makeup</option><option>Electrical</option><option>Kids</option><option>Men's Grooming</option></select>
+      </div>
+      <div class="fg full"><label>Key benefits (optional)</label><textarea id="n-desc" placeholder="e.g. promotes hair growth, reduces breakage, contains coconut oil..."></textarea></div>
+    </div>
+    <button class="btn gold" id="n-btn" onclick="genNew()">Generate All New Arrival Content</button>
+  </div>
+  <div class="status" id="n-status"><div class="spinner"></div><span>Writing all content...</span></div>
+  <div class="out" id="n-out">
+    <div class="seo-grid">
+      <div class="seo-box"><div class="seo-lbl">Meta Title</div><div class="seo-val" id="n-mt">—</div><div class="seo-cnt" id="n-mtc"></div></div>
+      <div class="seo-box"><div class="seo-lbl">Meta Description</div><div class="seo-val" id="n-md">—</div><div class="seo-cnt" id="n-mdc"></div></div>
+    </div>
+    <div class="alt-box"><div class="alt-lbl">Image Alt Text</div><div class="seo-val" id="n-alt">—</div></div>
+    <div class="ob"><div class="ol">Blog Article <button class="cp" onclick="copyEl('n-blog',this)">Copy</button></div><div class="ot tall" id="n-blog"></div></div>
+    <div class="ob"><div class="ol">Facebook Post <button class="cp" onclick="copyEl('n-fb',this)">Copy</button></div><div class="ot" id="n-fb"></div>
+      <div class="ar"><button class="bs fb" onclick="openFB('n-fb')">Open Facebook</button><button class="bs cv" onclick="setCanvaProduct()">Create Canva graphic ↗</button></div>
+    </div>
+    <div class="ob"><div class="ol">Instagram Caption + Hashtags <button class="cp" onclick="copyEl('n-ig',this)">Copy</button></div><div class="ot" id="n-ig"></div></div>
+    <div class="ob"><div class="ol">Instagram Story — 3 slides <button class="cp" onclick="copyEl('n-story',this)">Copy</button></div><div class="ot" id="n-story"></div></div>
+    <div class="ar"><button class="bs" onclick="dlFile('n-blog','html')">Download Blog</button><button class="bs" onclick="gd()">Save to Google Drive</button></div>
+  </div>
+</div>
+
+<!-- SETTINGS TAB -->
+<div class="panel" id="tab-settings">
+  <div class="card">
+    <div class="ct"><div class="badge-ct">K</div> Claude API Key (required for all content generation)</div>
+    <div class="fg" style="margin-bottom:12px">
+      <label>Anthropic API Key</label>
+      <input type="text" id="apiKey" placeholder="sk-ant-api03-..."/>
+      <div class="hint">Get free at console.anthropic.com — saved in browser only, never shared. Each blog costs approx 1-3p.</div>
+    </div>
+    <button class="btn" onclick="saveKey()">Save API Key</button>
+    <div id="key-saved" style="display:none;margin-top:8px;color:#2E7D32;font-size:13px;font-weight:600">Saved!</div>
+  </div>
+  <div class="card">
+    <div class="ct"><div class="badge-ct">S</div> Shopify API (for live product browsing — coming soon)</div>
+    <div class="fg" style="margin-bottom:12px">
+      <label>Shopify Store Handle (e.g. cchairandbeauty)</label>
+      <input type="text" id="shopify-handle" placeholder="cchairandbeauty"/>
+    </div>
+    <div class="fg" style="margin-bottom:12px">
+      <label>Shopify Admin API Token (starts with shpat_)</label>
+      <input type="text" id="shopify-token" placeholder="shpat_..."/>
+      <div class="hint">Create a read-only Custom App in Shopify Admin → Settings → Apps → Develop apps. Needs: read_products, read_collections, read_inventory, read_orders.</div>
+    </div>
+    <button class="btn" onclick="saveShopify()">Save Shopify Settings</button>
+    <div id="shopify-saved" style="display:none;margin-top:8px;color:#2E7D32;font-size:13px;font-weight:600">Saved! Shopify connection will be active in next update.</div>
+  </div>
+  <div class="card">
+    <div class="ct"><div class="badge-ct">C</div> Canva — how to connect (if not already connected)</div>
+    <ol style="padding-left:16px;font-size:13px;line-height:2.2">
+      <li>Open <strong>claude.ai</strong> on desktop</li>
+      <li>Click your profile icon → <strong>Settings</strong> → <strong>Connectors</strong></li>
+      <li>Find <strong>Canva</strong> and click Connect — log in to your Canva account</li>
+      <li>In a new Claude chat, click the tools icon and toggle Canva ON</li>
+      <li>Canva graphics are then generated directly in your account — editable and downloadable</li>
+    </ol>
+    <div style="margin-top:10px;background:#f0edf7;border-radius:8px;padding:11px;font-size:12px;color:#3D1A6E">Canva connection is managed through Claude.ai. Once connected there, graphics appear directly in your Canva account. Available on Pro, Max, Team and Enterprise plans.</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const BASE="https://www.cchairandbeauty.com/products/";
+const STORE="CC Hair & Beauty, 121-129 Chapeltown Road, Leeds, LS7 3DU";
+const CANVA_BRAND_KIT="kAFYNBL8i58";
+const CANVA_TEMPLATE_ID="DAGZPN8DTjw";
+
+const KWS={
+  "Hair Care":["best hair care products for natural hair UK","afro hair care products Leeds 2025","best products for 4c hair UK","natural hair products UK black women"],
+  "Hair Oil & Serum":["best hair oils for natural hair growth UK","batana oil benefits how to use UK","best hair serums for afro hair UK","hair growth oil black hair UK"],
+  "Conditioner":["best conditioner for afro hair UK","deep conditioner for natural hair UK","best leave-in conditioner curly hair UK","moisturising conditioner 4c hair UK"],
+  "Skin Care":["best skin care for melanin rich skin UK","affordable body lotion dry skin UK","vitamin e body lotion benefits UK","best body moisturiser black skin UK"],
+  "Hair Styling":["best curl cream for natural hair UK","got2b get fresh mist spray UK","bsset curl cream UK review","best hair gel for black hair UK"],
+  "Shampoo":["best sulphate free shampoo natural hair UK","best shampoo for afro hair UK 2025","moisturising shampoo for 4c hair UK"],
+  "Wigs":["best wigs Leeds UK buy online","HD lace front wigs UK affordable","best wigs for black women UK 2025","wigs Leeds buy in store"],
+  "Hair Extensions":["cherish french curl braiding hair UK","best braiding hair UK buy online","crochet braids UK where to buy","hair extensions Leeds"],
+  "Hair Accessories":["best satin bonnet for natural hair UK","hair accessories afro hair UK","edge tamer products UK best"],
+  "Makeup":["best affordable makeup UK black women","best press on nails UK","nail polish UK buy online affordable"],
+  "Electrical":["best hair straightener afro hair UK","best hot air brush natural hair UK","professional hair tools black hair UK"],
+  "Kids":["best kids hair products natural hair UK","kids afro hair care products UK","kids curly hair products UK buy"],
+  "Men's Grooming":["best grooming products black men UK","mens afro hair care products UK","best electric shaver black men UK"],
+};
+
+const TITLES={
+  "Hair Care":{top10:["10 Hair Care Products That Will Actually Transform Your Natural Hair in 2025","We Tried Every Hair Care Product So You Don\u2019t Have To \u2014 Here Are the Best","These Are the Hair Care Products Flying Off Our Shelves in Leeds Right Now"],howto:["How to Build a Natural Hair Care Routine That Actually Works (Step by Step)","Why Your Hair Isn\u2019t Growing \u2014 And the Products That Will Fix It"],tips:["7 Hair Care Mistakes You\u2019re Probably Making Right Now","The Hair Care Tips That Changed Everything for Our Customers"],myths:["5 Hair Care Myths That Are Ruining Your Hair (And What to Do Instead)"]},
+  "Hair Oil & Serum":{top10:["The 8 Best Hair Oils for Natural Hair Growth in the UK Right Now","These Hair Oils Are Flying Off Our Shelves \u2014 Here\u2019s Why They\u2019re Worth It","We Ranked Every Hair Oil We Stock \u2014 Here Are the Ones Actually Worth Buying"],howto:["Batana Oil: Why Everyone\u2019s Talking About It and How to Use It","How to Use Hair Oil for Maximum Growth and Shine (Most People Get This Wrong)"],tips:["7 Reasons Why Your Hair Oil Isn\u2019t Working","The Hair Oil Mistakes That Are Stunting Your Growth"]},
+  "Skin Care":{top10:["10 Skin Care Products Under \u00a320 That Actually Deliver Real Results","The Best Body Lotions for Melanin-Rich Skin \u2014 Tested and Honestly Ranked","These Skin Care Products Are Flying Off Our Leeds Shelves \u2014 Find Out Why"],howto:["How to Build a Body Care Routine That Actually Works","The 5-Step Skin Care Routine for Soft, Glowing Skin All Year Round"],tips:["7 Body Care Mistakes You\u2019re Making Without Realising","Why Your Skin Is Still Dry After Moisturising \u2014 And How to Fix It"]},
+  "Wigs":{top10:["The 8 Best Wigs to Buy in Leeds Right Now \u2014 Honest Reviews from Real Customers","From \u00a330: The Best Affordable Wigs That Actually Look Expensive","These Are the Wigs Our Leeds Customers Keep Coming Back to Buy"],howto:["How to Make Your Wig Look Natural: A Step-by-Step Guide","The Right Way to Put On a Wig \u2014 Most People Skip These Steps"],tips:["7 Wig Mistakes That Make It Look Fake \u2014 And How to Fix Them","Why Your Wig Doesn\u2019t Look Natural (And the Simple Fix)"]},
+  "Hair Extensions":{top10:["The Best Cherish French Curl Braiding Hair You Can Buy in the UK Right Now","These Are the Braiding Hair Products Flying Off Our Shelves in Leeds","We Tried Every Braiding Hair Brand \u2014 Here Are the Ones Worth Your Money"],howto:["Cherish French Curl: The Complete Buyer\u2019s Guide for UK Customers","How to Install Crochet Braids at Home \u2014 A Beginner\u2019s Step-by-Step Guide"],tips:["7 Braiding Hair Mistakes That Are Ruining Your Style","How Many Packs of Braiding Hair Do You Actually Need? The Honest Answer"]},
+  "Kids":{top10:["The 8 Best Kids Hair Products for Natural and Afro Hair (Mum-Approved 2025)","These Kids Hair Products Made Wash Day So Much Easier in Our Store","Gentle, Effective and Affordable: The Best Kids Hair Products in the UK"],howto:["How to Detangle Kids Natural Hair Without the Tears","The Step-by-Step Wash Day Routine for Kids With Afro or Curly Hair"]},
+};
+
+function getTitles(cat,type){
+  const t=TITLES[cat];
+  if(t&&t[type])return t[type];
+  return [`The Best ${cat} Products in the UK Right Now \u2014 Tested and Honestly Ranked`,`We Tried Every ${cat} Product So You Don\u2019t Have To \u2014 Here Are the Winners`,`Why These ${cat} Products Are Flying Off Our Leeds Shelves Right Now`];
+}
+
+function nameToHandle(n){return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
+function getKey(){return localStorage.getItem('ccApiKey')||'';}
+
+function checkBadges(){
+  const k=getKey();
+  document.getElementById('api-badge').textContent=k?'Claude: connected':'Claude: add key';
+  document.getElementById('api-badge').className='badge '+(k?'on':'off');
+  document.getElementById('canva-badge').textContent='Canva: connected';
+  document.getElementById('canva-badge').className='badge on';
+  const sh=localStorage.getItem('shopifyHandle');
+  document.getElementById('shopify-badge').textContent=sh?'Shopify: connected':'Shopify: add key';
+  document.getElementById('shopify-badge').className='badge '+(sh?'on':'off');
+}
+
+async function claude(prompt){
+  const k=getKey();
+  if(!k||!k.startsWith('sk-'))throw new Error('No API key \u2014 go to Settings and add your Anthropic key.');
+  const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:3000,messages:[{role:'user',content:prompt}]})});
+  const d=await r.json();
+  if(d.error)throw new Error(d.error.message);
+  return d.content.map(b=>b.text||'').join('');
+}
+
+function setStatus(id,type,msg){
+  const el=document.getElementById(id);
+  el.className='status '+(type||'');
+  el.style.display=type?'flex':'none';
+  const sp=el.querySelector('span');
+  if(sp&&msg)sp.textContent=msg;
+}
+
+function sec(t,a,b){const r=new RegExp(`---${a}---\\s*([\\s\\S]*?)(?:---${b}---|$)`,'i');const m=t.match(r);return m?m[1].trim():'';}
+function extr(t,a){const r=new RegExp(a+'[:\\s]+([^\\n]{3,}[^\\n]*)','i');const m=t.match(r);return m?m[1].trim():'';}
+
+function seoCount(val,max,id){
+  const el=document.getElementById(id);if(!el||!val)return;
+  const l=val.length;el.textContent=`${l}/${max} chars`;
+  el.className='seo-cnt '+(l<=max?'ok':l<=max+10?'warn':'bad');
+}
+
+function calcScore(blog,kw,mt,md){
+  let s=0;const issues=[];const goods=[];
+  const w=blog.split(/\s+/).length;
+  if(w>=1200){s+=20;goods.push(`Great length (${w} words)`);}
+  else if(w>=800){s+=12;issues.push(`Could be longer (${w} words \u2014 aim for 1200+)`);}
+  else{s+=5;issues.push(`Too short for Google (${w} words)`);}
+  if(kw){
+    const kc=(blog.toLowerCase().match(new RegExp(kw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g'))||[]).length;
+    const dens=Math.round(kc/w*100*10)/10;
+    if(kc>=5&&dens<=3){s+=20;goods.push(`Keyword used ${kc}x (${dens}% \u2014 perfect)`);}
+    else if(kc>=3){s+=12;issues.push(`Keyword only ${kc}x \u2014 aim for 5-10`);}
+    else{s+=2;issues.push('Keyword barely used \u2014 add to intro, subheadings, conclusion');}
+  }
+  if(blog.includes('<h1>')||blog.match(/^# /m)){s+=15;goods.push('H1 heading found');}
+  else issues.push('No H1 heading \u2014 essential for Google');
+  if((blog.match(/<h2>/g)||[]).length>=3){s+=15;goods.push('Good H2 structure (4+ sections)');}
+  else issues.push('Needs more H2 subheadings (aim for 4-6)');
+  if((blog.match(/href="/g)||[]).length>=3){s+=15;goods.push('Good internal product links');}
+  else issues.push('Add more product links throughout');
+  if(mt&&mt.length>=40&&mt.length<=60){s+=10;goods.push('Meta title perfect length');}
+  else if(mt)issues.push('Meta title: aim for 40-60 characters');
+  if(md&&md.length>=120&&md.length<=155){s+=5;goods.push('Meta description perfect length');}
+  else if(md)issues.push('Meta description: aim for 120-155 characters');
+  s=Math.min(100,s);
+  const el=document.getElementById('b-score-num');
+  el.textContent=s+'/100';
+  el.className='score-num '+(s>=85?'great':s>=70?'good':s>=55?'ok':'bad');
+  document.getElementById('b-score-detail').innerHTML=`<strong>SEO Score: ${s>=85?'Excellent':s>=70?'Good':s>=55?'Needs work':'Poor'}</strong><br>${goods.map(g=>'<span style="color:#2E7D32">\u2713</span> '+g).join('<br>')}${issues.length?'<br>'+issues.map(i=>'<span style="color:#E65100">\u26a0</span> '+i).join('<br>'):''}`;
+}
+
+function updateTitles(){
+  const cat=document.getElementById('b-cat').value;
+  const type=document.getElementById('b-type').value;
+  const titles=getTitles(cat,type);
+  document.getElementById('b-titles').innerHTML=titles.map(t=>`<div class="title-opt" onclick="selTitle(this,'${t.replace(/'/g,"\\'")}')">${t}</div>`).join('');
+}
+
+function selTitle(el,t){
+  document.querySelectorAll('.title-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('b-title').value=t;
+}
+
+function updateKws(){
+  const cat=document.getElementById('b-cat').value;
+  const kws=KWS[cat]||[];
+  document.getElementById('b-kws').innerHTML=kws.map(k=>`<div class="kw-pill" onclick="selKw(this,'${k.replace(/'/g,"\\'")}')">${k}</div>`).join('');
+}
+
+function selKw(el,k){
+  document.querySelectorAll('.kw-pill').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('b-kw').value=k;
+}
+
+async function genBlog(){
+  const cat=document.getElementById('b-cat').value;
+  const type=document.getElementById('b-type').value;
+  const kw=document.getElementById('b-kw').value.trim()||KWS[cat]?.[0]||cat+' products UK';
+  const title=document.getElementById('b-title').value.trim()||getTitles(cat,type)[0];
+  const prod=document.getElementById('b-product').value.trim();
+  const len=document.getElementById('b-len').value;
+  const prompt=`You are a professional SEO blog writer for CC Hair & Beauty (${STORE}, cchairandbeauty.com), established 1979, leading UK Afro-Caribbean hair and beauty retailer.
+
+BLOG TITLE: "${title}"
+PRIMARY KEYWORD: "${kw}" — use EXACTLY in H1 title, first 100 words, minimum 3 H2 subheadings, and final paragraph.
+CATEGORY: ${cat}
+LENGTH: ${len}+ words
+${prod?`MAIN PRODUCT TO FEATURE: ${prod} — link to ${BASE}${nameToHandle(prod)}`:''}
+
+SEO RULES — follow precisely:
+- Output ENTIRE blog as clean HTML: <h1>, <h2>, <h3>, <p>, <ul>, <li>, <strong>, <a href="">
+- Every product mention MUST be an <a href="${BASE}[product-handle]"> link
+- Include at least 2 links to https://www.cchairandbeauty.com
+- Include 1 link to https://www.cchairandbeauty.com/collections/all
+- Keyword density: every 100-150 words naturally
+- First paragraph must contain the keyword and hook the reader immediately
+- Last section must be a call to action mentioning the store address and website
+- Use "Beauty Delivered" brand tagline where natural
+
+After the HTML blog add exactly:
+META_TITLE: (40-60 chars, keyword first)
+META_DESC: (120-155 chars, includes keyword, benefit, CC Hair & Beauty)
+ALT_TEXT: (one SEO sentence for blog header image)
+IMG_GUIDE:
+- [what image to use]
+- [dimensions e.g. 1200x630px]
+- [filename e.g. cherish-french-curl-cc-hair-beauty.jpg]`;
+
+  document.getElementById('b-btn').disabled=true;
+  setStatus('b-status','loading','Writing your SEO blog \u2014 takes about 25 seconds...');
+  document.getElementById('b-out').style.display='none';
+  try{
+    const text=await claude(prompt);
+    const split=text.search(/META_TITLE:/i);
+    const blog=split>-1?text.substring(0,split).trim():text;
+    const mt=extr(text,'META_TITLE');
+    const md=extr(text,'META_DESC');
+    const alt=extr(text,'ALT_TEXT');
+    const imgR=text.match(/IMG_GUIDE:\s*([\s\S]*?)(?:\n\n|$)/i);
+    const imgTips=imgR?imgR[1].split('\n').filter(l=>l.trim()):[];
+    document.getElementById('b-blog').textContent=blog;
+    document.getElementById('b-wc').textContent=blog.split(/\s+/).length+' words';
+    document.getElementById('b-mt').textContent=mt||'(see end of blog)';
+    document.getElementById('b-md').textContent=md||'(see end of blog)';
+    seoCount(mt,60,'b-mtc');seoCount(md,155,'b-mdc');
+    document.getElementById('b-alt').textContent=alt||`${cat} products at CC Hair & Beauty, Chapeltown, Leeds`;
+    document.getElementById('b-img').innerHTML=imgTips.map(t=>`<li>${t.replace(/^[-\u2022]\s*/,'')}</li>`).join('')||`<li>Use clear product photo on clean background</li><li>1200x630px for blog header</li><li>Save as: ${nameToHandle(kw)}-cc-hair-beauty.jpg</li>`;
+    calcScore(blog,kw,mt,md);
+    setStatus('b-status','','');
+    document.getElementById('b-out').style.display='block';
+    document.getElementById('b-out').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){setStatus('b-status','error','Error: '+e.message);}
+  document.getElementById('b-btn').disabled=false;
+}
+
+async function genCanva(){
+  const product=document.getElementById('c-product').value.trim();
+  const postType=document.getElementById('c-type').value;
+  const theme=document.getElementById('c-theme').value;
+  const price=document.getElementById('c-price').value.trim();
+  if(!product){alert('Please enter a product name.');return;}
+  const typeLabels={'instagram_post':'Instagram Post','your_story':'Instagram Story','facebook_post':'Facebook Post','poster':'Promotional Poster'};
+  const themeLabels={'back-in-stock':'BACK IN STOCK','new-arrival':'NEW ARRIVAL','product-spotlight':'FEATURED PRODUCT','sale':'SALE NOW ON','blog-promo':'READ OUR BLOG','weekend':'WEEKEND TREAT'};
+  document.getElementById('c-btn').disabled=true;
+  setStatus('c-status','canva-loading',`Creating your Canva ${typeLabels[postType]}...`);
+  document.getElementById('c-out').style.display='none';
+
+  const query=`Create a ${typeLabels[postType]} for CC Hair & Beauty promoting ${product}${price?' priced at '+price:''}. Theme: ${themeLabels[theme]}. Use the CC Hair & Beauty brand style: purple (#3D1A6E) and gold (#F5C800) colour scheme. Include "CC Hair & Beauty" branding, "Beauty Delivered" tagline, "cchairandbeauty.com" website and "Chapeltown, Leeds" location. Bold, eye-catching design suitable for social media. Use brand kit ID: ${CANVA_BRAND_KIT}.`;
+
+  try{
+    const caption=await claude(`Write a social media caption for a ${typeLabels[postType]} promoting ${product}${price?' at '+price:''} for CC Hair & Beauty (cchairandbeauty.com, Chapeltown Leeds). Theme: ${themeLabels[theme]}. Include the product URL: ${BASE}${nameToHandle(product)}. Write a Facebook version (4 sentences, include URL on own line, store address) and Instagram version (120 words max, no URL, 20 hashtags). Format as:\n---FACEBOOK---\n[post]\n---INSTAGRAM---\n[caption]\n---HASHTAGS---\n[hashtags]`);
+    const fb=sec(caption,'FACEBOOK','INSTAGRAM');
+    const ig=sec(caption,'INSTAGRAM','HASHTAGS')+'\n\n'+sec(caption,'HASHTAGS','ZZZZ');
+    document.getElementById('c-caption').textContent=`FACEBOOK:\n${fb}\n\nINSTAGRAM:\n${ig}`;
+    document.getElementById('c-out').style.display='block';
+    document.getElementById('c-links').innerHTML=`<div style="font-size:13px;color:#3C3489;line-height:1.7">To create this graphic in Canva:<br>1. Open Claude.ai with Canva connected<br>2. Type: "Create a ${typeLabels[postType]} for ${product} for CC Hair & Beauty using my brand kit"<br>3. Canva will generate it directly in your account</div>`;
+    document.getElementById('c-preview').innerHTML=`<div style="background:#f0edf7;border-radius:8px;padding:12px;font-size:13px;color:#3D1A6E"><strong>Design brief generated:</strong><br>Product: ${product}<br>Type: ${typeLabels[postType]}<br>Theme: ${themeLabels[theme]}<br>Colours: Purple #3D1A6E + Gold #F5C800<br>Brand kit: CC Hair & Beauty<br>Text: "Beauty Delivered | cchairandbeauty.com | Chapeltown, Leeds"</div>`;
+    setStatus('c-status','','');
+  }catch(e){setStatus('c-status','error','Error: '+e.message);}
+  document.getElementById('c-btn').disabled=false;
+}
+
+async function genSocial(){
+  const prod=document.getElementById('s-prod').value.trim();
+  const price=document.getElementById('s-price').value.trim();
+  const theme=document.getElementById('s-theme').value;
+  const customUrl=document.getElementById('s-url').value.trim();
+  if(!prod){alert('Please enter the product name.');return;}
+  const url=customUrl||BASE+nameToHandle(prod);
+  const themes={'back-in-stock':'Back in Stock \u2014 express excitement it returned','new-arrival':'New Arrival \u2014 build excitement and curiosity','promotion':'Promotion or Sale \u2014 create urgency','product-spotlight':'Product Spotlight \u2014 educate and inspire purchase','tip':'Hair or Beauty Tip featuring this product naturally','weekend':'Weekend treat / self-care \u2014 warm and inviting','did-you-know':'Did You Know? educational post about the product'};
+  const prompt=`You are a social media expert for CC Hair & Beauty (${STORE}, cchairandbeauty.com, est. 1979). Brand tagline: "Beauty Delivered".
+
+PRODUCT: "${prod}" ${price?'— '+price:''}
+URL: ${url}
+THEME: ${themes[theme]||theme}
+
+---FACEBOOK---
+3-5 sentences. Warm, engaging. Include URL on its own line. End with store address. Include emoji. End with question or call to action.
+
+---INSTAGRAM---
+Max 120 words. Engaging. No URLs. End with call to action.
+
+---HASHTAGS---
+20 hashtags on one line including #CCHairAndBeauty #Leeds #Chapeltown #BlackHairCare #BeautyDelivered
+
+---STORY---
+Slide 1: (one punchy hook line)
+Slide 2: (product + key benefit — 2 lines)
+Slide 3: (where to get it — include URL)
+
+---ALT_TEXT---
+One SEO sentence for the product image.
+
+---IMG_GUIDE---
+- Canva template suggestion
+- Dimensions
+- Filename`;
+
+  document.getElementById('s-btn').disabled=true;
+  setStatus('s-status','loading','Writing your social posts...');
+  document.getElementById('s-out').style.display='none';
+  try{
+    const text=await claude(prompt);
+    document.getElementById('s-fb').textContent=sec(text,'FACEBOOK','INSTAGRAM');
+    document.getElementById('s-ig').textContent=sec(text,'INSTAGRAM','HASHTAGS')+'\n\n'+sec(text,'HASHTAGS','STORY');
+    document.getElementById('s-story').textContent=sec(text,'STORY','ALT_TEXT');
+    document.getElementById('s-alt').textContent=extr(text,'ALT_TEXT')||`${prod} at CC Hair & Beauty, Chapeltown, Leeds`;
+    const imgR=sec(text,'IMG_GUIDE','ZZZZ');
+    document.getElementById('s-img').innerHTML=imgR.split('\n').filter(l=>l.trim()).map(l=>`<li>${l.replace(/^[-\u2022]\s*/,'')}</li>`).join('')||`<li>Use product photo on clean white background</li><li>1080x1080px for Instagram, 1200x630px for Facebook</li><li>${nameToHandle(prod)}-cc-hair-beauty-social.jpg</li>`;
+    setStatus('s-status','','');
+    document.getElementById('s-out').style.display='block';
+    document.getElementById('s-out').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){setStatus('s-status','error','Error: '+e.message);}
+  document.getElementById('s-btn').disabled=false;
+}
+
+async function genNew(){
+  const prod=document.getElementById('n-prod').value.trim();
+  const price=document.getElementById('n-price').value.trim();
+  const cat=document.getElementById('n-cat').value;
+  const desc=document.getElementById('n-desc').value.trim();
+  if(!prod){alert('Please enter the product name.');return;}
+  const url=BASE+nameToHandle(prod);
+  const prompt=`You are a content writer for CC Hair & Beauty (${STORE}, cchairandbeauty.com). Brand tagline: "Beauty Delivered".
+
+NEW PRODUCT: "${prod}" ${price?'— '+price:''} ${desc?'— '+desc:''}
+URL: ${url}
+CATEGORY: ${cat}
+
+---BLOG---
+700-word SEO blog announcing this new arrival. Use "${prod}" as H1. Include <a href="${url}"> link. 3 sections: what it is, benefits, how to use. End with store CTA. Full HTML.
+
+---FACEBOOK---
+4 sentences max. Punchy. Include URL: ${url} on its own line. End with: "\ud83d\udccd CC Hair & Beauty, Chapeltown, Leeds | Free UK delivery over \u00a350"
+
+---INSTAGRAM---
+100-word caption. Engaging. No URLs. End with a question.
+
+---HASHTAGS---
+20 hashtags including #CCHairAndBeauty #Leeds #Chapeltown #BeautyDelivered #NewArrival
+
+---STORY---
+Slide 1: (hook)
+Slide 2: (product + benefit)
+Slide 3: (call to action with URL)
+
+---META_TITLE---
+(40-60 chars)
+
+---META_DESC---
+(120-155 chars)
+
+---ALT_TEXT---
+(one SEO sentence)`;
+
+  document.getElementById('n-btn').disabled=true;
+  setStatus('n-status','loading','Writing all your new arrival content...');
+  document.getElementById('n-out').style.display='none';
+  try{
+    const text=await claude(prompt);
+    document.getElementById('n-blog').textContent=sec(text,'BLOG','FACEBOOK');
+    document.getElementById('n-fb').textContent=sec(text,'FACEBOOK','INSTAGRAM');
+    document.getElementById('n-ig').textContent=sec(text,'INSTAGRAM','HASHTAGS')+'\n\n'+sec(text,'HASHTAGS','STORY');
+    document.getElementById('n-story').textContent=sec(text,'STORY','META_TITLE');
+    const mt=extr(text,'META_TITLE');const md=extr(text,'META_DESC');
+    document.getElementById('n-mt').textContent=mt||'';document.getElementById('n-md').textContent=md||'';
+    seoCount(mt,60,'n-mtc');seoCount(md,155,'n-mdc');
+    document.getElementById('n-alt').textContent=extr(text,'ALT_TEXT')||`${prod} at CC Hair & Beauty, Chapeltown, Leeds`;
+    setStatus('n-status','','');
+    document.getElementById('n-out').style.display='block';
+    document.getElementById('n-out').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){setStatus('n-status','error','Error: '+e.message);}
+  document.getElementById('n-btn').disabled=false;
+}
+
+function copyEl(id,btn){
+  navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{btn.textContent='Copied!';btn.classList.add('done');setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('done');},2000);});
+}
+
+function dlFile(id,ext){
+  const t=document.getElementById(id).textContent;
+  const c=ext==='html'?`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>CC Hair & Beauty Blog</title><style>body{font-family:Arial;max-width:820px;margin:40px auto;padding:0 24px;line-height:1.8;color:#1a1a1a}h1{color:#3D1A6E}h2{color:#2d1254}a{color:#3D1A6E}</style></head><body>${t}</body></html>`:t;
+  const blob=new Blob([c],{type:ext==='html'?'text/html':'text/plain'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cc_hair_beauty_'+Date.now()+'.'+ext;a.click();
+}
+
+function openFB(id){
+  navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{alert('Post copied!\n\nFacebook is opening \u2014 paste with Ctrl+V (or Cmd+V).');window.open('https://www.facebook.com/','_blank');});
+}
+
+function gd(){alert('To save to Google Drive:\n\n1. Click Download button\n2. Go to drive.google.com\n3. + New \u2192 File upload\n4. Select downloaded file\n\nTip: Create a "CC Blog Posts" folder in Google Drive.');}
+
+function saveKey(){
+  const k=document.getElementById('apiKey').value.trim();
+  if(!k)return alert('Please enter your API key.');
+  localStorage.setItem('ccApiKey',k);
+  document.getElementById('key-saved').style.display='block';
+  setTimeout(()=>document.getElementById('key-saved').style.display='none',3000);
+  checkBadges();
+}
+
+function saveShopify(){
+  const h=document.getElementById('shopify-handle').value.trim();
+  const t=document.getElementById('shopify-token').value.trim();
+  if(h)localStorage.setItem('shopifyHandle',h);
+  if(t)localStorage.setItem('shopifyToken',t);
+  document.getElementById('shopify-saved').style.display='block';
+  setTimeout(()=>document.getElementById('shopify-saved').style.display='none',3000);
+  checkBadges();
+}
+
+function showTab(name,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+name).classList.add('on');
+  if(btn)btn.classList.add('on');
+}
+
+function switchToBlog(cat,prod,kw){
+  showTab('blog',document.querySelectorAll('.tb')[1]);
+  setTimeout(()=>{
+    document.getElementById('b-cat').value=cat;
+    document.getElementById('b-product').value=prod;
+    document.getElementById('b-kw').value=kw;
+    updateTitles();updateKws();
+    document.querySelectorAll('.kw-pill').forEach(p=>{if(p.textContent===kw)p.classList.add('sel');});
+  },100);
+}
+
+function makeCanvaFromBlog(){
+  const blog=document.getElementById('b-blog').textContent;
+  const title=blog.match(/<h1>(.*?)<\/h1>/i)?.[1]||'CC Hair & Beauty product';
+  showTab('canva',document.querySelectorAll('.tb')[2]);
+  setTimeout(()=>{document.getElementById('c-product').value=title;document.getElementById('c-theme').value='blog-promo';},100);
+}
+
+function makeCanvaFromSocial(){
+  const prod=document.getElementById('s-prod').value;
+  const theme=document.getElementById('s-theme').value;
+  showTab('canva',document.querySelectorAll('.tb')[2]);
+  setTimeout(()=>{document.getElementById('c-product').value=prod;document.getElementById('c-theme').value=theme;},100);
+}
+
+function setCanvaProduct(){
+  const prod=document.getElementById('n-prod').value;
+  showTab('canva',document.querySelectorAll('.tb')[2]);
+  setTimeout(()=>{document.getElementById('c-product').value=prod;document.getElementById('c-theme').value='new-arrival';},100);
+}
+
+window.addEventListener('load',()=>{
+  const k=localStorage.getItem('ccApiKey');if(k)document.getElementById('apiKey').value=k;
+  const sh=localStorage.getItem('shopifyHandle');if(sh)document.getElementById('shopify-handle').value=sh;
+  updateTitles();updateKws();checkBadges();
+});
+</script>
+</body>
+</html>
