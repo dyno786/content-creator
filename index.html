@@ -448,10 +448,16 @@ function ss(id,st){document.getElementById(id).className='si '+st;}
 function sp(p){document.getElementById('pf').style.width=p+'%';}
 
 async function loadShopifyProducts(){
-  const domain=localStorage.getItem('shDomain');
-  const token=localStorage.getItem('shToken');
+  // Read directly from inputs AND localStorage - use whichever has a value
+  const domainInput=document.getElementById('sh-domain').value.trim();
+  const tokenInput=document.getElementById('sh-token').value.trim();
+  const domain=domainInput||localStorage.getItem('shDomain')||'';
+  const token=tokenInput||localStorage.getItem('shToken')||'';
+  // Save whatever we have back to localStorage
+  if(domain)localStorage.setItem('shDomain',domain);
+  if(token)localStorage.setItem('shToken',token);
   if(!domain||!token){
-    alert('Please add your Shopify domain and API token in Settings first.');
+    alert('Please go to Settings, enter your Shopify domain and API token, then click Save Shopify Settings — then try Load Products again.');
     showSc('settings',document.querySelectorAll('.nb')[2]);
     return;
   }
@@ -852,9 +858,15 @@ function saveKey(){
 function saveShopify(){
   const d=document.getElementById('sh-domain').value.trim();
   const t=document.getElementById('sh-token').value.trim();
-  if(d)localStorage.setItem('shDomain',d);
-  if(t)localStorage.setItem('shToken',t);
+  if(!d||!t){alert('Please enter both the Shopify domain and the API token.');return;}
+  localStorage.setItem('shDomain',d);
+  localStorage.setItem('shToken',t);
   show('sh-sv');
+  setTimeout(()=>{
+    if(confirm('Shopify settings saved! Click OK to go to Generate Content and load your products.')){
+      showSc('gen',document.querySelectorAll('.nb')[0]);
+    }
+  },500);
 }
 function saveStore(){
   const u=document.getElementById('s-url').value.trim();
