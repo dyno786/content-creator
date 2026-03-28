@@ -562,7 +562,7 @@ body {
 
   <!-- HISTORY -->
   <div class="history-panel" id="historyPanel" style="display:none">
-    <div class="history-title">⚠ Already done this week — don't repeat</div>
+    <div class="history-title" style="display:flex;justify-content:space-between;align-items:center">⚠ Already done this week — don't repeat <span id="historyCount" style="color:var(--gold);font-size:12px;font-weight:700"></span></div>
     <div class="history-chips" id="historyChips"></div>
   </div>
 
@@ -570,7 +570,17 @@ body {
   <div id="step1Panel">
 
     <!-- WEEKLY SCHEDULE -->
-    <button class="week-btn" onclick="generateWeekSchedule()">📅 Generate This Week's Content Schedule</button>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+  <button class="week-btn" onclick="generateWeekSchedule()" style="flex:1;margin-bottom:0">
+    📅 Generate This Week's Schedule
+  </button>
+  <div id="weekProgress" style="
+    background:var(--dark2);border:1px solid var(--border);
+    border-radius:10px;padding:10px 16px;
+    font-size:13px;font-weight:600;color:var(--gold);
+    white-space:nowrap;flex-shrink:0;
+  ">📝 0 / 7 blogs</div>
+</div>
     <div id="weekGrid" style="display:none"></div>
 
     <!-- SUGGESTED TODAY -->
@@ -658,7 +668,7 @@ body {
   <!-- GENERATE BUTTON -->
   <button class="generate-btn" id="generateBtn" onclick="generateContent()" style="display:none">
     <span>✦ Generate Today's Content</span>
-    <span class="btn-sub">Blog · 3 GBP posts · Instagram · Facebook · Review request</span>
+    <span class="btn-sub">Daily blog · 3 GBP posts · Instagram · Facebook · Review request</span>
   </button>
 
   <!-- LOADING STATE -->
@@ -706,6 +716,69 @@ body {
       <button class="week-btn" onclick="resetToStep1()" style="margin-bottom:0">
         ← Generate content for a different product
       </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- DEBUG CONSOLE + POST LOG -->
+<div class="main" style="padding-top:0">
+
+  <!-- POST LOG -->
+  <div class="panel" style="margin-bottom:16px">
+    <div class="panel-header">
+      <div class="panel-title">📋 Post Log</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div id="postLogCount" style="font-size:11px;color:var(--text3)"></div>
+        <button class="copy-btn" style="font-size:12px;padding:6px 12px;min-height:32px" onclick="downloadPostLog()">⬇ Export TSV</button>
+        <button class="copy-btn" style="font-size:12px;padding:6px 12px;min-height:32px" onclick="clearPostLog()">🗑 Clear</button>
+        <button class="copy-btn" style="font-size:12px;padding:6px 12px;min-height:32px" onclick="togglePostLog()">▼ Show/Hide</button>
+      </div>
+    </div>
+    <div id="postLogBody" style="display:none">
+      <div style="padding:16px">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.6">
+          Every time you generate content a log entry is saved. Tick tasks in the checklist to mark them as done here.
+          Icons: 📝 Blog &nbsp; 📍 GBP post &nbsp; 📸 Instagram &nbsp; 👍 Facebook &nbsp; 🖼 Image &nbsp; 💬 Review request
+        </div>
+        <div id="postLogContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEBUG CONSOLE -->
+  <div class="panel" style="margin-bottom:24px">
+    <div class="panel-header">
+      <div class="panel-title">🔧 Debug Console</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="copy-btn" id="copyDebugBtn" style="font-size:12px;padding:6px 12px;min-height:32px" onclick="copyDebugLogs()">Copy Logs</button>
+        <button class="copy-btn" style="font-size:12px;padding:6px 12px;min-height:32px" onclick="clearDebugLogs()">Clear</button>
+        <button class="copy-btn" style="font-size:12px;padding:6px 12px;min-height:32px" onclick="toggleDebugConsole()">▼ Show/Hide</button>
+      </div>
+    </div>
+    <div id="debugConsoleBody" style="display:none">
+      <div style="padding:12px">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">
+          If something goes wrong, copy these logs and paste them here to get help diagnosing the issue.
+        </div>
+        <div id="debugConsoleOutput" style="
+          background:var(--dark3);
+          border:1px solid var(--border2);
+          border-radius:8px;
+          padding:12px;
+          font-family:'DM Mono',monospace;
+          max-height:300px;
+          overflow-y:auto;
+          font-size:11px;
+          line-height:1.8;
+        ">No logs yet</div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <button class="copy-btn" style="font-size:12px;padding:8px 14px;min-height:36px" onclick="runDebug()">Test Shopify Connection</button>
+          <button class="copy-btn" style="font-size:12px;padding:8px 14px;min-height:36px" onclick="clearCache()">Clear Cache & Reload</button>
+          <button class="copy-btn" style="font-size:12px;padding:8px 14px;min-height:36px" onclick="testGenerate()">Test Generate (mini)</button>
+        </div>
+        <div id="debugOutput" style="display:none;margin-top:10px;background:var(--dark3);border:1px solid var(--border2);border-radius:8px;padding:12px;font-size:11px;font-family:'DM Mono',monospace;color:var(--text2);line-height:1.7;max-height:250px;overflow-y:auto;"></div>
+      </div>
     </div>
   </div>
 
@@ -791,7 +864,9 @@ function saveSettings() {
   closeSettings();
   showToast('Settings saved ✓');
   applyTheme(currentTheme);
+loadDebugLogs();
 loadProducts();
+debugLog('INFO', 'Tool loaded. Ready to generate content.');
 }
 
 // ── HISTORY ────────────────────────────────────────────────────────────────
@@ -801,25 +876,50 @@ function getHistory() {
 function addToHistory(product) {
   let h = getHistory();
   h = h.filter(p => p.id !== product.id);
-  h.unshift({ id: product.id, title: product.title, date: new Date().toISOString() });
-  if (h.length > 30) h = h.slice(0, 30);
+  h.unshift({
+    id: product.id,
+    title: product.title,
+    productType: product.productType || '',
+    tags: product.tags || '',
+    date: new Date().toISOString()
+  });
+  if (h.length > 60) h = h.slice(0, 60);
   localStorage.setItem('cc_history', JSON.stringify(h));
 }
 function showHistory() {
   const h = getHistory();
-  const thisWeek = h.filter(p => {
-    const d = new Date(p.date);
-    const now = new Date();
-    const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
-    return d > weekAgo;
-  });
+  const now = new Date();
+  const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+  const thisWeek = h.filter(p => new Date(p.date) > weekAgo);
   const panel = document.getElementById('historyPanel');
   const chips = document.getElementById('historyChips');
   if (thisWeek.length === 0) { panel.style.display = 'none'; return; }
   panel.style.display = 'block';
-  chips.innerHTML = thisWeek.map(p =>
-    `<div class="history-chip">${p.title.substring(0,30)}${p.title.length>30?'...':''}</div>`
-  ).join('');
+
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  chips.innerHTML = thisWeek.map(p => {
+    const d = new Date(p.date);
+    const dayLabel = dayNames[d.getDay()];
+    const timeLabel = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    const shortTitle = p.title.substring(0, 25) + (p.title.length > 25 ? '...' : '');
+    return `<div class="history-chip" title="${p.title}">
+      <span style="color:var(--gold);font-size:9px;font-weight:700">${dayLabel}</span>
+      &nbsp;${shortTitle}
+    </div>`;
+  }).join('');
+
+  // Show count
+  const countEl = document.getElementById('historyCount');
+  if (countEl) countEl.textContent = `${thisWeek.length} blog${thisWeek.length !== 1 ? 's' : ''} this week`;
+
+  // Update week progress counter
+  const weekProgress = document.getElementById('weekProgress');
+  if (weekProgress) {
+    const pct = Math.round((thisWeek.length / 7) * 100);
+    const emoji = thisWeek.length >= 7 ? '🎉' : thisWeek.length >= 5 ? '🔥' : '📝';
+    weekProgress.textContent = `${emoji} ${thisWeek.length} / 7 blogs`;
+    weekProgress.style.color = thisWeek.length >= 7 ? 'var(--green)' : thisWeek.length >= 5 ? '#FF8C00' : 'var(--gold)';
+  }
 }
 
 // ── TODAY FOCUS ────────────────────────────────────────────────────────────
@@ -1155,13 +1255,16 @@ Current Tags: ${selectedProduct.tags}
 Description: ${selectedProduct.description}
 Product URL: https://cchairandbeauty.com/products/${selectedProduct.handle}`;
 
+  debugLog('START', `Generating content for: ${selectedProduct.title}`);
+  debugLog('API', `Calling /api/claude with model claude-sonnet-4-20250514, max_tokens: 8000`);
+
   try {
     const response = await fetch('/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 4000,
+        max_tokens: 8000,
         apiKey: s.apiKey,
         system: systemPrompt,
         messages: [{ role: 'user', content: userMessage }]
@@ -1169,30 +1272,57 @@ Product URL: https://cchairandbeauty.com/products/${selectedProduct.handle}`;
     });
 
     clearInterval(stepInterval);
+    debugLog('HTTP', `Response status: ${response.status} ${response.statusText}`);
+
+    if (!response.ok) {
+      const errText = await response.text();
+      debugLog('HTTP_ERROR', `${response.status}: ${errText.substring(0, 200)}`);
+      throw new Error(`API returned ${response.status}: ${errText.substring(0, 100)}`);
+    }
+
     const data = await response.json();
+    debugLog('API_OK', `Response received. Stop reason: ${data.stop_reason || 'unknown'}`);
+
+    if (data.error) {
+      debugLog('API_ERROR', JSON.stringify(data.error));
+      throw new Error(`Anthropic error: ${data.error.message || JSON.stringify(data.error)}`);
+    }
+
     const rawText = data.content?.[0]?.text || '';
+    debugLog('CONTENT', `Raw response length: ${rawText.length} chars. First 100: ${rawText.substring(0,100)}`);
+
+    if (!rawText) {
+      throw new Error('Empty response from API — check API key and billing');
+    }
 
     let parsed;
     try {
       const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-      parsed = JSON.parse(jsonMatch ? jsonMatch[0] : rawText);
+      if (!jsonMatch) throw new Error('No JSON object found in response');
+      parsed = JSON.parse(jsonMatch[0]);
+      debugLog('PARSE_OK', `JSON parsed. Keys: ${Object.keys(parsed).join(', ')}`);
     } catch(e) {
-      throw new Error('Could not parse AI response');
+      debugLog('PARSE_ERROR', `${e.message}. Raw text: ${rawText.substring(0, 300)}`);
+      throw new Error(`Could not parse AI response: ${e.message}`);
     }
 
     generatedContent = parsed;
     addToHistory(selectedProduct);
+    addToPostLog(selectedProduct, parsed);
     showChecklist(parsed);
+    debugLog('SUCCESS', `Content generated and checklist shown`);
 
   } catch(err) {
     clearInterval(stepInterval);
     document.getElementById('loadingPanel').style.display = 'none';
-    document.getElementById('step1Panel').style.display = 'block';
     document.getElementById('selectedBar').style.display = 'flex';
     document.getElementById('generateBtn').style.display = 'flex';
+    document.getElementById('step1Panel').style.display = 'block';
     setStep(1);
-    showToast('Error generating content — check API key in Settings');
-    console.error(err);
+    const errMsg = err && err.message ? err.message : String(err);
+    debugLog('ERROR', errMsg);
+    showToast('Error — check the Debug Console below for details');
+    console.error('Generate error:', err);
   }
 }
 
@@ -1422,6 +1552,9 @@ function toggleTask(taskId, e) {
   } else {
     tasksDone.add(taskId);
     item.classList.add('done');
+    // Log task completion against the current product
+    if (selectedProduct) updatePostLogTasks(selectedProduct.id, taskId);
+    debugLog('TASK_DONE', `Task completed: ${taskId} for ${selectedProduct?.title || 'unknown'}`);
   }
   updateProgress();
 }
@@ -1441,8 +1574,8 @@ function generateWeekSchedule() {
 
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const focuses = [
-    'Hair care product', 'Wig or extension', 'Skin care or makeup',
-    'Braiding or accessories', 'Relaxer or high-impression', 'New arrival or promo', 'Community story'
+    'Mon: How-to guide', 'Tue: Product review', 'Wed: Buying guide',
+    'Thu: Top tips', 'Fri: Brand spotlight', 'Sat: Leeds local', 'Sun: Hair routine'
   ];
   const today = (new Date().getDay() + 6) % 7;
 
@@ -1807,6 +1940,280 @@ function showCopied(btn) {
     btn.textContent = orig;
     btn.classList.remove('copied');
   }, 2500);
+}
+
+
+// ── DEBUG CONSOLE ─────────────────────────────────────────────────────────
+const debugLogs = [];
+
+function debugLog(type, message) {
+  const ts = new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  const entry = { ts, type, message };
+  debugLogs.unshift(entry);
+  if (debugLogs.length > 100) debugLogs.pop();
+  localStorage.setItem('cc_debug_logs', JSON.stringify(debugLogs.slice(0, 50)));
+
+  // Update debug panel if visible
+  const panel = document.getElementById('debugConsoleOutput');
+  if (panel) renderDebugLogs();
+
+  console.log(`[${type}] ${message}`);
+}
+
+function renderDebugLogs() {
+  const panel = document.getElementById('debugConsoleOutput');
+  if (!panel) return;
+  const colours = {
+    START: '#C9A84C', API: '#7B8FF0', HTTP: '#7B8FF0',
+    HTTP_ERROR: '#E74C3C', API_ERROR: '#E74C3C', PARSE_ERROR: '#E74C3C',
+    ERROR: '#E74C3C', API_OK: '#2ECC71', PARSE_OK: '#2ECC71',
+    SUCCESS: '#2ECC71', CONTENT: '#B8A8D8', INFO: '#B8A8D8',
+    LOG_SAVED: '#C9A84C',
+  };
+  panel.innerHTML = debugLogs.map(e => {
+    const col = colours[e.type] || '#B8A8D8';
+    return `<div style="padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+      <span style="color:#555;font-size:10px">${e.ts}</span>
+      <span style="color:${col};font-weight:700;margin:0 6px;font-size:11px">[${e.type}]</span>
+      <span style="color:#B8A8D8;font-size:11px;word-break:break-all">${e.message}</span>
+    </div>`;
+  }).join('') || '<div style="color:#555;font-size:11px;padding:8px 0">No logs yet — try generating content</div>';
+}
+
+function clearDebugLogs() {
+  debugLogs.length = 0;
+  localStorage.removeItem('cc_debug_logs');
+  renderDebugLogs();
+}
+
+function copyDebugLogs() {
+  const text = debugLogs.map(e => `[${e.ts}] [${e.type}] ${e.message}`).join('\n');
+  copyText(text, document.getElementById('copyDebugBtn'));
+}
+
+// Load saved logs on startup
+function loadDebugLogs() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('cc_debug_logs') || '[]');
+    debugLogs.push(...saved);
+  } catch(e) {}
+}
+
+// ── POST LOG ───────────────────────────────────────────────────────────────
+function getPostLog() {
+  try { return JSON.parse(localStorage.getItem('cc_post_log') || '[]'); } catch { return []; }
+}
+
+function addToPostLog(product, generatedContent) {
+  const log = getPostLog();
+  const entry = {
+    id: Date.now(),
+    date: new Date().toISOString(),
+    productId: product.id,
+    productTitle: product.title,
+    productPrice: product.price,
+    productHandle: product.handle,
+    productType: product.productType || '',
+    vendor: product.vendor || '',
+    blogTitle: generatedContent.blog_meta_title || '',
+    blogMetaDesc: generatedContent.blog_meta_description || '',
+    gbpChapeltown: (generatedContent.gbp_chapeltown || '').substring(0, 100) + '...',
+    instagram: (generatedContent.instagram_caption || '').substring(0, 100) + '...',
+    facebook: (generatedContent.facebook_post || '').substring(0, 100) + '...',
+    tags: generatedContent.shopify_tags || '',
+    menuTags: Array.isArray(generatedContent.menu_tags) ? generatedContent.menu_tags.join(', ') : '',
+    tasksCompleted: [],
+  };
+  log.unshift(entry);
+  if (log.length > 365) log.pop(); // Keep 1 year of logs
+  localStorage.setItem('cc_post_log', JSON.stringify(log));
+  debugLog('LOG_SAVED', `Post logged: ${product.title}`);
+}
+
+function updatePostLogTasks(productId, taskId) {
+  const log = getPostLog();
+  const entry = log.find(e => e.productId == productId);
+  if (entry) {
+    if (!entry.tasksCompleted) entry.tasksCompleted = [];
+    if (!entry.tasksCompleted.includes(taskId)) entry.tasksCompleted.push(taskId);
+    localStorage.setItem('cc_post_log', JSON.stringify(log));
+  }
+}
+
+function renderPostLog() {
+  const log = getPostLog();
+  const container = document.getElementById('postLogContainer');
+  if (!container) return;
+
+  if (log.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px">No posts logged yet. Generate content to start the log.</div>';
+    return;
+  }
+
+  // Group by week
+  const weeks = {};
+  log.forEach(entry => {
+    const d = new Date(entry.date);
+    const weekStart = new Date(d);
+    weekStart.setDate(d.getDate() - d.getDay() + 1);
+    const weekKey = weekStart.toISOString().substring(0, 10);
+    if (!weeks[weekKey]) weeks[weekKey] = [];
+    weeks[weekKey].push(entry);
+  });
+
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  container.innerHTML = Object.entries(weeks).map(([weekKey, entries]) => {
+    const weekDate = new Date(weekKey);
+    const weekEnd = new Date(weekDate);
+    weekEnd.setDate(weekDate.getDate() + 6);
+    const weekLabel = `Week of ${weekDate.toLocaleDateString('en-GB', { day:'numeric', month:'short' })} — ${weekEnd.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })}`;
+    const blogCount = entries.length;
+
+    return `
+      <div style="margin-bottom:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;
+                    padding:10px 14px;background:var(--surface);border-radius:10px;
+                    margin-bottom:8px;border:1px solid var(--border2)">
+          <div style="font-size:13px;font-weight:700;color:var(--gold)">${weekLabel}</div>
+          <div style="font-size:12px;color:${blogCount >= 7 ? 'var(--green)' : 'var(--text3)'};font-weight:600">
+            ${blogCount >= 7 ? '🎉' : blogCount >= 5 ? '🔥' : '📝'} ${blogCount}/7 blogs
+          </div>
+        </div>
+        ${entries.map(entry => {
+          const d = new Date(entry.date);
+          const dayLabel = dayNames[d.getDay()];
+          const timeLabel = d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+          const tasks = entry.tasksCompleted || [];
+          const taskIcons = {
+            blog: '📝', gbp1: '📍', gbp2: '📍', gbp3: '📍',
+            instagram: '📸', facebook: '👍', image: '🖼', review_whatsapp: '💬'
+          };
+          return `
+            <div style="background:var(--dark2);border:1px solid var(--border2);
+                        border-radius:10px;padding:12px 14px;margin-bottom:6px">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap">
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                    <span style="background:var(--surface);color:var(--gold);font-size:10px;
+                                 font-weight:700;padding:2px 8px;border-radius:4px">${dayLabel}</span>
+                    <span style="font-size:10px;color:var(--text3)">${timeLabel}</span>
+                    ${entry.vendor ? `<span style="font-size:10px;color:var(--purple-light)">${entry.vendor}</span>` : ''}
+                  </div>
+                  <div style="font-size:13px;font-weight:600;color:var(--text);
+                               white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                    ${entry.productTitle}
+                  </div>
+                  <div style="font-size:11px;color:var(--text3);margin-top:3px">
+                    ${entry.blogTitle}
+                  </div>
+                </div>
+                <div style="display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0">
+                  ${Object.entries(taskIcons).map(([tid, icon]) =>
+                    `<span style="font-size:14px;opacity:${tasks.includes(tid) ? '1' : '0.2'}" title="${tid}">${icon}</span>`
+                  ).join('')}
+                </div>
+              </div>
+              <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+                <a href="https://cchairandbeauty.com/products/${entry.productHandle}"
+                   target="_blank" style="font-size:11px;color:var(--gold);text-decoration:none">
+                  View product ↗
+                </a>
+                <a href="https://admin.shopify.com/store/cchairandbeauty/articles"
+                   target="_blank" style="font-size:11px;color:var(--text3);text-decoration:none">
+                  Shopify blogs ↗
+                </a>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }).join('');
+}
+
+function downloadPostLog() {
+  const log = getPostLog();
+  const rows = [
+    ['Date', 'Day', 'Time', 'Product', 'Brand', 'Type', 'Blog Title', 'Meta Description', 'Tasks Done', 'Product URL'].join('\t'),
+    ...log.map(e => {
+      const d = new Date(e.date);
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      return [
+        d.toLocaleDateString('en-GB'),
+        days[d.getDay()],
+        d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }),
+        e.productTitle,
+        e.vendor || '',
+        e.productType || '',
+        e.blogTitle,
+        e.blogMetaDesc,
+        (e.tasksCompleted || []).join(', '),
+        `https://cchairandbeauty.com/products/${e.productHandle}`,
+      ].map(v => `"${String(v).replace(/"/g,'""')}"`).join('\t');
+    })
+  ].join('\n');
+
+  const blob = new Blob([rows], { type: 'text/tab-separated-values' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `cc-post-log-${new Date().toISOString().substring(0,10)}.tsv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Post log downloaded ✓');
+}
+
+function clearPostLog() {
+  if (!confirm('Clear entire post log? This cannot be undone.')) return;
+  localStorage.removeItem('cc_post_log');
+  renderPostLog();
+  showToast('Post log cleared');
+}
+
+
+function toggleDebugConsole() {
+  const body = document.getElementById('debugConsoleBody');
+  body.style.display = body.style.display === 'none' ? 'block' : 'none';
+  if (body.style.display === 'block') renderDebugLogs();
+}
+
+function togglePostLog() {
+  const body = document.getElementById('postLogBody');
+  body.style.display = body.style.display === 'none' ? 'block' : 'none';
+  if (body.style.display === 'block') {
+    renderPostLog();
+    // Update count
+    const log = getPostLog();
+    const countEl = document.getElementById('postLogCount');
+    if (countEl) countEl.textContent = `${log.length} total entries`;
+  }
+}
+
+async function testGenerate() {
+  const s = getSettings();
+  debugLog('TEST', 'Running mini generation test...');
+  if (!s.apiKey) { debugLog('TEST_ERROR', 'No API key set'); return; }
+  try {
+    const resp = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 100,
+        apiKey: s.apiKey,
+        messages: [{ role: 'user', content: 'Reply with just the word: WORKING' }]
+      })
+    });
+    debugLog('TEST_HTTP', `Status: ${resp.status}`);
+    const data = await resp.json();
+    const text = data.content?.[0]?.text || '';
+    debugLog('TEST_RESULT', `API response: "${text}" — ${text.includes('WORKING') ? '✓ WORKING' : '⚠ Unexpected response'}`);
+    renderDebugLogs();
+  } catch(e) {
+    debugLog('TEST_ERROR', e.message);
+    renderDebugLogs();
+  }
 }
 
 // ── INIT ───────────────────────────────────────────────────────────────────
