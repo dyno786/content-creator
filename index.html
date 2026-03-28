@@ -949,11 +949,11 @@ function getTodayFocus() {
 // ── LOAD PRODUCTS ──────────────────────────────────────────────────────────
 
 async function loadProductPage(page, s) {
-  const url = `/api/shopify?domain=${s.shopifyDomain}&token=${s.shopifyToken}&endpoint=products&limit=250&page=${page}`;
-  debugLog('SHOPIFY_FETCH', `Fetching page ${page}: ${url.replace(s.shopifyToken, 'TOKEN_HIDDEN')}`);
+  const url = `/api/shopify?domain=${s.shopifyDomain}&token=${s.shopifyToken}&endpoint=products&limit=250`;
+  debugLog('SHOPIFY_FETCH', `Fetching products: ${url.replace(s.shopifyToken, 'TOKEN_HIDDEN')}`);
 
   const resp = await fetch(url);
-  debugLog('SHOPIFY_STATUS', `Page ${page} response: ${resp.status} ${resp.statusText}`);
+  debugLog('SHOPIFY_STATUS', `Response: ${resp.status} ${resp.statusText}`);
 
   if (!resp.ok) {
     const errText = await resp.text();
@@ -962,11 +962,11 @@ async function loadProductPage(page, s) {
   }
 
   const data = await resp.json();
-  debugLog('SHOPIFY_DATA', `Page ${page}: got ${data.products?.length || 0} products. Keys: ${Object.keys(data).join(', ')}`);
+  debugLog('SHOPIFY_DATA', `Got ${data.products?.length || 0} products. Keys: ${Object.keys(data).join(', ')}`);
 
   if (!data.products || data.products.length === 0) {
-    debugLog('SHOPIFY_EMPTY', `No products returned on page ${page}. Full response: ${JSON.stringify(data).substring(0, 200)}`);
-    if (page === 1) {
+    debugLog('SHOPIFY_EMPTY', `No products returned. Full response: ${JSON.stringify(data).substring(0, 200)}`);
+    if (true) {
       showToast('No products returned — check debug console');
     }
     return;
