@@ -950,10 +950,29 @@ function getTodayFocus() {
 
 async function loadProductPage(page, s) {
   const url = `/api/shopify?domain=${s.shopifyDomain}&token=${s.shopifyToken}&endpoint=products&limit=250&page=${page}`;
+  debugLog('SHOPIFY_FETCH', `Fetching page ${page}: ${url.replace(s.shopifyToken, 'TOKEN_HIDDEN')}`);
+
   const resp = await fetch(url);
-  if (!resp.ok) throw new Error(`Shopify API error: ${resp.status}`);
+  debugLog('SHOPIFY_STATUS', `Page ${page} response: ${resp.status} ${resp.statusText}`);
+
+  if (!resp.ok) {
+    const errText = await resp.text();
+    debugLog('SHOPIFY_ERROR', `${resp.status}: ${errText.substring(0, 200)}`);
+    throw new Error(`Shopify API error: ${resp.status} — ${errText.substring(0, 100)}`);
+  }
+
   const data = await resp.json();
-  const products = (data.products || []).map(p => ({
+  debugLog('SHOPIFY_DATA', `Page ${page}: got ${data.products?.length || 0} products. Keys: ${Object.keys(data).join(', ')}`);
+
+  if (!data.products || data.products.length === 0) {
+    debugLog('SHOPIFY_EMPTY', `No products returned on page ${page}. Full response: ${JSON.stringify(data).substring(0, 200)}`);
+    if (page === 1) {
+      showToast('No products returned — check debug console');
+    }
+    return;
+  }
+
+  const products = data.products.map(p => ({
     id: p.id,
     title: p.title,
     price: p.variants?.[0]?.price ? `£${parseFloat(p.variants[0].price).toFixed(2)}` : '',
@@ -961,18 +980,18 @@ async function loadProductPage(page, s) {
     tags: p.tags || '',
     productType: p.product_type || '',
     vendor: p.vendor || '',
-    description: p.body_html?.replace(/<[^>]+>/g,'').substring(0,300) || '',
+    description: p.body_html?.replace(/<[^>]+>/g,'').substring(0, 300) || '',
     handle: p.handle,
   }));
+
   allProducts = [...allProducts, ...products];
-  const cacheKey = 'cc_products_cache';
-  const cacheTime = 'cc_products_cache_time';
-  localStorage.setItem(cacheKey, JSON.stringify(allProducts));
-  localStorage.setItem(cacheTime, Date.now().toString());
+  localStorage.setItem('cc_products_cache', JSON.stringify(allProducts));
+  localStorage.setItem('cc_products_cache_time', Date.now().toString());
   renderProducts();
   renderSuggested();
   showHistory();
-  showToast(`✓ Loaded ${allProducts.length} products`);
+  debugLog('SHOPIFY_OK', `Total loaded: ${allProducts.length} products`);
+  showToast(`✓ Loaded ${allProducts.length} products from Shopify`);
 }
 
 async function loadProducts() {
@@ -1010,10 +1029,14 @@ async function loadProducts() {
     await loadProductPage(1, s);
   } catch(e) {
     console.error('Shopify load error:', e);
-    allProducts = getDemoProducts();
-    renderProducts();
-    renderSuggested();
-    showToast('Could not load Shopify products — using demo data');
+    debugLog('SHOPIFY_FAIL', `Load failed: ${e.message}`);
+    // Only fall back to demo if we have zero products
+    if (allProducts.length === 0) {
+      allProducts = getDemoProducts();
+      renderProducts();
+      renderSuggested();
+      showToast('Could not load Shopify — open Debug Console for details');
+    }
   }
 }
 
