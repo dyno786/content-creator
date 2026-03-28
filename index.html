@@ -791,6 +791,34 @@ function getTodayFocus() {
 }
 
 // ── LOAD PRODUCTS ──────────────────────────────────────────────────────────
+
+async function loadProductPage(page, s) {
+  const url = `/api/shopify?domain=${s.shopifyDomain}&token=${s.shopifyToken}&endpoint=products&limit=250&page=${page}`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`Shopify API error: ${resp.status}`);
+  const data = await resp.json();
+  const products = (data.products || []).map(p => ({
+    id: p.id,
+    title: p.title,
+    price: p.variants?.[0]?.price ? `£${parseFloat(p.variants[0].price).toFixed(2)}` : '',
+    image: p.images?.[0]?.src || '',
+    tags: p.tags || '',
+    productType: p.product_type || '',
+    vendor: p.vendor || '',
+    description: p.body_html?.replace(/<[^>]+>/g,'').substring(0,300) || '',
+    handle: p.handle,
+  }));
+  allProducts = [...allProducts, ...products];
+  const cacheKey = 'cc_products_cache';
+  const cacheTime = 'cc_products_cache_time';
+  localStorage.setItem(cacheKey, JSON.stringify(allProducts));
+  localStorage.setItem(cacheTime, Date.now().toString());
+  renderProducts();
+  renderSuggested();
+  showHistory();
+  showToast(`✓ Loaded ${allProducts.length} products`);
+}
+
 async function loadProducts() {
   const s = getSettings();
 
@@ -810,37 +838,22 @@ async function loadProducts() {
   }
 
   if (!s.shopifyToken || !s.shopifyDomain) {
-    // Demo mode with sample products
     allProducts = getDemoProducts();
     renderProducts();
     renderSuggested();
     showHistory();
-    showToast('Demo mode — add Shopify credentials in Settings');
+    showToast('⚙ Add Shopify token in Settings to load real products');
     return;
   }
 
   document.getElementById('productGrid').innerHTML = '<div class="empty-state"><div class="spinner" style="margin:auto;width:24px;height:24px"></div><p style="margin-top:8px">Loading products...</p></div>';
+  document.getElementById('suggestedGrid').innerHTML = '<div class="empty-state"><div class="spinner" style="margin:auto;width:24px;height:24px"></div></div>';
 
   try {
-    const resp = await fetch(`/api/shopify?domain=${s.shopifyDomain}&token=${s.shopifyToken}&endpoint=products&limit=250`);
-    const data = await resp.json();
-    allProducts = (data.products || []).map(p => ({
-      id: p.id,
-      title: p.title,
-      price: p.variants?.[0]?.price ? `£${parseFloat(p.variants[0].price).toFixed(2)}` : '',
-      image: p.images?.[0]?.src || '',
-      tags: p.tags || '',
-      productType: p.product_type || '',
-      vendor: p.vendor || '',
-      description: p.body_html?.replace(/<[^>]+>/g,'').substring(0,300) || '',
-      handle: p.handle,
-    }));
-    localStorage.setItem(cacheKey, JSON.stringify(allProducts));
-    localStorage.setItem(cacheTime, Date.now().toString());
-    renderProducts();
-    renderSuggested();
-    showHistory();
+    // Load first page
+    await loadProductPage(1, s);
   } catch(e) {
+    console.error('Shopify load error:', e);
     allProducts = getDemoProducts();
     renderProducts();
     renderSuggested();
