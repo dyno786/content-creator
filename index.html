@@ -5,931 +5,1394 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CC Hair & Beauty — Content Generator</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f5f3fb;min-height:100vh;color:#1a1a1a}
-.top{background:#3D1A6E;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.top h1{color:#fff;font-size:16px;font-weight:700}
-.top p{color:#c9aaff;font-size:11px;margin-top:2px}
-.nav{background:#2d1254;display:flex;overflow-x:auto;scrollbar-width:none}
-.nav::-webkit-scrollbar{display:none}
-.nb{padding:11px 20px;color:#c9aaff;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;white-space:nowrap;flex-shrink:0;transition:all .15s}
-.nb.on{color:#F5C800;border-bottom-color:#F5C800}
-.nb:hover:not(.on){color:#fff}
-.wrap{max-width:720px;margin:24px auto;padding:0 16px}
-.sc{display:none}.sc.on{display:block}
-.card{background:#fff;border-radius:14px;border:1px solid #e0ddf0;padding:24px;margin-bottom:16px}
-.card h2{font-size:18px;font-weight:700;color:#3D1A6E;margin-bottom:6px}
-.card .sub{font-size:13px;color:#888;margin-bottom:22px}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.fg{display:flex;flex-direction:column;gap:5px}
-.fg.full{grid-column:1/-1}
-label{font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.4px}
-input,select,textarea{padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;font-family:Arial;width:100%;background:#fff;color:#1a1a1a;transition:border .15s}
-input:focus,select:focus,textarea:focus{outline:none;border-color:#3D1A6E}
-textarea{resize:vertical;min-height:60px;line-height:1.5}
-.hint{font-size:11px;color:#aaa;margin-top:3px}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
-/* SHOPIFY PRODUCT PICKER */
-.prod-picker{position:relative}
-.prod-search{display:flex;gap:8px;margin-bottom:8px}
-.prod-search input{flex:1}
-.load-btn{padding:10px 16px;background:#3D1A6E;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
-.load-btn:hover{background:#5a2fa0}
-.load-btn:disabled{background:#bbb;cursor:not-allowed}
-.prod-list{background:#fff;border:1.5px solid #e0ddf0;border-radius:8px;max-height:220px;overflow-y:auto;display:none}
-.prod-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid #f0edf7;transition:background .1s;display:flex;align-items:center;gap:10px}
-.prod-item:hover{background:#f5f3fb}
-.prod-item:last-child{border-bottom:none}
-.prod-item.selected{background:#EEEDFE}
-.prod-img{width:36px;height:36px;border-radius:4px;object-fit:cover;background:#f0edf7;flex-shrink:0}
-.prod-info{flex:1;min-width:0}
-.prod-title{font-size:13px;font-weight:500;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.prod-meta{font-size:11px;color:#888;margin-top:1px}
-.prod-price{font-size:12px;font-weight:700;color:#3D1A6E;flex-shrink:0}
-.selected-prod{background:#EEEDFE;border-radius:8px;padding:10px 12px;font-size:13px;color:#3C3489;margin-top:6px;display:none;align-items:center;gap:8px}
-.selected-prod img{width:32px;height:32px;border-radius:4px;object-fit:cover}
-.selected-prod .name{flex:1;font-weight:500}
-.selected-prod .clear{background:none;border:none;color:#A32D2D;cursor:pointer;font-size:12px;font-weight:600}
-.cat-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.cat-pill{padding:4px 10px;border:1px solid #ddd;border-radius:20px;font-size:11px;cursor:pointer;background:#fff;color:#666;transition:all .15s}
-.cat-pill.on{background:#3D1A6E;color:#fff;border-color:#3D1A6E}
+:root {
+  --gold: #C9A84C;
+  --gold-light: #F0D080;
+  --purple: #4A1A6B;
+  --purple-light: #7B3FA0;
+  --dark: #0F0A18;
+  --dark2: #1A1128;
+  --dark3: #241836;
+  --surface: #2E2040;
+  --surface2: #3A2B50;
+  --text: #F0E8FF;
+  --text2: #B8A8D8;
+  --text3: #7A6A90;
+  --green: #2ECC71;
+  --green-dark: #1A7A44;
+  --red: #E74C3C;
+  --border: rgba(201,168,76,0.2);
+  --border2: rgba(201,168,76,0.08);
+}
 
-.go{width:100%;padding:16px;background:#3D1A6E;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;transition:background .2s}
-.go:hover{background:#5a2fa0}.go:disabled{background:#bbb;cursor:not-allowed}
-.err{background:#FCEBEB;border-radius:8px;padding:11px 13px;font-size:13px;color:#A32D2D;margin-bottom:12px;display:none}
-.pw{background:#fff;border-radius:14px;border:1px solid #e0ddf0;padding:22px;margin-bottom:16px;display:none}
-.pb{background:#f0edf7;border-radius:10px;height:10px;overflow:hidden;margin-bottom:16px}
-.pf{height:100%;background:#3D1A6E;border-radius:10px;width:0%;transition:width .5s ease}
-.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.si{text-align:center;padding:10px 6px;border-radius:8px;font-size:11px;font-weight:600;line-height:1.4}
-.si .dot{width:8px;height:8px;border-radius:50%;margin:0 auto 5px;background:currentColor;opacity:.4}
-.si.wait{background:#f5f3fb;color:#aaa}
-.si.run{background:#EEEDFE;color:#3C3489}.si.run .dot{animation:blink .7s infinite}
-.si.done{background:#EAF3DE;color:#27500A}.si.done .dot{opacity:1}
-.si.err{background:#FCEBEB;color:#A32D2D}
-@keyframes blink{0%,100%{opacity:.2}50%{opacity:1}}
-.rw{display:none}
-.rh{background:#3D1A6E;border-radius:12px;padding:16px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
-.rh h3{color:#fff;font-size:14px;font-weight:700}
-.rh p{color:#c9aaff;font-size:11px;margin-top:2px}
-.new-btn{padding:8px 16px;background:#F5C800;color:#1a1a00;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer}
-.rtabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
-.rt{padding:8px 16px;border:1.5px solid #ddd;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#666;transition:all .15s}
-.rt.on{background:#3D1A6E;color:#fff;border-color:#3D1A6E}
-.rp{display:none}.rp.on{display:block}
-.ob{background:#fff;border-radius:10px;border:1px solid #e8e5f0;padding:14px;margin-bottom:10px}
-.oh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px}
-.ot{font-size:11px;font-weight:700;color:#3D1A6E;text-transform:uppercase;letter-spacing:.4px}
-.oa{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.oc{font-size:13px;line-height:1.85;color:#1a1a1a;white-space:pre-wrap;max-height:360px;overflow-y:auto}
-.oc.tall{max-height:520px}
-/* RENDERED BLOG */
-.blog-rendered{font-size:14px;line-height:1.85;color:#1a1a1a;max-height:520px;overflow-y:auto;padding:4px}
-.blog-rendered h1{font-size:22px;font-weight:700;color:#3D1A6E;margin-bottom:12px;margin-top:8px}
-.blog-rendered h2{font-size:18px;font-weight:700;color:#2d1254;margin-bottom:8px;margin-top:16px}
-.blog-rendered h3{font-size:15px;font-weight:700;color:#3D1A6E;margin-bottom:6px;margin-top:14px}
-.blog-rendered p{margin-bottom:10px}
-.blog-rendered ul,.blog-rendered ol{padding-left:20px;margin-bottom:10px}
-.blog-rendered li{margin-bottom:4px}
-.blog-rendered a{color:#3D1A6E;text-decoration:underline}
-.blog-rendered strong{font-weight:700}
-.toggle-view{display:flex;gap:4px;background:#f0edf7;border-radius:6px;padding:3px}
-.tv-btn{padding:3px 10px;border:none;background:none;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;color:#666;transition:all .15s}
-.tv-btn.on{background:#3D1A6E;color:#fff}
-.cp{padding:5px 11px;background:#3D1A6E;color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
-.cp:hover{background:#5a2fa0}.cp.ok{background:#2E7D32}
-.dl{padding:5px 11px;background:#2E7D32;color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
-.fb-btn{padding:5px 11px;background:#1877F2;color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* SEO SCORE */
-.score{display:flex;align-items:start;gap:14px;background:#f0edf7;border-radius:10px;padding:14px;margin-bottom:12px}
-.sn{font-size:30px;font-weight:700;min-width:60px;text-align:center;padding-top:2px}
-.sn.great{color:#2E7D32}.sn.good{color:#1D9E75}.sn.ok{color:#E65100}.sn.bad{color:#C62828}
-.sd{font-size:12px;color:#555;line-height:1.75;flex:1}
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--dark);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+}
 
-/* SHOPIFY FIELDS */
-.shopify-section{background:#f8f7ff;border:1.5px solid #e0ddf0;border-radius:10px;padding:16px;margin-bottom:10px}
-.shopify-title{font-size:12px;font-weight:700;color:#3D1A6E;text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.shopify-title .logo{background:#3D1A6E;color:#fff;padding:2px 6px;border-radius:4px;font-size:10px}
-.sf{margin-bottom:10px}
-.sf .lbl{font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between}
-.sf .cnt{font-size:10px;font-weight:700}
-.sf .cnt.ok{color:#2E7D32}.sf .cnt.warn{color:#E65100}.sf .cnt.bad{color:#C62828}
-.sf .val{background:#fff;border:1px solid #ddd;border-radius:6px;padding:9px 11px;font-size:13px;color:#1a1a1a;line-height:1.5;min-height:36px}
-.sf .hint{font-size:10px;color:#aaa;margin-top:3px}
+/* ── HEADER ── */
+.header {
+  background: var(--dark2);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--gold), var(--purple-light));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.logo-text { font-size: 15px; font-weight: 600; color: var(--gold); }
+.logo-sub { font-size: 11px; color: var(--text3); }
+.header-right { display: flex; align-items: center; gap: 8px; }
+.settings-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2); border-radius: 8px; padding: 6px 12px;
+  font-size: 12px; cursor: pointer; font-family: inherit;
+}
+.settings-btn:hover { background: var(--surface2); }
 
-/* SOCIAL */
-.social-diff{background:#EAF3DE;border-radius:6px;padding:6px 10px;font-size:11px;color:#27500A;margin-bottom:8px}
+/* ── MAIN LAYOUT ── */
+.main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
 
-/* SEO REPORT */
-.dz{border:2px dashed #AFA9EC;border-radius:12px;padding:36px 20px;text-align:center;cursor:pointer;transition:all .2s;background:#fff;margin-bottom:14px}
-.dz:hover,.dz.drag{border-color:#3D1A6E;background:#f5f3fb}
-.dz h3{font-size:15px;font-weight:700;color:#3D1A6E;margin-bottom:6px}
-.dz p{font-size:13px;color:#888;margin-bottom:10px}
-.fmt{font-size:11px;color:#aaa;margin-top:8px}
-.ul-lbl{display:inline-block;padding:9px 20px;background:#3D1A6E;color:#fff;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;margin-top:8px}
+/* ── STEP INDICATORS ── */
+.steps {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px;
+}
+.step {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.step.active { background: var(--gold); color: var(--dark); }
+.step.done { background: var(--green-dark); color: #fff; }
+.step.inactive { background: var(--surface); color: var(--text3); }
+.step-num {
+  width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600;
+  background: rgba(255,255,255,0.2);
+}
+.step-divider { flex: 1; height: 1px; background: var(--border2); }
 
-.note{background:#EEEDFE;border-radius:8px;padding:12px 14px;font-size:13px;color:#3C3489;margin-bottom:14px;line-height:1.6}
-.note strong{display:block;font-size:13px;font-weight:700;margin-bottom:3px}
-.sc-card{background:#fff;border-radius:12px;border:1px solid #e0ddf0;padding:20px;margin-bottom:12px}
-.sc-card h3{font-size:14px;font-weight:700;color:#3D1A6E;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #f0edf7}
-.save-btn{padding:10px 18px;background:#3D1A6E;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px}
-.sv{color:#2E7D32;font-size:12px;font-weight:600;margin-top:8px;display:none}
-@media(max-width:560px){.two,.sg{grid-template-columns:1fr}}
+/* ── PANEL ── */
+.panel {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.panel-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.panel-title { font-size: 14px; font-weight: 600; color: var(--gold); }
+.panel-body { padding: 20px; }
+
+/* ── SUGGESTED PRODUCTS ── */
+.suggested-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text3);
+  margin-bottom: 12px;
+}
+.suggested-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.suggested-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 10px;
+}
+.suggested-card:hover, .suggested-card.selected {
+  border-color: var(--gold);
+  background: var(--surface2);
+}
+.suggested-card.selected { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(201,168,76,0.3); }
+.suggested-img {
+  width: 44px; height: 44px; border-radius: 8px;
+  object-fit: cover; background: var(--dark3);
+  flex-shrink: 0;
+}
+.suggested-info { flex: 1; min-width: 0; }
+.suggested-name {
+  font-size: 12px; font-weight: 500; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.suggested-price { font-size: 11px; color: var(--gold); margin-top: 2px; }
+.suggested-tag {
+  font-size: 9px; font-weight: 600; letter-spacing: 0.5px;
+  text-transform: uppercase; color: var(--purple-light);
+  background: rgba(123,63,160,0.2); border-radius: 4px;
+  padding: 2px 5px; margin-top: 3px; display: inline-block;
+}
+
+/* ── SEARCH ── */
+.search-wrap { position: relative; margin-bottom: 16px; }
+.search-input {
+  width: 100%; padding: 12px 16px 12px 40px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--text); font-size: 14px;
+  font-family: inherit; outline: none;
+  transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--gold); }
+.search-input::placeholder { color: var(--text3); }
+.search-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--text3); font-size: 16px;
+}
+
+/* ── PRODUCT GRID ── */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.product-grid::-webkit-scrollbar { width: 4px; }
+.product-grid::-webkit-scrollbar-track { background: var(--dark3); border-radius: 2px; }
+.product-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.product-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.product-card:hover { border-color: var(--gold); background: var(--surface2); }
+.product-card.selected { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(201,168,76,0.3); }
+.product-card img {
+  width: 100%; aspect-ratio: 1; object-fit: cover;
+  border-radius: 6px; background: var(--dark3); margin-bottom: 6px;
+}
+.product-card .p-name {
+  font-size: 11px; color: var(--text); line-height: 1.3;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.product-card .p-price { font-size: 11px; color: var(--gold); margin-top: 3px; font-weight: 500; }
+
+/* ── SELECTED PRODUCT BAR ── */
+.selected-bar {
+  background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(74,26,107,0.2));
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 16px;
+}
+.selected-bar img {
+  width: 56px; height: 56px; border-radius: 8px; object-fit: cover;
+  background: var(--dark3);
+}
+.selected-bar-info { flex: 1; }
+.selected-bar-name { font-size: 15px; font-weight: 600; color: var(--text); }
+.selected-bar-price { font-size: 13px; color: var(--gold); margin-top: 2px; }
+.selected-bar-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.change-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2); border-radius: 8px; padding: 6px 14px;
+  font-size: 12px; cursor: pointer; font-family: inherit; white-space: nowrap;
+}
+.change-btn:hover { background: var(--surface2); }
+
+/* ── GENERATE BUTTON ── */
+.generate-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold), #A07830);
+  color: var(--dark);
+  border: none;
+  border-radius: 12px;
+  padding: 18px;
+  font-size: 16px; font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.generate-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
+.generate-btn:active { transform: translateY(0); }
+.generate-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.generate-btn .btn-sub { font-size: 12px; font-weight: 400; opacity: 0.8; }
+
+/* ── LOADING ── */
+.loading-state {
+  text-align: center;
+  padding: 40px 20px;
+}
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { color: var(--text2); font-size: 14px; }
+.loading-steps { margin-top: 12px; }
+.loading-step {
+  font-size: 12px; color: var(--text3);
+  padding: 3px 0;
+  transition: color 0.3s;
+}
+.loading-step.active { color: var(--gold); }
+
+/* ── CHECKLIST ── */
+.checklist-header {
+  background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(74,26,107,0.15));
+  border-bottom: 1px solid var(--border);
+  padding: 16px 20px;
+}
+.checklist-title { font-size: 16px; font-weight: 700; color: var(--gold); }
+.checklist-product { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.checklist-meta {
+  display: flex; gap: 16px; margin-top: 10px;
+}
+.checklist-meta-item { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 4px; }
+
+.task-list { padding: 12px; }
+.task-item {
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.task-item.done { border-color: rgba(46,204,113,0.3); background: rgba(46,204,113,0.03); }
+.task-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+.task-check {
+  width: 22px; height: 22px;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.task-item.done .task-check {
+  background: var(--green); border-color: var(--green);
+  color: white;
+}
+.task-info { flex: 1; }
+.task-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.task-item.done .task-name { color: var(--text3); text-decoration: line-through; }
+.task-hint { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.task-time {
+  font-size: 11px; color: var(--text3);
+  background: var(--surface); border-radius: 4px;
+  padding: 2px 7px; white-space: nowrap;
+}
+.task-actions { display: flex; gap: 6px; align-items: center; }
+
+.copy-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2); border-radius: 7px;
+  padding: 5px 10px; font-size: 11px; font-weight: 500;
+  cursor: pointer; font-family: inherit;
+  transition: all 0.15s; white-space: nowrap;
+}
+.copy-btn:hover { background: var(--surface2); border-color: var(--gold); color: var(--gold); }
+.copy-btn.copied { background: var(--green-dark); border-color: var(--green); color: #fff; }
+.open-btn {
+  background: var(--purple); border: 1px solid rgba(123,63,160,0.5);
+  color: #D8B8FF; border-radius: 7px;
+  padding: 5px 10px; font-size: 11px; font-weight: 500;
+  cursor: pointer; font-family: inherit; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 4px;
+  transition: all 0.15s; white-space: nowrap;
+}
+.open-btn:hover { background: var(--purple-light); }
+
+/* ── CONTENT PREVIEW ── */
+.task-content {
+  border-top: 1px solid var(--border2);
+  padding: 12px 14px;
+  display: none;
+}
+.task-content.visible { display: block; }
+.content-box {
+  background: var(--dark3);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 12px; color: var(--text2);
+  line-height: 1.6;
+  max-height: 200px; overflow-y: auto;
+  white-space: pre-wrap;
+  font-family: 'DM Mono', monospace;
+}
+.content-box::-webkit-scrollbar { width: 4px; }
+.content-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── BONUS SECTION ── */
+.bonus-section {
+  border-top: 1px solid var(--border2);
+  margin: 4px 12px;
+  padding: 12px 0;
+}
+.bonus-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text3);
+  margin-bottom: 8px;
+  padding: 0 2px;
+}
+
+/* ── TAGS DISPLAY ── */
+.tags-display { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 14px; }
+.tag-pill {
+  font-size: 11px; background: rgba(74,26,107,0.4);
+  border: 1px solid rgba(123,63,160,0.4);
+  color: #D8B8FF; border-radius: 20px; padding: 3px 10px;
+}
+
+/* ── PROGRESS BAR ── */
+.progress-bar {
+  background: var(--surface);
+  border-radius: 4px; height: 4px;
+  overflow: hidden; margin-top: 12px;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--purple-light));
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+.progress-text { font-size: 11px; color: var(--text3); margin-top: 6px; }
+
+/* ── WEEKLY SCHEDULE ── */
+.week-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2); border-radius: 10px; padding: 10px 16px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  font-family: inherit; width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: all 0.2s; margin-bottom: 12px;
+}
+.week-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+.week-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
+  margin-bottom: 16px;
+}
+.day-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 8px 6px; text-align: center;
+  cursor: pointer; transition: all 0.2s;
+}
+.day-card:hover { border-color: var(--gold); }
+.day-card.today { border-color: var(--gold); background: rgba(201,168,76,0.1); }
+.day-name { font-size: 10px; color: var(--text3); font-weight: 600; text-transform: uppercase; }
+.day-product { font-size: 10px; color: var(--text); margin-top: 4px; line-height: 1.3; }
+.day-focus { font-size: 9px; color: var(--text3); margin-top: 3px; }
+
+/* ── HISTORY ── */
+.history-panel {
+  background: var(--dark2); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 14px; margin-bottom: 16px;
+}
+.history-title { font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--text3); margin-bottom: 10px; }
+.history-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.history-chip {
+  font-size: 11px; background: var(--surface);
+  border: 1px solid var(--border2); color: var(--text3);
+  border-radius: 20px; padding: 3px 10px;
+}
+
+/* ── SETTINGS MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: none; align-items: center; justify-content: center;
+  z-index: 200;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--dark2); border: 1px solid var(--border);
+  border-radius: 16px; width: 90%; max-width: 480px;
+  padding: 24px;
+}
+.modal-title { font-size: 16px; font-weight: 700; color: var(--gold); margin-bottom: 20px; }
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 12px; color: var(--text3); margin-bottom: 6px; display: block; }
+.form-input {
+  width: 100%; padding: 10px 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-size: 13px;
+  font-family: inherit; outline: none;
+}
+.form-input:focus { border-color: var(--gold); }
+.modal-actions { display: flex; gap: 8px; margin-top: 20px; }
+.save-btn {
+  flex: 1; background: var(--gold); color: var(--dark);
+  border: none; border-radius: 8px; padding: 10px;
+  font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+}
+.cancel-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2); border-radius: 8px; padding: 10px 16px;
+  font-size: 14px; cursor: pointer; font-family: inherit;
+}
+
+/* ── LOAD BTN ── */
+.load-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text2); border-radius: 8px; padding: 8px 14px;
+  font-size: 12px; cursor: pointer; font-family: inherit;
+}
+.load-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── QR SECTION ── */
+.qr-section {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 14px; margin-top: 8px;
+}
+.qr-title { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 8px; }
+.qr-text {
+  font-size: 11px; color: var(--text3); line-height: 1.6;
+  background: var(--dark3); border-radius: 6px; padding: 10px;
+  font-family: 'DM Mono', monospace;
+  white-space: pre-wrap;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .suggested-grid { grid-template-columns: 1fr 1fr; }
+  .week-grid { grid-template-columns: repeat(4, 1fr); }
+  .checklist-meta { flex-wrap: wrap; gap: 8px; }
+  .task-actions { flex-wrap: wrap; }
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 20px; right: 20px;
+  background: var(--green-dark); color: #fff;
+  border-radius: 8px; padding: 10px 16px; font-size: 13px;
+  font-weight: 500; z-index: 300;
+  transform: translateY(60px); opacity: 0;
+  transition: all 0.3s;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center; padding: 40px 20px;
+  color: var(--text3);
+}
+.empty-state .emoji { font-size: 32px; margin-bottom: 10px; }
+.empty-state p { font-size: 13px; }
 </style>
 </head>
 <body>
 
-<div class="top">
-  <div><h1>CC Hair & Beauty — Content Generator</h1><p>Pick a product + type — everything else is automatic</p></div>
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">✂</div>
+    <div>
+      <div class="logo-text">CC Hair & Beauty</div>
+      <div class="logo-sub">Content Generator</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="load-btn" onclick="loadProducts()">↻ Refresh Products</button>
+    <button class="settings-btn" onclick="openSettings()">⚙ Settings</button>
+  </div>
 </div>
-<div class="nav">
-  <button class="nb on" onclick="showSc('gen',this)">Generate Content</button>
-  <button class="nb" onclick="showSc('report',this)">Weekly SEO Report</button>
-  <button class="nb" onclick="showSc('settings',this)">Settings</button>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- STEP INDICATORS -->
+  <div class="steps">
+    <div class="step active" id="step1-indicator">
+      <div class="step-num">1</div>
+      Pick a Product
+    </div>
+    <div class="step-divider"></div>
+    <div class="step inactive" id="step2-indicator">
+      <div class="step-num">2</div>
+      Generate & Publish
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="history-panel" id="historyPanel" style="display:none">
+    <div class="history-title">⚠ Already done this week — don't repeat</div>
+    <div class="history-chips" id="historyChips"></div>
+  </div>
+
+  <!-- STEP 1: PRODUCT PICKER -->
+  <div id="step1Panel">
+
+    <!-- WEEKLY SCHEDULE -->
+    <button class="week-btn" onclick="generateWeekSchedule()">📅 Generate This Week's Content Schedule</button>
+    <div id="weekGrid" style="display:none"></div>
+
+    <!-- SUGGESTED TODAY -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">✦ Suggested Today</div>
+        <div style="font-size:11px;color:var(--text3)" id="todayFocus"></div>
+      </div>
+      <div class="panel-body">
+        <div class="suggested-grid" id="suggestedGrid">
+          <div class="empty-state"><div class="emoji">⏳</div><p>Loading products...</p></div>
+        </div>
+
+        <!-- SEARCH ALL PRODUCTS -->
+        <div class="suggested-label">OR SEARCH ALL PRODUCTS</div>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" placeholder="Search by product name or brand..."
+            oninput="filterProducts(this.value)" id="searchInput">
+        </div>
+        <div class="product-grid" id="productGrid">
+          <div class="empty-state"><div class="emoji">⏳</div><p>Loading...</p></div>
+        </div>
+        <div style="text-align:center;margin-top:10px">
+          <button class="load-btn" onclick="loadMoreProducts()">Load more products</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SELECTED PRODUCT BAR (shown once product picked) -->
+  <div class="selected-bar" id="selectedBar" style="display:none">
+    <img id="selectedImg" src="" alt="">
+    <div class="selected-bar-info">
+      <div class="selected-bar-name" id="selectedName"></div>
+      <div class="selected-bar-price" id="selectedPrice"></div>
+      <div class="selected-bar-hint">Ready to generate all content for this product</div>
+    </div>
+    <button class="change-btn" onclick="changeProduct()">Change</button>
+  </div>
+
+  <!-- GENERATE BUTTON -->
+  <button class="generate-btn" id="generateBtn" onclick="generateContent()" style="display:none">
+    <span>✦ Generate Today's Content</span>
+    <span class="btn-sub">Blog · 3 GBP posts · Instagram · Facebook · Review request</span>
+  </button>
+
+  <!-- LOADING STATE -->
+  <div class="panel" id="loadingPanel" style="display:none">
+    <div class="panel-body">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <div class="loading-text">Generating all content...</div>
+        <div class="loading-steps">
+          <div class="loading-step" id="ls1">✦ Writing blog post (1,200+ words)...</div>
+          <div class="loading-step" id="ls2">✦ Creating 3 GBP posts for each branch...</div>
+          <div class="loading-step" id="ls3">✦ Writing Instagram & Facebook posts...</div>
+          <div class="loading-step" id="ls4">✦ Generating review request message...</div>
+          <div class="loading-step" id="ls5">✦ Checking menu tags...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: CHECKLIST -->
+  <div class="panel" id="checklistPanel" style="display:none">
+    <div class="checklist-header">
+      <div class="checklist-title">STEP 2 — Work through this list top to bottom</div>
+      <div class="checklist-product" id="checklistProduct"></div>
+      <div class="checklist-meta">
+        <div class="checklist-meta-item">📅 <span id="genTime"></span></div>
+        <div class="checklist-meta-item">⏱ Estimated total: 5–8 minutes</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="progress-text" id="progressText">0 of 6 tasks done</div>
+    </div>
+
+    <div class="task-list" id="taskList"></div>
+
+    <!-- BONUS -->
+    <div class="bonus-section">
+      <div class="bonus-label">BONUS — Optional (2 extra minutes)</div>
+      <div class="task-list" id="bonusList"></div>
+    </div>
+
+    <!-- NEW PRODUCT BTN -->
+    <div style="padding:12px;padding-top:4px">
+      <button class="week-btn" onclick="resetToStep1()" style="margin-bottom:0">
+        ← Generate content for a different product
+      </button>
+    </div>
+  </div>
+
 </div>
 
-<div class="wrap">
-
-<!-- GENERATE -->
-<div class="sc on" id="sc-gen">
-  <!-- STEP BY STEP GUIDE -->
-  <div id="how-to" style="background:#fff;border-radius:14px;border:1px solid #e0ddf0;padding:20px;margin-bottom:16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div style="font-size:14px;font-weight:700;color:#3D1A6E">How to use this tool — 3 steps</div>
-      <button onclick="document.getElementById('how-to').style.display='none'" style="background:none;border:none;color:#aaa;cursor:pointer;font-size:18px;line-height:1">×</button>
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <div class="modal-title">⚙ Settings</div>
+    <div class="form-group">
+      <label class="form-label">Anthropic API Key</label>
+      <input class="form-input" type="password" id="apiKey" placeholder="sk-ant-...">
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
-      <div style="background:#f5f3fb;border-radius:10px;padding:14px">
-        <div style="width:28px;height:28px;background:#3D1A6E;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-bottom:8px">1</div>
-        <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px">Settings (first time only)</div>
-        <div style="font-size:12px;color:#666;line-height:1.6">Click Settings tab → add your Anthropic API key (sk-ant-...) → add Shopify domain + token → Save both</div>
-      </div>
-      <div style="background:#f5f3fb;border-radius:10px;padding:14px">
-        <div style="width:28px;height:28px;background:#3D1A6E;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-bottom:8px">2</div>
-        <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px">Choose a product</div>
-        <div style="font-size:12px;color:#666;line-height:1.6">Click "Load Products" to see your live Shopify store. Click any product to select it. Pick a content type (New Arrival, Blog Guide etc)</div>
-      </div>
-      <div style="background:#f5f3fb;border-radius:10px;padding:14px">
-        <div style="width:28px;height:28px;background:#3D1A6E;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-bottom:8px">3</div>
-        <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px">Click Generate</div>
-        <div style="font-size:12px;color:#666;line-height:1.6">Blog, Facebook, Instagram, Story, Reel, all Shopify fields and Canva prompt are created. Copy each one with the Copy button.</div>
-      </div>
+    <div class="form-group">
+      <label class="form-label">Shopify Store Domain (e.g. cchairandbeauty.myshopify.com)</label>
+      <input class="form-input" type="text" id="shopifyDomain" placeholder="cchairandbeauty.myshopify.com">
     </div>
-    <div style="margin-top:12px;background:#EAF3DE;border-radius:8px;padding:10px 14px;font-size:12px;color:#27500A;line-height:1.6">
-      <strong>After generating:</strong> SEO Blog tab has all your Shopify fields (Meta Title, Meta Description, Excerpt, Tags, Alt Text) — copy each one and paste into Shopify blog editor → SEO section at the bottom.
-      Social Posts tab has Facebook, Instagram, Hashtags, Story and Reel script — all separate with copy buttons.
+    <div class="form-group">
+      <label class="form-label">Shopify Access Token</label>
+      <input class="form-input" type="password" id="shopifyToken" placeholder="shpat_...">
     </div>
-  </div>
-
-  <div class="card" id="input-card">
-    <h2>What do you want to promote?</h2>
-    <div class="sub">Choose a product from your Shopify store, pick a content type — everything else is automatic.</div>
-
-    <div class="fg full" style="margin-bottom:14px">
-      <label>Product — search your Shopify store</label>
-      <div class="prod-picker">
-        <div class="prod-search">
-          <input id="prod-search" placeholder="Search products e.g. BioSilk, Cherish, Cantu..." oninput="filterProducts(this.value)" />
-          <button class="load-btn" id="load-btn" onclick="loadShopifyProducts()">Load Products</button>
-        </div>
-        <div class="cat-filter" id="cat-filter"></div>
-        <div class="prod-list" id="prod-list"></div>
-        <div class="selected-prod" id="selected-prod">
-          <img id="sel-img" src="" alt="" />
-          <span class="name" id="sel-name"></span>
-          <span id="sel-price" style="font-size:12px;font-weight:700;color:#3D1A6E;margin-right:4px"></span>
-          <button class="clear" onclick="clearProduct()">✕ Clear</button>
-        </div>
-      </div>
-      <div class="hint">Products load directly from your Shopify store. Add your Shopify token in Settings first.</div>
+    <div class="form-group">
+      <label class="form-label">Google Review Link — Chapeltown Branch</label>
+      <input class="form-input" type="text" id="reviewChapeltown" placeholder="https://g.page/r/...">
     </div>
-
-    <div class="two">
-      <div class="fg">
-        <label>Content Type</label>
-        <select id="g-type">
-          <option value="new-arrival">New Arrival</option>
-          <option value="back-in-stock">Back in Stock</option>
-          <option value="blog-guide">Blog Guide (SEO)</option>
-          <option value="product-spotlight">Product Spotlight</option>
-          <option value="promotion">Promotion / Sale</option>
-          <option value="weekend">Weekend Treat</option>
-          <option value="tip">Hair & Beauty Tip</option>
-          <option value="did-you-know">Did You Know?</option>
-        </select>
-      </div>
-      <div class="fg">
-        <label>Price (auto-filled from Shopify)</label>
-        <input id="g-price" placeholder="e.g. £8.79" />
-      </div>
-      <div class="fg full">
-        <label>Extra benefits (optional)</label>
-        <textarea id="g-ben" placeholder="Add any extra product details to improve content quality..."></textarea>
-      </div>
+    <div class="form-group">
+      <label class="form-label">Google Review Link — Roundhay Branch</label>
+      <input class="form-input" type="text" id="reviewRoundhay" placeholder="https://g.page/r/...">
     </div>
-    <div class="err" id="g-err"></div>
-    <button class="go" id="g-btn" onclick="genAll()">Generate Everything — Blog + Social + Canva + SEO →</button>
-  </div>
-
-  <div class="pw" id="pw">
-    <div class="pb"><div class="pf" id="pf"></div></div>
-    <div class="sg">
-      <div class="si wait" id="st-blog"><div class="dot"></div>SEO Blog</div>
-      <div class="si wait" id="st-social"><div class="dot"></div>Social Posts</div>
-      <div class="si wait" id="st-canva"><div class="dot"></div>Canva Prompt</div>
-      <div class="si wait" id="st-seo"><div class="dot"></div>SEO Fields</div>
+    <div class="form-group">
+      <label class="form-label">Google Review Link — City Centre Branch</label>
+      <input class="form-input" type="text" id="reviewCityCentre" placeholder="https://g.page/r/...">
     </div>
-  </div>
-
-  <div class="rw" id="rw">
-    <div class="rh">
-      <div><h3 id="r-name">Results ready</h3><p id="r-sub">All content generated</p></div>
-      <button class="new-btn" onclick="resetAll()">← New Content</button>
-    </div>
-    <div class="rtabs">
-      <button class="rt on" onclick="showRt('rp-blog',this)">SEO Blog + Shopify</button>
-      <button class="rt" onclick="showRt('rp-social',this)">Social Posts</button>
-      <button class="rt" onclick="showRt('rp-canva',this)">Canva Graphic</button>
-    </div>
-
-    <!-- BLOG + SHOPIFY TAB -->
-    <div class="rp on" id="rp-blog">
-      <div class="score"><div class="sn" id="sc-num">—</div><div class="sd" id="sc-det">Calculating...</div></div>
-
-      <!-- SHOPIFY FIELDS - ALL IN ONE PLACE -->
-      <div class="shopify-section">
-        <div class="shopify-title"><span class="logo">Shopify</span> Paste these fields directly into your Shopify blog post</div>
-
-        <div class="sf">
-          <div class="lbl">Blog Title (H1) <button class="cp" style="padding:2px 8px;font-size:10px" onclick="copyEl('blog-title',this)">Copy</button></div>
-          <div class="val" id="blog-title"></div>
-        </div>
-
-        <div class="sf">
-          <div class="lbl">
-            Meta Title — Shopify: Online Store → Blog Posts → Edit → SEO
-            <div style="display:flex;gap:4px;align-items:center"><span class="cnt" id="mt-cnt"></span><button class="cp" style="padding:2px 8px;font-size:10px" onclick="copyEl('meta-title',this)">Copy</button></div>
-          </div>
-          <div class="val" id="meta-title"></div>
-          <div class="hint">Max 60 characters. Goes in the SEO section at the bottom of the blog editor.</div>
-        </div>
-
-        <div class="sf">
-          <div class="lbl">
-            Meta Description — Shopify SEO section
-            <div style="display:flex;gap:4px;align-items:center"><span class="cnt" id="md-cnt"></span><button class="cp" style="padding:2px 8px;font-size:10px" onclick="copyEl('meta-desc',this)">Copy</button></div>
-          </div>
-          <div class="val" id="meta-desc"></div>
-          <div class="hint">Max 155 characters. Shown in Google search results under the title.</div>
-        </div>
-
-        <div class="sf">
-          <div class="lbl">Excerpt — Shopify: shown on blog listing page + Google snippet <button class="cp" style="padding:2px 8px;font-size:10px" onclick="copyEl('excerpt',this)">Copy</button></div>
-          <div class="val" id="excerpt"></div>
-          <div class="hint">Paste into the "Excerpt" field in the blog editor sidebar.</div>
-        </div>
-
-        <div class="sf">
-          <div class="lbl">
-            Tags — Shopify: paste in Tags field (comma separated)
-            <button class="cp" style="padding:2px 8px;font-size:10px" onclick="copyEl('shopify-tags',this)">Copy Tags</button>
-          </div>
-          <div class="val" id="shopify-tags"></div>
-          <div class="hint">Comma separated for Shopify. Go to blog post → Tags field → paste.</div>
-        </div>
-
-        <div class="sf">
-          <div class="lbl">Image Alt Text — paste when uploading blog header image <button class="cp" style="padding:2px 8px;font-size:10px" onclick="copyEl('alt-text',this)">Copy</button></div>
-          <div class="val" id="alt-text"></div>
-        </div>
-
-        <div class="sf">
-          <div class="lbl">Focus Keyword <button class="cp" style="padding:2px 8px;font-size:10px" onclick="copyEl('focus-kw',this)">Copy</button></div>
-          <div class="val" id="focus-kw"></div>
-          <div class="hint">Install the free Shopify SEO app "Plug in SEO" to use this field directly.</div>
-        </div>
-
-        <div class="sf">
-          <div class="lbl">SEO Expert Tips for this product page <button class="cp" style="padding:2px 8px;font-size:10px" onclick="copyEl('seo-tips',this)">Copy</button></div>
-          <div class="oc" style="max-height:200px" id="seo-tips"></div>
-        </div>
-      </div>
-
-      <!-- BLOG BODY -->
-      <div class="ob">
-        <div class="oh">
-          <span class="ot">Blog Post Body</span>
-          <div class="oa">
-            <span id="wc" style="font-size:11px;color:#888"></span>
-            <div class="toggle-view">
-              <button class="tv-btn on" id="tv-preview" onclick="setView('preview')">Preview</button>
-              <button class="tv-btn" id="tv-html" onclick="setView('html')">HTML Code</button>
-            </div>
-            <button class="cp" onclick="copyEl('blog-html',this)">Copy HTML</button>
-            <button class="dl" onclick="dlBlog()">Download</button>
-          </div>
-        </div>
-        <div class="blog-rendered" id="blog-preview"></div>
-        <div class="oc tall" id="blog-html" style="display:none"></div>
-      </div>
-    </div>
-
-    <!-- SOCIAL TAB -->
-    <div class="rp" id="rp-social">
-      <div class="social-diff">Facebook and Instagram posts are different — Facebook has the link + longer text. Instagram has no link, shorter caption, ends with a question. Hashtags are separate for easy copying.</div>
-
-      <div class="ob">
-        <div class="oh"><span class="ot">Facebook Post (with link)</span><div class="oa"><button class="cp" onclick="copyEl('fb-txt',this)">Copy</button><button class="fb-btn" onclick="openFB()">Open Facebook</button></div></div>
-        <div class="oc" id="fb-txt"></div>
-      </div>
-
-      <div class="ob">
-        <div class="oh"><span class="ot">Instagram Caption (no link — ends with question)</span><div class="oa"><button class="cp" onclick="copyEl('ig-cap',this)">Copy Caption</button></div></div>
-        <div class="oc" id="ig-cap"></div>
-      </div>
-
-      <div class="ob">
-        <div class="oh"><span class="ot">Instagram Hashtags (20) — copy separately and add after caption</span><div class="oa"><button class="cp" onclick="copyEl('ig-tags',this)">Copy Hashtags</button></div></div>
-        <div class="oc" id="ig-tags"></div>
-      </div>
-
-      <div class="ob">
-        <div class="oh"><span class="ot">Instagram Story — 3 Slides</span><div class="oa"><button class="cp" onclick="copyEl('ig-story',this)">Copy</button></div></div>
-        <div class="oc" id="ig-story"></div>
-      </div>
-
-      <div class="ob">
-        <div class="oh"><span class="ot">Reel Script (30 seconds)</span><div class="oa"><button class="cp" onclick="copyEl('reel',this)">Copy Script</button></div></div>
-        <div class="oc" id="reel"></div>
-      </div>
-    </div>
-
-    <!-- CANVA TAB -->
-    <div class="rp" id="rp-canva">
-      <div class="note">
-        <strong>How to create your Canva graphic</strong>
-        Copy the prompt below, open Claude.ai in a new tab (with Canva connected), paste it — the design is created directly in your Canva account using your brand kit.
-      </div>
-      <div class="ob">
-        <div class="oh"><span class="ot">Canva Prompt — copy and paste into Claude.ai</span><div class="oa"><button class="cp" onclick="copyEl('cv-prompt',this)">Copy Prompt</button><a class="dl" href="https://claude.ai" target="_blank">Open Claude.ai</a></div></div>
-        <div class="oc" id="cv-prompt"></div>
-      </div>
-      <div class="ob">
-        <div class="oh"><span class="ot">Caption + Hashtags for the graphic</span><div class="oa"><button class="cp" onclick="copyEl('cv-cap',this)">Copy All</button></div></div>
-        <div class="oc" id="cv-cap"></div>
-      </div>
-      <div style="background:#FAEEDA;border-radius:8px;padding:12px;margin-bottom:10px">
-        <div style="font-size:11px;font-weight:700;color:#854F0B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Image guidance for your staff</div>
-        <ul style="padding-left:14px" id="img-tips"></ul>
-      </div>
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeSettings()">Cancel</button>
+      <button class="save-btn" onclick="saveSettings()">Save Settings</button>
     </div>
   </div>
 </div>
 
-<!-- SEO REPORT -->
-<div class="sc" id="sc-report">
-  <div class="note">
-    <strong>Upload your Google Search Console report every Monday</strong>
-    Export from Search Console: Performance → Export → Download CSV. Upload here for a full weekly action plan — exact blog titles to write, meta fields to fix, trending products to post about.
-  </div>
-  <div class="dz" id="dz" onclick="document.getElementById('rf').click()"
-    ondragover="event.preventDefault();this.classList.add('drag')"
-    ondragleave="this.classList.remove('drag')"
-    ondrop="handleDrop(event)">
-    <h3>Drop your Search Console CSV here</h3>
-    <p>Or click to choose file</p>
-    <label class="ul-lbl" onclick="event.stopPropagation()">
-      <input type="file" id="rf" accept=".csv,.xlsx,.xls,.txt" style="display:none" onchange="handleFile(this.files[0])">
-      Choose File
-    </label>
-    <div class="fmt">CSV, XLSX, XLS — Search Console Performance, Coverage, Merchant Center reports all supported</div>
-  </div>
-  <div id="rep-status" style="display:none;background:#EEEDFE;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:#3C3489"><span id="rep-st">Analysing...</span></div>
-  <div style="display:none" id="rep-wrap">
-    <div class="ob">
-      <div class="oh"><span class="ot" id="rep-title">This Week's SEO Action Plan</span><div class="oa"><button class="cp" onclick="copyEl('rep-out',this)">Copy All</button><button class="dl" onclick="dlReport()">Download</button></div></div>
-      <div class="oc tall" id="rep-out"></div>
-    </div>
-  </div>
-</div>
-
-<!-- SETTINGS -->
-<div class="sc" id="sc-settings">
-  <div class="sc-card">
-    <h3>Anthropic API Key</h3>
-    <div class="fg">
-      <label>API Key (starts with sk-ant-)</label>
-      <input type="password" id="api-inp" placeholder="sk-ant-api03-..." />
-      <div class="hint">Get from console.anthropic.com → API Keys. Saves in browser only.</div>
-    </div>
-    <button class="save-btn" onclick="saveKey()">Save API Key</button>
-    <div class="sv" id="key-sv">Saved!</div>
-  </div>
-
-  <div class="sc-card">
-    <h3>Shopify Store Connection</h3>
-    <div class="fg" style="margin-bottom:12px">
-      <label>Shopify Store Domain (e.g. cchairandbeauty.myshopify.com)</label>
-      <input id="sh-domain" placeholder="cchairandbeauty.myshopify.com" />
-      <div class="hint">Use your .myshopify.com domain, not your custom domain.</div>
-    </div>
-    <div class="fg">
-      <label>Shopify Admin API Access Token (starts with shpat_)</label>
-      <input type="password" id="sh-token" placeholder="shpat_..." />
-      <div class="hint">Shopify Admin → Settings → Apps → Develop apps → Create app → API credentials. Needs: read_products, read_inventory, read_collections.</div>
-    </div>
-    <button class="save-btn" onclick="saveShopify()">Save Shopify Settings</button>
-    <div class="sv" id="sh-sv">Saved! Click "Load Products" on the main screen to test.</div>
-  </div>
-
-  <div class="sc-card">
-    <h3>Store Details</h3>
-    <div class="fg" style="margin-bottom:12px">
-      <label>Store Name</label>
-      <input id="s-name" value="CC Hair & Beauty" />
-    </div>
-    <div class="fg">
-      <label>Store URL</label>
-      <input id="s-url" value="https://www.cchairandbeauty.com" />
-    </div>
-    <button class="save-btn" onclick="saveStore()">Save</button>
-    <div class="sv" id="store-sv">Saved!</div>
-  </div>
-</div>
-
-</div>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <script>
-const STORE_URL=()=>localStorage.getItem('sUrl')||'https://www.cchairandbeauty.com';
-const STORE_NAME=()=>localStorage.getItem('sName')||'CC Hair & Beauty';
-const BASE=()=>STORE_URL()+'/products/';
-const ADDR='121-129 Chapeltown Road, Leeds, LS7 3DU';
-const TYPES={'new-arrival':'New Arrival','back-in-stock':'Back in Stock','blog-guide':'Blog Guide','product-spotlight':'Product Spotlight','promotion':'Promotion / Sale','weekend':'Weekend Treat','tip':'Hair & Beauty Tip','did-you-know':'Did You Know?'};
+// ── STATE ──────────────────────────────────────────────────────────────────
+let allProducts = [];
+let filteredProducts = [];
+let selectedProduct = null;
+let generatedContent = null;
+let tasksDone = new Set();
+let currentPage = 0;
+const PAGE_SIZE = 60;
 
-let allProducts=[],filteredProducts=[],selectedProduct=null,curReport='';
+// ── SETTINGS ───────────────────────────────────────────────────────────────
+function getSettings() {
+  return {
+    apiKey: localStorage.getItem('cc_api_key') || '',
+    shopifyDomain: localStorage.getItem('cc_shopify_domain') || 'cchairandbeauty.myshopify.com',
+    shopifyToken: localStorage.getItem('cc_shopify_token') || '',
+    reviewChapeltown: localStorage.getItem('cc_review_chapeltown') || '',
+    reviewRoundhay: localStorage.getItem('cc_review_roundhay') || '',
+    reviewCityCentre: localStorage.getItem('cc_review_citycentre') || '',
+  };
+}
+function openSettings() {
+  const s = getSettings();
+  document.getElementById('apiKey').value = s.apiKey;
+  document.getElementById('shopifyDomain').value = s.shopifyDomain;
+  document.getElementById('shopifyToken').value = s.shopifyToken;
+  document.getElementById('reviewChapeltown').value = s.reviewChapeltown;
+  document.getElementById('reviewRoundhay').value = s.reviewRoundhay;
+  document.getElementById('reviewCityCentre').value = s.reviewCityCentre;
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings() { document.getElementById('settingsModal').classList.remove('open'); }
+function saveSettings() {
+  localStorage.setItem('cc_api_key', document.getElementById('apiKey').value.trim());
+  localStorage.setItem('cc_shopify_domain', document.getElementById('shopifyDomain').value.trim());
+  localStorage.setItem('cc_shopify_token', document.getElementById('shopifyToken').value.trim());
+  localStorage.setItem('cc_review_chapeltown', document.getElementById('reviewChapeltown').value.trim());
+  localStorage.setItem('cc_review_roundhay', document.getElementById('reviewRoundhay').value.trim());
+  localStorage.setItem('cc_review_citycentre', document.getElementById('reviewCityCentre').value.trim());
+  closeSettings();
+  showToast('Settings saved ✓');
+  loadProducts();
+}
 
-function n2h(n){return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
-function getKey(){return localStorage.getItem('ccApiKey')||'';}
-function showSc(id,btn){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));document.getElementById('sc-'+id).classList.add('on');if(btn)btn.classList.add('on');}
-function showRt(id,btn){document.querySelectorAll('.rp').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.rt').forEach(b=>b.classList.remove('on'));document.getElementById(id).classList.add('on');if(btn)btn.classList.add('on');}
-function ss(id,st){document.getElementById(id).className='si '+st;}
-function sp(p){document.getElementById('pf').style.width=p+'%';}
+// ── HISTORY ────────────────────────────────────────────────────────────────
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem('cc_history') || '[]'); } catch { return []; }
+}
+function addToHistory(product) {
+  let h = getHistory();
+  h = h.filter(p => p.id !== product.id);
+  h.unshift({ id: product.id, title: product.title, date: new Date().toISOString() });
+  if (h.length > 30) h = h.slice(0, 30);
+  localStorage.setItem('cc_history', JSON.stringify(h));
+}
+function showHistory() {
+  const h = getHistory();
+  const thisWeek = h.filter(p => {
+    const d = new Date(p.date);
+    const now = new Date();
+    const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+    return d > weekAgo;
+  });
+  const panel = document.getElementById('historyPanel');
+  const chips = document.getElementById('historyChips');
+  if (thisWeek.length === 0) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+  chips.innerHTML = thisWeek.map(p =>
+    `<div class="history-chip">${p.title.substring(0,30)}${p.title.length>30?'...':''}</div>`
+  ).join('');
+}
 
-async function loadShopifyProducts(){
-  const domainInput=document.getElementById('sh-domain').value.trim();
-  const tokenInput=document.getElementById('sh-token').value.trim();
-  const domain=domainInput||localStorage.getItem('shDomain')||'';
-  const token=tokenInput||localStorage.getItem('shToken')||'';
-  if(domain)localStorage.setItem('shDomain',domain);
-  if(token)localStorage.setItem('shToken',token);
-  if(!domain||!token){
-    alert('Please go to Settings, enter your Shopify domain and API token, then click Save Shopify Settings.');
-    showSc('settings',document.querySelectorAll('.nb')[2]);
+// ── TODAY FOCUS ────────────────────────────────────────────────────────────
+function getTodayFocus() {
+  const day = new Date().getDay();
+  const focuses = {
+    1: { label: 'Monday — Benefits focus', hint: 'Lead with product benefits & who it\'s for' },
+    2: { label: 'Tuesday — Extensions & wigs', hint: 'Focus on hair extensions or wig products' },
+    3: { label: 'Wednesday — Community focus', hint: 'Lead with Leeds community & store visit angle' },
+    4: { label: 'Thursday — Braiding & accessories', hint: 'Focus on braiding hair or accessories' },
+    5: { label: 'Friday — Delivery & online', hint: 'Lead with online shopping & free delivery' },
+    6: { label: 'Saturday — New arrivals', hint: 'Highlight new arrivals or promotions' },
+    0: { label: 'Sunday — Community story', hint: 'Share a community or heritage story' },
+  };
+  return focuses[day] || focuses[1];
+}
+
+// ── LOAD PRODUCTS ──────────────────────────────────────────────────────────
+async function loadProducts() {
+  const s = getSettings();
+
+  // Try cache first
+  const cacheKey = 'cc_products_cache';
+  const cacheTime = 'cc_products_cache_time';
+  const cached = localStorage.getItem(cacheKey);
+  const cachedTime = localStorage.getItem(cacheTime);
+  const threedays = 3 * 24 * 60 * 60 * 1000;
+
+  if (cached && cachedTime && (Date.now() - parseInt(cachedTime)) < threedays) {
+    allProducts = JSON.parse(cached);
+    renderProducts();
+    renderSuggested();
+    showHistory();
     return;
   }
-  const btn=document.getElementById('load-btn');
-  btn.textContent='Loading...';btn.disabled=true;
-  allProducts=[];
-  try{
-    // Load ALL products using Shopify cursor pagination - handles 9000+ products
-    let pageInfo=null;
-    let page=1;
-    while(true){
-      const url=pageInfo?'/api/shopify?page_info='+encodeURIComponent(pageInfo):'/api/shopify';
-      btn.textContent='Loading page '+page+'... ('+allProducts.length+' so far)';
-      const r=await fetch(url,{headers:{'x-shopify-token':token,'x-shopify-store':domain}});
-      const d=await r.json();
-      if(d.error)throw new Error(d.error);
-      const batch=d.products||[];
-      allProducts=allProducts.concat(batch);
-      // Check for next page in Link header
-      const link=d._link||'';
-      const nextMatch=link.match(/page_info=([^&>]+)[^>]*>; rel="next"/);
-      if(nextMatch&&batch.length===250){
-        pageInfo=nextMatch[1];
-        page++;
-      }else{
-        break; // No more pages
-      }
-      // Safety limit - stop at 5000 products to avoid hanging
-      if(allProducts.length>=5000)break;
-    }
-    filteredProducts=[...allProducts];
-    renderProductList(filteredProducts);
-    renderCatFilter();
-    document.getElementById('prod-list').style.display='block';
-    btn.textContent='✓ '+allProducts.length+' products loaded';
-    btn.disabled=false;
-  }catch(err){
-    btn.textContent='Retry';btn.disabled=false;
-    alert('Error loading products: '+err.message+'\n\nCheck your Shopify domain and API token in Settings.');
+
+  if (!s.shopifyToken || !s.shopifyDomain) {
+    // Demo mode with sample products
+    allProducts = getDemoProducts();
+    renderProducts();
+    renderSuggested();
+    showHistory();
+    showToast('Demo mode — add Shopify credentials in Settings');
+    return;
+  }
+
+  document.getElementById('productGrid').innerHTML = '<div class="empty-state"><div class="spinner" style="margin:auto;width:24px;height:24px"></div><p style="margin-top:8px">Loading products...</p></div>';
+
+  try {
+    const resp = await fetch(`/api/shopify?domain=${s.shopifyDomain}&token=${s.shopifyToken}&endpoint=products&limit=250`);
+    const data = await resp.json();
+    allProducts = (data.products || []).map(p => ({
+      id: p.id,
+      title: p.title,
+      price: p.variants?.[0]?.price ? `£${parseFloat(p.variants[0].price).toFixed(2)}` : '',
+      image: p.images?.[0]?.src || '',
+      tags: p.tags || '',
+      productType: p.product_type || '',
+      vendor: p.vendor || '',
+      description: p.body_html?.replace(/<[^>]+>/g,'').substring(0,300) || '',
+      handle: p.handle,
+    }));
+    localStorage.setItem(cacheKey, JSON.stringify(allProducts));
+    localStorage.setItem(cacheTime, Date.now().toString());
+    renderProducts();
+    renderSuggested();
+    showHistory();
+  } catch(e) {
+    allProducts = getDemoProducts();
+    renderProducts();
+    renderSuggested();
+    showToast('Could not load Shopify products — using demo data');
   }
 }
 
-function renderCatFilter(){
-  const types=[...new Set(allProducts.map(p=>p.product_type).filter(Boolean))].sort();
-  const el=document.getElementById('cat-filter');
-  el.innerHTML='<div class="cat-pill on" onclick="filterByCat(null,this)">All</div>'+
-    types.map(t=>`<div class="cat-pill" onclick="filterByCat('${t}',this)">${t}</div>`).join('');
+function getDemoProducts() {
+  return [
+    { id:1, title:'Cantu Shea Butter Leave-In Conditioning Repair Cream 453g', price:'£9.99', image:'', tags:'Conditioners,menu-conditioners', productType:'Conditioner', vendor:'Cantu', description:'Cantu Shea Butter leave-in conditioning repair cream for natural hair.', handle:'cantu-leave-in' },
+    { id:2, title:'Dark & Lovely Optimum Care Relaxer Kit - Super', price:'£14.99', image:'', tags:'Relaxers,menu-relaxers', productType:'Relaxer', vendor:'Dark & Lovely', description:'Professional strength no-lye conditioning relaxer for coarse hair.', handle:'dark-lovely-relaxer' },
+    { id:3, title:'Cherish Spiral French Curl 3X Braid Pre-Stretched 22"', price:'£8.99', image:'', tags:'Synthetic Hair Braids,menu-hair-extensions', productType:'Hair Extensions', vendor:'Cherish', description:'Pre-stretched spiral french curl braiding hair for crochet styles.', handle:'cherish-french-curl' },
+    { id:4, title:'Sleek Fashion Idol Brazilian Wig - Natural', price:'£24.99', image:'', tags:'Synthetic Hair Wigs,menu-wigs', productType:'Wigs', vendor:'Sleek', description:'Brazilian style synthetic wig with natural look hairline.', handle:'sleek-wig' },
+    { id:5, title:'BSSET Original Curl Cream 250ml', price:'£11.99', image:'', tags:'Hair Styling,menu-hair-styling', productType:'Hair Styling', vendor:'BSSET', description:'Original curl cream that softens and moisturises curls.', handle:'bsset-curl-cream' },
+    { id:6, title:'Shea Moisture Coconut & Hibiscus Curl & Shine Shampoo 384ml', price:'£12.99', image:'', tags:'Shampoo,menu-shampoo', productType:'Shampoo', vendor:'Shea Moisture', description:'Curl-enhancing shampoo with coconut oil and neem oil.', handle:'shea-moisture-shampoo' },
+  ];
 }
 
-function filterByCat(type,btn){
-  document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('on'));
-  btn.classList.add('on');
-  filteredProducts=type?allProducts.filter(p=>p.product_type===type):allProducts;
-  const q=document.getElementById('prod-search').value;
-  if(q)filteredProducts=filteredProducts.filter(p=>p.title.toLowerCase().includes(q.toLowerCase()));
-  renderProductList(filteredProducts);
+function renderProducts() {
+  filteredProducts = [...allProducts];
+  currentPage = 0;
+  renderProductPage();
 }
 
-function filterProducts(q){
-  filteredProducts=allProducts.filter(p=>p.title.toLowerCase().includes(q.toLowerCase()));
-  renderProductList(filteredProducts);
-  if(allProducts.length>0)document.getElementById('prod-list').style.display='block';
+function renderProductPage() {
+  const grid = document.getElementById('productGrid');
+  const start = currentPage * PAGE_SIZE;
+  const end = start + PAGE_SIZE;
+  const page = filteredProducts.slice(start, end);
+
+  if (currentPage === 0) grid.innerHTML = '';
+  if (page.length === 0 && currentPage === 0) {
+    grid.innerHTML = '<div class="empty-state"><div class="emoji">🔍</div><p>No products found</p></div>';
+    return;
+  }
+
+  page.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.dataset.id = p.id;
+    card.innerHTML = `
+      <img src="${p.image || ''}" alt="${p.title}" onerror="this.style.display='none'">
+      <div class="p-name">${p.title}</div>
+      <div class="p-price">${p.price}</div>
+    `;
+    card.onclick = () => selectProduct(p);
+    grid.appendChild(card);
+  });
 }
 
-function renderProductList(prods){
-  const el=document.getElementById('prod-list');
-  if(prods.length===0){el.innerHTML='<div style="padding:12px;font-size:13px;color:#888;text-align:center">No products found</div>';return;}
-  el.innerHTML=prods.slice(0,100).map(p=>{
-    const price=p.variants&&p.variants[0]?'£'+parseFloat(p.variants[0].price).toFixed(2):'';
-    const img=p.images&&p.images[0]?p.images[0].src:'';
-    return`<div class="prod-item" onclick="selectProduct(${p.id})">
-      ${img?`<img class="prod-img" src="${img}" alt="" loading="lazy" />`:'<div class="prod-img"></div>'}
-      <div class="prod-info"><div class="prod-title">${p.title}</div><div class="prod-meta">${p.vendor||''} ${p.product_type?'· '+p.product_type:''}</div></div>
-      <div class="prod-price">${price}</div>
-    </div>`;
+function filterProducts(q) {
+  const query = q.toLowerCase();
+  filteredProducts = allProducts.filter(p =>
+    p.title.toLowerCase().includes(query) ||
+    p.vendor.toLowerCase().includes(query) ||
+    p.tags.toLowerCase().includes(query)
+  );
+  currentPage = 0;
+  renderProductPage();
+}
+
+function loadMoreProducts() {
+  currentPage++;
+  renderProductPage();
+}
+
+function renderSuggested() {
+  const grid = document.getElementById('suggestedGrid');
+  const focus = getTodayFocus();
+  document.getElementById('todayFocus').textContent = focus.label;
+
+  // Pick 3: one from priority category, one new arrival or random, one high-impression category
+  const priorityTags = ['menu-relaxers', 'menu-wigs', 'menu-hair-extensions', 'menu-hair-dye'];
+  const priority = allProducts.filter(p => priorityTags.some(t => p.tags.includes(t)));
+  const general = allProducts.filter(p => !priorityTags.some(t => p.tags.includes(t)));
+
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  const suggestions = [];
+  if (priority.length > 0) suggestions.push({ ...pick(priority), suggestTag: 'High Priority' });
+  if (general.length > 0) suggestions.push({ ...pick(general), suggestTag: 'Mix it up' });
+  if (allProducts.length > 0) suggestions.push({ ...pick(allProducts), suggestTag: 'Random pick' });
+
+  grid.innerHTML = suggestions.map(p => `
+    <div class="suggested-card" data-id="${p.id}" onclick="selectProduct(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+      ${p.image ? `<img src="${p.image}" class="suggested-img" alt="${p.title}" onerror="this.style.display='none'">` : '<div class="suggested-img" style="display:flex;align-items:center;justify-content:center;font-size:20px">✂</div>'}
+      <div class="suggested-info">
+        <div class="suggested-name">${p.title}</div>
+        <div class="suggested-price">${p.price}</div>
+        <div class="suggested-tag">${p.suggestTag}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── SELECT PRODUCT ─────────────────────────────────────────────────────────
+function selectProduct(product) {
+  selectedProduct = product;
+
+  // Highlight selection
+  document.querySelectorAll('.product-card, .suggested-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll(`[data-id="${product.id}"]`).forEach(c => c.classList.add('selected'));
+
+  // Show selected bar
+  document.getElementById('selectedImg').src = product.image || '';
+  document.getElementById('selectedImg').style.display = product.image ? 'block' : 'none';
+  document.getElementById('selectedName').textContent = product.title;
+  document.getElementById('selectedPrice').textContent = product.price;
+  document.getElementById('selectedBar').style.display = 'flex';
+  document.getElementById('generateBtn').style.display = 'flex';
+
+  // Scroll to generate button
+  document.getElementById('generateBtn').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function changeProduct() {
+  selectedProduct = null;
+  document.getElementById('selectedBar').style.display = 'none';
+  document.getElementById('generateBtn').style.display = 'none';
+  document.getElementById('checklistPanel').style.display = 'none';
+  document.getElementById('step1Panel').style.display = 'block';
+  document.querySelectorAll('.product-card, .suggested-card').forEach(c => c.classList.remove('selected'));
+  setStep(1);
+}
+
+function resetToStep1() {
+  changeProduct();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── GENERATE ───────────────────────────────────────────────────────────────
+async function generateContent() {
+  if (!selectedProduct) return;
+  const s = getSettings();
+  if (!s.apiKey) {
+    showToast('Please add your Anthropic API key in Settings ⚙');
+    openSettings();
+    return;
+  }
+
+  setStep(2);
+  document.getElementById('step1Panel').style.display = 'none';
+  document.getElementById('selectedBar').style.display = 'none';
+  document.getElementById('generateBtn').style.display = 'none';
+  document.getElementById('checklistPanel').style.display = 'none';
+  document.getElementById('loadingPanel').style.display = 'block';
+
+  // Animate loading steps
+  const steps = ['ls1','ls2','ls3','ls4','ls5'];
+  let si = 0;
+  const stepInterval = setInterval(() => {
+    if (si > 0) document.getElementById(steps[si-1]).classList.remove('active');
+    if (si < steps.length) { document.getElementById(steps[si]).classList.add('active'); si++; }
+  }, 2000);
+
+  const today = new Date();
+  const dayName = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][today.getDay()];
+  const focus = getTodayFocus();
+  const reviewLinks = {
+    chapeltown: s.reviewChapeltown || 'https://g.page/r/CHAPELTOWN_REVIEW_LINK',
+    roundhay: s.reviewRoundhay || 'https://g.page/r/ROUNDHAY_REVIEW_LINK',
+    citycentre: s.reviewCityCentre || 'https://g.page/r/CITYCENTRE_REVIEW_LINK',
+  };
+
+  const systemPrompt = `You are the content generator for CC Hair & Beauty, Leeds, UK.
+
+BUSINESS CONTEXT (use these facts in every piece of content):
+- Trading since 1989 — always reference this as a trust signal
+- 9,000+ products, 1,000+ brands
+- All products genuine, dispatched from Leeds warehouse
+- Free UK delivery over £50
+- 3 physical stores in Leeds — the ONLY Leeds afro hair retailer with a full e-commerce website
+- Local competitors only opened in 2023 — CC Hair & Beauty has 36 years experience
+
+BRANCHES:
+- Chapeltown Road: 121-129 Chapeltown Road, Leeds LS7 3DU | Tel: 0113 262 8852 | Mon-Sun 9am-8pm
+- Roundhay Road: 256-258 Roundhay Road, Leeds LS8 5RL | Tel: 0113 249 5562 | Mon-Sun 9am-8pm
+- City Centre: 1-19 New York Street, Leeds | Tel: 0113 242 6262 | Mon-Sun 9am-7pm
+- Online: cchairandbeauty.com | 9am-5pm
+
+TODAY IS ${dayName}. CONTENT FOCUS: ${focus.hint}
+
+BRAND VOICE:
+- Warm, knowledgeable, community-focused
+- Written as if by someone who genuinely loves afro hair and beauty
+- Never corporate or stiff — friendly and real
+- References the Chapeltown community naturally
+- Inclusive and welcoming to all
+
+LOCAL LEEDS AREAS TO REFERENCE (rotate usage):
+Chapeltown, Roundhay, Harehills, Beeston, Headingley, Hyde Park, City Centre, LS7, LS8, LS9
+
+SEO RULES:
+- Blog minimum 1,200 words with proper HTML (h2, h3, p, strong, ul, li tags)
+- Blog must include 2 internal links: one to a relevant cchairandbeauty.com collection, one to another product
+- Meta title MUST be under 60 characters — count carefully
+- Meta description MUST be under 155 characters — count carefully
+- GBP posts MUST be under 150 words — NO hashtags in GBP posts
+- Instagram caption under 150 words, NO URL, end with a question to boost engagement
+- Facebook post includes product URL on its own line
+
+NEVER:
+- Never name competitors (Kashmir, Julia, Laila's, Pak Cosmetics, Sabina, Shaba)
+- Never use "look no further" or "one stop shop"
+- Never invent product claims not in the description
+- Never use hashtags in GBP posts
+
+MENU TAGS TAXONOMY (suggest which apply):
+menu-shampoo, menu-conditioners, menu-hair-mask, menu-hair-treatments, menu-serums-oils,
+menu-hair-styling, menu-relaxers, menu-hair-dye, menu-hair-care, menu-wigs, menu-wigs-lace-wigs,
+menu-hair-extensions, menu-pony-tails, menu-skin-care, menu-soaps, menu-makeup, menu-eyelashes,
+menu-accessories, menu-electrical, menu-for-kids, menu-for-men
+
+OUTPUT: Return ONLY a valid JSON object with exactly these keys (no markdown, no extra text):
+{
+  "blog_meta_title": "string max 60 chars",
+  "blog_meta_description": "string max 155 chars",
+  "blog_focus_keyword": "string",
+  "blog_excerpt": "string 1-2 sentences",
+  "blog_tags": "comma,separated,tags",
+  "blog_alt_text": "string describing the product image for SEO",
+  "blog_html": "full HTML blog post 1200+ words",
+  "gbp_chapeltown": "100-150 words NO hashtags ends with Chapeltown address",
+  "gbp_roundhay": "100-150 words NO hashtags ends with Roundhay address",
+  "gbp_city_centre": "100-150 words NO hashtags ends with City Centre address",
+  "instagram_caption": "punchy under 150 words no URL ends with question",
+  "instagram_hashtags": "20 hashtags starting with #cchairandbeauty",
+  "facebook_post": "conversational with URL on own line and address at bottom",
+  "review_request_whatsapp": "warm 2-3 sentence WhatsApp message asking for Google review",
+  "review_request_instore": "short friendly in-store verbal script for staff to say at till",
+  "qr_card_text": "text for printing on a QR code review card for this product",
+  "menu_tags": ["array","of","applicable","menu-tags"],
+  "shopify_tags": "comma,separated,shopify,tags"
+}`;
+
+  const userMessage = `Generate all content for this product:
+
+Product Name: ${selectedProduct.title}
+Price: ${selectedProduct.price}
+Brand: ${selectedProduct.vendor}
+Product Type: ${selectedProduct.productType}
+Current Tags: ${selectedProduct.tags}
+Description: ${selectedProduct.description}
+Product URL: https://cchairandbeauty.com/products/${selectedProduct.handle}`;
+
+  try {
+    const response = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMessage }]
+      })
+    });
+
+    clearInterval(stepInterval);
+    const data = await response.json();
+    const rawText = data.content?.[0]?.text || '';
+
+    let parsed;
+    try {
+      const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+      parsed = JSON.parse(jsonMatch ? jsonMatch[0] : rawText);
+    } catch(e) {
+      throw new Error('Could not parse AI response');
+    }
+
+    generatedContent = parsed;
+    addToHistory(selectedProduct);
+    showChecklist(parsed);
+
+  } catch(err) {
+    clearInterval(stepInterval);
+    document.getElementById('loadingPanel').style.display = 'none';
+    document.getElementById('step1Panel').style.display = 'block';
+    document.getElementById('selectedBar').style.display = 'flex';
+    document.getElementById('generateBtn').style.display = 'flex';
+    setStep(1);
+    showToast('Error generating content — check API key in Settings');
+    console.error(err);
+  }
+}
+
+// ── SHOW CHECKLIST ─────────────────────────────────────────────────────────
+function showChecklist(content) {
+  document.getElementById('loadingPanel').style.display = 'none';
+  document.getElementById('checklistPanel').style.display = 'block';
+  document.getElementById('checklistProduct').textContent = selectedProduct.title;
+  document.getElementById('genTime').textContent = new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+
+  tasksDone.clear();
+  updateProgress();
+
+  const s = getSettings();
+
+  const tasks = [
+    {
+      id: 'blog',
+      name: '1. Shopify Blog Post',
+      hint: 'Paste HTML into blog body. Fill in meta title, meta description and tags.',
+      time: '~2 min',
+      openUrl: 'https://admin.shopify.com/store/cchairandbeauty/articles/new',
+      openLabel: 'Open Shopify ↗',
+      sections: [
+        { label: 'Meta Title (paste into SEO title field)', content: content.blog_meta_title, badge: `${(content.blog_meta_title||'').length}/60 chars` },
+        { label: 'Meta Description (paste into SEO description field)', content: content.blog_meta_description, badge: `${(content.blog_meta_description||'').length}/155 chars` },
+        { label: 'Tags', content: content.blog_tags },
+        { label: 'Image Alt Text', content: content.blog_alt_text },
+        { label: 'Excerpt', content: content.blog_excerpt },
+        { label: 'Blog HTML (paste into body — use HTML mode)', content: content.blog_html },
+      ]
+    },
+    {
+      id: 'gbp1',
+      name: '2. GBP Post — Chapeltown Road',
+      hint: 'Go to business.google.com → select Chapeltown branch → Add Update → paste → add photo → publish',
+      time: '~30 sec',
+      openUrl: 'https://business.google.com',
+      openLabel: 'Open Google ↗',
+      sections: [{ label: 'Post text (copy and paste)', content: content.gbp_chapeltown }]
+    },
+    {
+      id: 'gbp2',
+      name: '3. GBP Post — Roundhay Road',
+      hint: 'Go to business.google.com → select Roundhay branch → Add Update → paste → add photo → publish',
+      time: '~30 sec',
+      openUrl: 'https://business.google.com',
+      openLabel: 'Open Google ↗',
+      sections: [{ label: 'Post text (copy and paste)', content: content.gbp_roundhay }]
+    },
+    {
+      id: 'gbp3',
+      name: '4. GBP Post — City Centre',
+      hint: 'Go to business.google.com → select City Centre branch → Add Update → paste → add photo → publish',
+      time: '~30 sec',
+      openUrl: 'https://business.google.com',
+      openLabel: 'Open Google ↗',
+      sections: [{ label: 'Post text (copy and paste)', content: content.gbp_city_centre }]
+    },
+    {
+      id: 'instagram',
+      name: '5. Instagram',
+      hint: 'Open Instagram app → + New Post → add product photo → paste caption → paste hashtags → share',
+      time: '~1 min',
+      openUrl: 'https://www.instagram.com',
+      openLabel: 'Open Instagram ↗',
+      sections: [
+        { label: 'Caption (no URL — add product photo)', content: content.instagram_caption },
+        { label: 'Hashtags (paste in first comment or after caption)', content: content.instagram_hashtags },
+      ]
+    },
+    {
+      id: 'facebook',
+      name: '6. Facebook',
+      hint: 'Open Facebook → Create Post → paste text → add product photo → post',
+      time: '~30 sec',
+      openUrl: 'https://www.facebook.com/cchairandbeauty',
+      openLabel: 'Open Facebook ↗',
+      sections: [{ label: 'Post text', content: content.facebook_post }]
+    },
+  ];
+
+  const bonusTasks = [
+    {
+      id: 'review_whatsapp',
+      name: '7. WhatsApp Review Request',
+      hint: 'Send to customers who bought this product via WhatsApp',
+      time: '~1 min',
+      sections: [
+        { label: 'WhatsApp message', content: (content.review_request_whatsapp||'').replace('[GOOGLE_REVIEW_LINK]', s.reviewChapeltown || '[Add Google review link in Settings]') },
+      ]
+    },
+    {
+      id: 'review_instore',
+      name: '8. In-Store Review Request Script',
+      hint: 'Say this to customers at the till after a positive interaction',
+      time: '~5 sec',
+      sections: [
+        { label: 'What to say at the till', content: content.review_instore || content.review_request_instore },
+        { label: 'QR Card text (print and put on counter)', content: content.qr_card_text },
+      ]
+    },
+    {
+      id: 'tags',
+      name: '9. Check Shopify Tags',
+      hint: 'Make sure these tags are applied to the product in Shopify for the right collections',
+      time: '~1 min',
+      sections: [],
+      tags: content.menu_tags || [],
+    },
+  ];
+
+  renderTaskList('taskList', tasks, false);
+  renderTaskList('bonusList', bonusTasks, true);
+  showHistory();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderTaskList(containerId, tasks, isBonus) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+
+  tasks.forEach(task => {
+    const item = document.createElement('div');
+    item.className = 'task-item';
+    item.id = `task-${task.id}`;
+
+    const actionsHtml = `
+      <div class="task-actions">
+        ${task.sections && task.sections.length > 0 ? `<button class="copy-btn" onclick="copyTaskContent('${task.id}',event)">Copy</button>` : ''}
+        ${task.openUrl ? `<a href="${task.openUrl}" target="_blank" class="open-btn">${task.openLabel || 'Open ↗'}</a>` : ''}
+        <button class="copy-btn" onclick="expandTask('${task.id}',event)">View</button>
+      </div>
+    `;
+
+    item.innerHTML = `
+      <div class="task-header">
+        <div class="task-check" onclick="toggleTask('${task.id}',event)"></div>
+        <div class="task-info">
+          <div class="task-name">${task.name}</div>
+          <div class="task-hint">${task.hint}</div>
+        </div>
+        <div class="task-time">${task.time}</div>
+        ${actionsHtml}
+      </div>
+      <div class="task-content" id="content-${task.id}">
+        ${task.tags && task.tags.length > 0 ? `
+          <div class="tags-display">${task.tags.map(t => `<div class="tag-pill">${t}</div>`).join('')}</div>
+        ` : ''}
+        ${(task.sections||[]).map((s, si) => `
+          <div style="margin-bottom:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px">${s.label}</div>
+              ${s.badge ? `<div style="font-size:10px;color:var(--gold);background:rgba(201,168,76,0.1);padding:2px 6px;border-radius:4px">${s.badge}</div>` : ''}
+            </div>
+            <div class="content-box" id="cb-${task.id}-${si}">${(s.content||'No content generated').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+            <button class="copy-btn" style="margin-top:6px" onclick="copyText(${JSON.stringify(s.content||'')},this)">Copy ${s.label.split('(')[0].trim()}</button>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+function expandTask(taskId, e) {
+  if(e) e.stopPropagation();
+  const content = document.getElementById(`content-${taskId}`);
+  content.classList.toggle('visible');
+}
+
+function copyTaskContent(taskId, e) {
+  if(e) e.stopPropagation();
+  // Find the main content for this task
+  const task = document.getElementById(`task-${taskId}`);
+  const firstBox = task.querySelector('.content-box');
+  if (firstBox) {
+    const text = firstBox.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      // Find the copy button
+      const btn = e.target;
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copied';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function toggleTask(taskId, e) {
+  if(e) e.stopPropagation();
+  const item = document.getElementById(`task-${taskId}`);
+  if (tasksDone.has(taskId)) {
+    tasksDone.delete(taskId);
+    item.classList.remove('done');
+  } else {
+    tasksDone.add(taskId);
+    item.classList.add('done');
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = 6;
+  const done = [...tasksDone].filter(id => ['blog','gbp1','gbp2','gbp3','instagram','facebook'].includes(id)).length;
+  const pct = Math.round((done/total)*100);
+  document.getElementById('progressFill').style.width = `${pct}%`;
+  document.getElementById('progressText').textContent = `${done} of ${total} tasks done${done === total ? ' — 🎉 All done!' : ''}`;
+}
+
+// ── WEEKLY SCHEDULE ────────────────────────────────────────────────────────
+function generateWeekSchedule() {
+  const grid = document.getElementById('weekGrid');
+  if (grid.style.display === 'grid') { grid.style.display = 'none'; return; }
+
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const focuses = [
+    'Hair care product', 'Wig or extension', 'Skin care or makeup',
+    'Braiding or accessories', 'Relaxer or high-impression', 'New arrival or promo', 'Community story'
+  ];
+  const today = (new Date().getDay() + 6) % 7;
+
+  if (allProducts.length === 0) { showToast('Load products first'); return; }
+
+  grid.style.display = 'grid';
+  grid.innerHTML = days.map((d, i) => {
+    const p = allProducts[Math.floor(Math.random() * allProducts.length)];
+    return `
+      <div class="day-card ${i === today ? 'today' : ''}">
+        <div class="day-name">${d}</div>
+        <div class="day-product">${p.title.substring(0,25)}${p.title.length>25?'...':''}</div>
+        <div class="day-focus">${focuses[i]}</div>
+      </div>
+    `;
   }).join('');
 }
 
-function selectProduct(id){
-  const prod=allProducts.find(p=>p.id===id);if(!prod)return;
-  selectedProduct=prod;
-  const price=prod.variants&&prod.variants[0]?'£'+parseFloat(prod.variants[0].price).toFixed(2):'';
-  const img=prod.images&&prod.images[0]?prod.images[0].src:'';
-  document.getElementById('sel-name').textContent=prod.title;
-  document.getElementById('sel-price').textContent=price;
-  document.getElementById('sel-img').src=img;
-  document.getElementById('sel-img').style.display=img?'block':'none';
-  document.getElementById('selected-prod').style.display='flex';
-  document.getElementById('prod-list').style.display='none';
-  document.getElementById('prod-search').value=prod.title;
-  document.getElementById('g-price').value=price;
-}
-
-function clearProduct(){
-  selectedProduct=null;
-  document.getElementById('selected-prod').style.display='none';
-  document.getElementById('prod-search').value='';
-  document.getElementById('g-price').value='';
-}
-
-function setView(v){
-  document.getElementById('tv-preview').classList.toggle('on',v==='preview');
-  document.getElementById('tv-html').classList.toggle('on',v==='html');
-  document.getElementById('blog-preview').style.display=v==='preview'?'block':'none';
-  document.getElementById('blog-html').style.display=v==='html'?'block':'none';
-}
-
-async function callClaude(prompt,tokens){
-  const k=getKey();
-  if(!k||!k.startsWith('sk-'))throw new Error('No API key — go to Settings and add your Anthropic key (sk-ant-...)');
-  const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:tokens||3000,messages:[{role:'user',content:prompt}]})});
-  const d=await r.json();
-  if(d.error)throw new Error(d.error.message||'API error');
-  return d.content.map(b=>b.text||'').join('');
-}
-
-function extr(t,l){const r=new RegExp(l+'[:\\s]+([^\\n]{2,}[^\\n]*)','i');const m=t.match(r);return m?m[1].trim():'';}
-function sec(t,a,b){const r=new RegExp('---'+a+'---\\s*([\\s\\S]*?)(?:---'+b+'---|$)','i');const m=t.match(r);return m?m[1].trim():'';}
-
-function seoCount(val,max,elId,lblId){
-  const cnt=document.getElementById(lblId);if(!cnt||!val)return;
-  const l=val.length;cnt.textContent=l+'/'+max+' chars';
-  cnt.className='cnt '+(l<=max?'ok':l<=max+10?'warn':'bad');
-}
-
-function calcScore(blog,kw,mt,md){
-  let s=0;const g=[];const i=[];
-  const w=blog.split(/\s+/).length;
-  if(w>=1200){s+=20;g.push('Great length ('+w+' words)');}else if(w>=800){s+=12;i.push('Add more content ('+w+' words, aim 1200+)');}else{s+=5;i.push('Too short ('+w+' words, need 1200+)');}
-  if(kw){const kc=(blog.toLowerCase().match(new RegExp(kw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g'))||[]).length;if(kc>=5){s+=20;g.push('Keyword used '+kc+'x — perfect density');}else if(kc>=3){s+=12;i.push('Keyword '+kc+'x — aim for 5-10 times');}else{s+=3;i.push('Keyword barely present — add to intro, headings, conclusion');}}
-  if(blog.includes('<h1>')){s+=15;g.push('H1 title present');}else i.push('Missing H1 — paste blog title as H1');
-  if((blog.match(/<h2>/g)||[]).length>=3){s+=15;g.push('Good subheading structure (H2s)');}else i.push('Needs more H2 subheadings (aim for 4-6)');
-  if((blog.match(/href="/g)||[]).length>=3){s+=15;g.push('Good product links throughout');}else i.push('Add more internal links to products');
-  if(mt&&mt.length>=40&&mt.length<=60){s+=10;g.push('Meta title perfect ('+mt.length+' chars)');}else if(mt)i.push('Meta title: currently '+( mt.length)+' chars — aim for 40-60');else i.push('Meta title missing');
-  if(md&&md.length>=120&&md.length<=155){s+=5;g.push('Meta description perfect ('+md.length+' chars)');}else if(md)i.push('Meta description: '+md.length+' chars — aim for 120-155');else i.push('Meta description missing');
-  s=Math.min(100,s);
-  const el=document.getElementById('sc-num');
-  el.textContent=s+'/100';
-  el.className='sn '+(s>=90?'great':s>=75?'good':s>=55?'ok':'bad');
-  const label=s>=90?'Excellent — ready to post!':s>=75?'Good — minor improvements possible':s>=55?'Needs work — see below':'Poor — needs significant improvement';
-  document.getElementById('sc-det').innerHTML=
-    '<strong>SEO Score: '+label+'</strong><br>'+
-    g.map(x=>'<span style="color:#2E7D32">✓</span> '+x).join('<br>')+
-    (i.length?'<br>'+i.map(x=>'<span style="color:#E65100">⚠</span> '+x).join('<br>'):'');
-}
-
-async function genAll(){
-  const prod=selectedProduct?selectedProduct.title:document.getElementById('prod-search').value.trim();
-  const type=document.getElementById('g-type').value;
-  const price=document.getElementById('g-price').value.trim();
-  const ben=document.getElementById('g-ben').value.trim();
-  const errEl=document.getElementById('g-err');
-  errEl.style.display='none';
-  if(!prod){errEl.textContent='Please enter or select a product name.';errEl.style.display='block';return;}
-  if(!getKey()||!getKey().startsWith('sk-')){errEl.textContent='Add your Anthropic API key in Settings first.';errEl.style.display='block';return;}
-
-  const productUrl=selectedProduct?BASE()+selectedProduct.handle:BASE()+n2h(prod);
-  const imgUrl=selectedProduct&&selectedProduct.images&&selectedProduct.images[0]?selectedProduct.images[0].src:'';
-
-  document.getElementById('input-card').style.display='none';
-  document.getElementById('pw').style.display='block';
-  document.getElementById('rw').style.display='none';
-  sp(5);['st-blog','st-social','st-canva','st-seo'].forEach(s=>ss(s,'wait'));
-
-  const prompt=`You are a senior SEO content writer and social media expert for ${STORE_NAME()} (${ADDR}, ${STORE_URL()}).
-Brand tagline: "Beauty Delivered". Est. 1979. UK's leading Afro-Caribbean hair and beauty retailer.
-
-PRODUCT: "${prod}" ${price?'— Price: '+price:''} ${ben?'— Details: '+ben:''}
-PRODUCT URL: ${productUrl}
-CONTENT TYPE: ${TYPES[type]||type}
-
-Generate ALL sections EXACTLY as labelled below. Do not skip any section.
-
----BLOG_TITLE---
-Write one SEO-optimised H1 title for this blog (include keyword, 8-12 words max)
-
----BLOG---
-Write a 1300-word SEO blog. Output as clean HTML only.
-Use: <h1>, <h2>, <h3>, <p>, <ul>, <li>, <strong>, <a href="">
-Rules:
-- First <h1> MUST contain the exact title from BLOG_TITLE
-- Include <a href="${productUrl}">${prod}</a> at least twice
-- Link to ${STORE_URL()} at least 2 more times as <a href="${STORE_URL()}">${STORE_NAME()}</a>
-- Use the focus keyword naturally every 120-150 words
-- Minimum 4 H2 subheadings
-- Final paragraph: mention ${STORE_NAME()}, ${ADDR}, open 7 days, free UK delivery over £50
-- End with: <p><strong>Beauty Delivered — ${STORE_NAME()}</strong></p>
-
----FACEBOOK---
-Write a Facebook post ONLY (different to Instagram). 3-5 sentences. Longer, conversational, educational.
-Include the product URL ${productUrl} on its own line.
-Include price ${price?price:'if known'}.
-End: 📍 ${STORE_NAME()}, Chapeltown Leeds | Free UK delivery over £50
-
----INSTAGRAM---
-Write an Instagram caption ONLY (different to Facebook). Max 100 words. Short, punchy, emotional.
-NO URL. NO price mention. End with a question to boost comments.
-Do NOT copy the Facebook post.
-
----HASHTAGS---
-Exactly 20 hashtags on one line starting with #. Include: #CCHairAndBeauty #Leeds #Chapeltown #BeautyDelivered #BlackHairCare + 15 product-specific tags.
-
----STORY---
-Slide 1: (one punchy hook line — make them stop scrolling)
-Slide 2: (product name + ONE key benefit — max 2 lines)
-Slide 3: (call to action + URL: ${productUrl})
-
----REEL---
-30-second Reel/TikTok script with timing:
-[0-3s] Hook (controversial or surprising statement)
-[3-8s] Product reveal (name it, show it)
-[8-20s] Demo 3 benefits
-[20-26s] Text overlay bullets (3 short benefits)
-[26-30s] Call to action (where to buy)
-
----META_TITLE---
-IMPORTANT: Write ONLY the meta title text here, nothing else. Max 60 characters. Include main keyword + ${STORE_NAME()}. Example: "BioSilk Silk Therapy Heat Protectant | CC Hair & Beauty"
-
----META_DESC---
-IMPORTANT: Write ONLY the meta description text here, nothing else. 120-155 characters. Include keyword, benefit, buy from CC Hair & Beauty Leeds. Example: "Shop BioSilk Silk Therapy Thermal Shield at CC Hair & Beauty, Leeds. Protects hair up to 450F with silk proteins. Free UK delivery over £50." 
-
----EXCERPT---
-2-3 sentences (max 160 words) for Shopify blog listing page. Engaging, keyword-rich, ends with a reason to click.
-
----SHOPIFY_TAGS---
-Comma-separated tags (no #). Include: brand name, product type, hair type, key ingredients, Leeds, UK, store name. 12-15 tags total.
-
----FOCUS_KW---
-Single best search keyword (what customers type in Google). One line only.
-
----SEO_TIPS---
-5 numbered expert SEO tips SPECIFIC to this product and page. Each tip must name an exact action e.g. "Change your H1 to include X" not general advice.
-
----ALT_TEXT---
-One SEO sentence for the blog header image alt text. Include product name, brand, "CC Hair & Beauty Leeds".
-
----IMG_GUIDE---
-- What image to use
-- Exact filename (e.g. product-name-cc-hair-beauty-leeds.jpg)
-- Text overlay for Canva (what text to add on top of the image)`;
-
-  try{
-    ss('st-blog','run');ss('st-social','run');sp(15);
-    const text=await callClaude(prompt,4000);
-    sp(65);ss('st-blog','done');ss('st-social','done');ss('st-seo','run');
-
-    const blogTitle=sec(text,'BLOG_TITLE','BLOG').split('\n')[0].trim();
-    const blog=sec(text,'BLOG','FACEBOOK');
-    const fb=sec(text,'FACEBOOK','INSTAGRAM');
-    const ig=sec(text,'INSTAGRAM','HASHTAGS');
-    const tags=sec(text,'HASHTAGS','STORY');
-    const story=sec(text,'STORY','REEL');
-    const reel=sec(text,'REEL','META_TITLE');
-    // Meta fields - use sec() since they are between --- markers, fallback to extr()
-    let mt=sec(text,'META_TITLE','META_DESC').split('\n')[0].trim();
-    if(!mt)mt=extr(text,'META_TITLE');
-    let md=sec(text,'META_DESC','EXCERPT').split('\n')[0].trim();
-    if(!md)md=extr(text,'META_DESC');
-    const excerpt=sec(text,'EXCERPT','SHOPIFY_TAGS');
-    const shopifyTags=sec(text,'SHOPIFY_TAGS','FOCUS_KW');
-    const fkw=extr(text,'FOCUS_KW');
-    const seoTips=sec(text,'SEO_TIPS','ALT_TEXT');
-    const alt=extr(text,'ALT_TEXT');
-    const imgR=sec(text,'IMG_GUIDE','ZZZZ');
-
-    document.getElementById('blog-title').textContent=blogTitle||prod+' — '+STORE_NAME();
-    document.getElementById('blog-preview').innerHTML=blog;
-    document.getElementById('blog-html').textContent=blog;
-    document.getElementById('wc').textContent=blog.split(/\s+/).length+' words';
-    document.getElementById('fb-txt').textContent=fb;
-    document.getElementById('ig-cap').textContent=ig;
-    document.getElementById('ig-tags').textContent=tags;
-    document.getElementById('ig-story').textContent=story;
-    document.getElementById('reel').textContent=reel;
-    document.getElementById('meta-title').textContent=mt;
-    document.getElementById('meta-desc').textContent=md;
-    document.getElementById('excerpt').textContent=excerpt;
-    document.getElementById('shopify-tags').textContent=shopifyTags;
-    document.getElementById('focus-kw').textContent=fkw;
-    document.getElementById('seo-tips').textContent=seoTips;
-    document.getElementById('alt-text').textContent=alt||prod+' at '+STORE_NAME()+', Chapeltown, Leeds';
-
-    seoCount(mt,60,'meta-title','mt-cnt');
-    seoCount(md,155,'meta-desc','md-cnt');
-    calcScore(blog,fkw,mt,md);
-
-    const canvaPrompt=`Create a branded Instagram post (1080x1080px) for ${STORE_NAME()} promoting "${prod}"${price?' at '+price:''}. Theme: ${TYPES[type]}. Use my brand kit (CC Hair & Beauty brand). Include: "Beauty Delivered" tagline, cchairandbeauty.com, Chapeltown Leeds. Purple #3D1A6E and gold #F5C800 colour scheme. Bold eye-catching text.`;
-    document.getElementById('cv-prompt').textContent=canvaPrompt;
-    document.getElementById('cv-cap').textContent=fb+'\n\n---\n\nInstagram:\n'+ig+'\n\n'+tags;
-
-    const imgTips=imgR.split('\n').filter(l=>l.trim());
-    document.getElementById('img-tips').innerHTML=imgTips.map(t=>`<li style="font-size:12px;color:#412402;margin-bottom:3px;line-height:1.5">${t.replace(/^[-•]\s*/,'')}</li>`).join('')||
-      `<li style="font-size:12px;color:#412402;margin-bottom:3px">Use the official product photo on a clean background</li>
-       <li style="font-size:12px;color:#412402;margin-bottom:3px">1200x630px for blog header, 1080x1080px for Instagram</li>
-       <li style="font-size:12px;color:#412402;margin-bottom:3px">Filename: ${n2h(prod)}-cc-hair-beauty-leeds.jpg</li>`;
-
-    ss('st-seo','done');ss('st-canva','done');sp(100);
-    document.getElementById('r-name').textContent=prod;
-    document.getElementById('r-sub').textContent=TYPES[type]+' — blog, Shopify fields, social posts and Canva prompt ready';
-    document.getElementById('pw').style.display='none';
-    document.getElementById('rw').style.display='block';
-    setView('preview');
-
-  }catch(err){
-    document.getElementById('pw').style.display='none';
-    document.getElementById('input-card').style.display='block';
-    const errEl=document.getElementById('g-err');
-    errEl.textContent='Error: '+err.message;errEl.style.display='block';
-    ['st-blog','st-social','st-canva','st-seo'].forEach(s=>ss(s,'err'));
+// ── STEP MANAGEMENT ────────────────────────────────────────────────────────
+function setStep(n) {
+  const s1 = document.getElementById('step1-indicator');
+  const s2 = document.getElementById('step2-indicator');
+  if (n === 1) {
+    s1.className = 'step active';
+    s2.className = 'step inactive';
+  } else {
+    s1.className = 'step done';
+    s1.innerHTML = '<div class="step-num">✓</div> Product Selected';
+    s2.className = 'step active';
   }
 }
 
-function resetAll(){
-  document.getElementById('rw').style.display='none';
-  document.getElementById('input-card').style.display='block';
-  document.getElementById('g-ben').value='';
-  sp(0);
+// ── TOAST ──────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-function copyEl(id,btn){
-  const el=document.getElementById(id);
-  const text=el.textContent||el.innerText||el.value||'';
-  navigator.clipboard.writeText(text).then(()=>{
-    const o=btn.textContent;btn.textContent='Copied!';btn.classList.add('ok');
-    setTimeout(()=>{btn.textContent=o;btn.classList.remove('ok');},2000);
-  });
-}
-
-function dlBlog(){
-  const html=document.getElementById('blog-html').textContent;
-  const title=document.getElementById('blog-title').textContent;
-  const meta_t=document.getElementById('meta-title').textContent;
-  const meta_d=document.getElementById('meta-desc').textContent;
-  const full=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${meta_t||title}</title><meta name="description" content="${meta_d}"><style>body{font-family:Arial;max-width:820px;margin:40px auto;padding:0 24px;line-height:1.8;color:#1a1a1a}h1{color:#3D1A6E}h2{color:#2d1254}a{color:#3D1A6E}</style></head><body>${html}</body></html>`;
-  const blob=new Blob([full],{type:'text/html'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download=n2h(title||'blog')+'-cc-hair-beauty.html';a.click();
-}
-
-function openFB(){
-  const text=document.getElementById('fb-txt').textContent;
-  navigator.clipboard.writeText(text).then(()=>{
-    alert('Facebook post copied!\n\nFacebook is opening — paste with Ctrl+V (Cmd+V on Mac)');
-    window.open('https://www.facebook.com/','_blank');
-  });
-}
-
-function handleDrop(e){e.preventDefault();document.getElementById('dz').classList.remove('drag');handleFile(e.dataTransfer.files[0]);}
-
-async function handleFile(file){
-  if(!file)return;
-  if(!getKey()||!getKey().startsWith('sk-')){alert('Add your API key in Settings first.');return;}
-  const st=document.getElementById('rep-status');
-  document.getElementById('rep-st').textContent='Reading: '+file.name+'...';
-  st.style.display='block';document.getElementById('rep-wrap').style.display='none';
-  const reader=new FileReader();
-  reader.onload=async function(e){
-    const content=typeof e.target.result==='string'?e.target.result.substring(0,9000):'Data file uploaded';
-    document.getElementById('rep-st').textContent='Running SEO expert analysis (20-30 seconds)...';
-    try{
-      const today=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-      const prompt=`You are a senior Google SEO expert analysing data for ${STORE_NAME()} (${STORE_URL()}, Leeds UK, Afro-Caribbean hair and beauty retailer).
-Today: ${today}
-
-Data from their Google Search Console / Analytics report:
-${content}
-
-Provide a precise weekly SEO action plan formatted clearly:
-
-## THIS WEEK'S SEO SCORE: X/10
-Brief explanation of current SEO health.
-
-## CRITICAL FIXES (do today — hurting rankings now)
-For each issue: what it is, why it matters, EXACT fix with specific instructions.
-
-## BLOG OPPORTUNITIES (write this week — ranked by impact)
-For each: keyword, monthly impressions, current CTR, EXACT suggested blog title, why it will rank, expected traffic increase.
-
-## PAGES TO FIX THIS WEEK (meta titles + descriptions)
-For each page: current URL, current CTR, EXACT new meta title (write it out, max 60 chars), EXACT new meta description (write it out, max 155 chars).
-
-## TRENDING PRODUCTS THIS WEEK
-Products with increasing searches. For each: what to post, suggested post type.
-
-## TOP PRIORITY — SINGLE ACTION TODAY
-The one thing that will have the most impact. Be very specific.
-
-## KEYWORDS TO TARGET NEXT MONTH
-5 keywords with good traffic potential that you don't yet rank for. For each: keyword, estimated monthly searches, difficulty, suggested content type.
-
-Be extremely specific. Give exact titles, exact meta descriptions, exact keyword phrases. No general advice.`;
-
-      const analysis=await callClaude(prompt,2500);
-      curReport=analysis;
-      document.getElementById('rep-out').textContent=analysis;
-      document.getElementById('rep-title').textContent='SEO Report — '+today;
-      document.getElementById('rep-wrap').style.display='block';
-      st.style.display='none';
-    }catch(err){document.getElementById('rep-st').textContent='Error: '+err.message;}
-  };
-  reader.readAsText(file);
-}
-
-function dlReport(){
-  if(!curReport)return;
-  const blob=new Blob([curReport],{type:'text/plain'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download='seo-report-'+new Date().toISOString().split('T')[0]+'.txt';a.click();
-}
-
-function saveKey(){
-  const k=document.getElementById('api-inp').value.trim();
-  if(!k)return alert('Please enter your key.');
-  localStorage.setItem('ccApiKey',k);
-  show('key-sv');
-}
-function saveShopify(){
-  const d=document.getElementById('sh-domain').value.trim();
-  const t=document.getElementById('sh-token').value.trim();
-  if(!d||!t){alert('Please enter both the Shopify domain and the API token.');return;}
-  localStorage.setItem('shDomain',d);
-  localStorage.setItem('shToken',t);
-  show('sh-sv');
-  setTimeout(()=>{
-    if(confirm('Shopify settings saved! Click OK to go to Generate Content and load your products.')){
-      showSc('gen',document.querySelectorAll('.nb')[0]);
-    }
-  },500);
-}
-function saveStore(){
-  const u=document.getElementById('s-url').value.trim();
-  const n=document.getElementById('s-name').value.trim();
-  if(u)localStorage.setItem('sUrl',u);
-  if(n)localStorage.setItem('sName',n);
-  show('store-sv');
-}
-function show(id){const el=document.getElementById(id);el.style.display='block';setTimeout(()=>el.style.display='none',3000);}
-
-window.addEventListener('load',()=>{
-  const k=localStorage.getItem('ccApiKey');if(k)document.getElementById('api-inp').value=k;
-  const sd=localStorage.getItem('shDomain');if(sd)document.getElementById('sh-domain').value=sd;
-  const st=localStorage.getItem('shToken');if(st)document.getElementById('sh-token').value=st;
-  const su=localStorage.getItem('sUrl');if(su)document.getElementById('s-url').value=su;
-  const sn=localStorage.getItem('sName');if(sn)document.getElementById('s-name').value=sn;
-});
+// ── INIT ───────────────────────────────────────────────────────────────────
+loadProducts();
 </script>
 </body>
 </html>
