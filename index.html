@@ -42,24 +42,25 @@ body {
 .header {
   background: var(--dark2);
   border-bottom: 1px solid var(--border);
-  padding: 14px 20px;
+  padding: 12px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.4);
 }
 .logo { display: flex; align-items: center; gap: 10px; }
 .logo-icon {
-  width: 32px; height: 32px;
-  background: linear-gradient(135deg, var(--gold), var(--purple-light));
+  width: 36px; height: 36px;
+  background: var(--dark3);
+  border: 1.5px solid var(--gold);
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
 }
-.logo-text { font-size: 15px; font-weight: 600; color: var(--gold); }
-.logo-sub { font-size: 11px; color: var(--text3); }
+.logo-text { font-size: 15px; font-weight: 700; color: var(--gold); letter-spacing: 0.3px; }
+.logo-sub { font-size: 10px; color: var(--text3); letter-spacing: 0.2px; }
 .header-right { display: flex; align-items: center; gap: 8px; }
 .settings-btn {
   background: var(--surface); border: 1px solid var(--border);
@@ -88,8 +89,8 @@ body {
   cursor: pointer;
   transition: all 0.2s;
 }
-.step.active { background: var(--gold); color: var(--dark); }
-.step.done { background: var(--green-dark); color: #fff; }
+.step.active { background: var(--gold); color: #0A0A0A; font-weight: 700; }
+.step.done { background: #1A7A44; color: #fff; font-weight: 600; }
 .step.inactive { background: var(--surface); color: var(--text3); }
 .step-num {
   width: 20px; height: 20px; border-radius: 50%;
@@ -103,7 +104,7 @@ body {
 .panel {
   background: var(--dark2);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 12px;
   overflow: hidden;
   margin-bottom: 16px;
 }
@@ -112,14 +113,16 @@ body {
   border-bottom: 1px solid var(--border2);
   display: flex; align-items: center; justify-content: space-between;
 }
-.panel-title { font-size: 14px; font-weight: 600; color: var(--gold); }
+.panel-title { font-size: 13px; font-weight: 700; color: var(--gold); letter-spacing: 0.5px; text-transform: uppercase; }
 .panel-body { padding: 20px; }
 
 /* ── SUGGESTED PRODUCTS ── */
 .suggested-label {
-  font-size: 11px; font-weight: 600; letter-spacing: 1px;
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
   text-transform: uppercase; color: var(--text3);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border2);
 }
 .suggested-grid {
   display: grid;
@@ -235,21 +238,22 @@ body {
 /* ── GENERATE BUTTON ── */
 .generate-btn {
   width: 100%;
-  background: linear-gradient(135deg, var(--gold), #A07830);
-  color: var(--dark);
+  background: var(--gold);
+  color: #0A0A0A;
   border: none;
   border-radius: 12px;
-  padding: 18px;
+  padding: 18px 24px;
   font-size: 16px; font-weight: 700;
   font-family: inherit;
   cursor: pointer;
   transition: all 0.2s;
   display: flex; align-items: center; justify-content: center; gap: 10px;
+  letter-spacing: 0.3px;
 }
-.generate-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
+.generate-btn:hover { background: var(--gold-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,168,76,0.4); }
 .generate-btn:active { transform: translateY(0); }
-.generate-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-.generate-btn .btn-sub { font-size: 12px; font-weight: 400; opacity: 0.8; }
+.generate-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.generate-btn .btn-sub { font-size: 11px; font-weight: 500; opacity: 0.75; }
 
 /* ── LOADING ── */
 .loading-state {
@@ -280,7 +284,7 @@ body {
   border-bottom: 1px solid var(--border);
   padding: 16px 20px;
 }
-.checklist-title { font-size: 16px; font-weight: 700; color: var(--gold); }
+.checklist-title { font-size: 14px; font-weight: 700; color: var(--gold); letter-spacing: 0.5px; text-transform: uppercase; }
 .checklist-product { font-size: 12px; color: var(--text2); margin-top: 2px; }
 .checklist-meta {
   display: flex; gap: 16px; margin-top: 10px;
@@ -295,25 +299,44 @@ body {
   overflow: hidden;
   transition: border-color 0.2s;
 }
-.task-item.done { border-color: rgba(46,204,113,0.3); background: rgba(46,204,113,0.03); }
+.task-item.done { 
+  border-color: rgba(46,204,113,0.5); 
+  background: rgba(46,204,113,0.06);
+  transform: none;
+}
+.task-item.done .task-name { 
+  color: var(--text3); 
+  text-decoration: line-through;
+  text-decoration-color: var(--green);
+}
+.task-item.done .task-time {
+  color: var(--green);
+  background: rgba(46,204,113,0.15);
+}
 .task-header {
   display: flex; align-items: center; gap: 12px;
   padding: 16px 14px;
   cursor: pointer;
 }
 .task-check {
-  width: 30px; height: 30px;
+  width: 32px; height: 32px;
   border: 2px solid var(--border);
   border-radius: 8px;
   flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   font-size: 16px;
 }
+.task-check:hover {
+  border-color: var(--green);
+  transform: scale(1.1);
+}
 .task-item.done .task-check {
-  background: var(--green); border-color: var(--green);
+  background: var(--green);
+  border-color: var(--green);
   color: white;
+  transform: scale(1.05);
 }
 .task-info { flex: 1; }
 .task-name { font-size: 15px; font-weight: 700; color: var(--text); }
@@ -532,15 +555,21 @@ body {
 <!-- HEADER -->
 <div class="header">
   <div class="logo">
-    <div class="logo-icon">✂</div>
+    <div class="logo-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#C9A84C" stroke-width="1.5"/>
+        <path d="M8 12h8M12 8v8" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="12" cy="12" r="2" fill="#C9A84C"/>
+      </svg>
+    </div>
     <div>
       <div class="logo-text">CC Hair & Beauty</div>
-      <div class="logo-sub">Content Generator</div>
+      <div class="logo-sub">Smart Content Generator · Leeds Since 1989</div>
     </div>
   </div>
   <div class="header-right">
     <button class="load-btn" onclick="loadProducts()">↻ Refresh</button>
-    <button class="settings-btn" id="themeBtn" onclick="toggleTheme()">🌙 Dark</button>
+    <button class="settings-btn" id="themeBtn" onclick="toggleTheme()">☀ Light</button>
     <button class="settings-btn" onclick="openSettings()">⚙ Settings</button>
   </div>
 </div>
@@ -671,6 +700,21 @@ body {
     <span>✦ Generate Today's Content</span>
     <span class="btn-sub">Daily blog · 3 GBP posts · Instagram · Facebook · Review request</span>
   </button>
+
+  <!-- PRE-GENERATE AI IMAGE BUTTON (shown alongside generate btn) -->
+  <div id="preAiImageBar" style="display:none;margin-top:8px">
+    <button onclick="preGenerateAIImage()" style="
+      width:100%;background:linear-gradient(135deg,#10a37f,#0d7a5f);
+      color:#fff;border:none;border-radius:12px;padding:13px;
+      font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;
+      display:flex;align-items:center;justify-content:center;gap:8px;
+    ">
+      ✦ Also Generate AI Image Now
+      <span style="font-size:11px;font-weight:400;opacity:0.8">~15 sec · will be ready in Step 2</span>
+    </button>
+    <div id="preAiImageStatus" style="font-size:11px;color:var(--text3);
+         text-align:center;margin-top:6px;display:none"></div>
+  </div>
 
   <!-- LOADING STATE -->
   <div class="panel" id="loadingPanel" style="display:none">
@@ -1170,6 +1214,12 @@ function selectProduct(product) {
   document.getElementById('selectedBar').style.display = 'flex';
   document.getElementById('generateBtn').style.display = 'flex';
 
+  // Show pre-generate AI image button if OpenAI key is set
+  const _s = getSettings();
+  if (_s.openaiKey && product.image) {
+    document.getElementById('preAiImageBar').style.display = 'block';
+  }
+
   // Scroll to top so generate button is visible
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1178,6 +1228,7 @@ function changeProduct() {
   selectedProduct = null;
   document.getElementById('selectedBar').style.display = 'none';
   document.getElementById('generateBtn').style.display = 'none';
+  document.getElementById('preAiImageBar').style.display = 'none';
   document.getElementById('checklistPanel').style.display = 'none';
   document.getElementById('loadingPanel').style.display = 'none';
   document.getElementById('step1Panel').style.display = 'block';
@@ -1238,11 +1289,15 @@ BUSINESS CONTEXT (use these facts in every piece of content):
 - 3 physical stores in Leeds — the ONLY Leeds afro hair retailer with a full e-commerce website
 - Local competitors only opened in 2023 — CC Hair & Beauty has 36 years experience
 
-BRANCHES:
+BRANCHES (mention ALL 3 in social media posts where relevant):
 - Chapeltown Road: 121-129 Chapeltown Road, Leeds LS7 3DU | Tel: 0113 262 8852 | Mon-Sun 9am-8pm
 - Roundhay Road: 256-258 Roundhay Road, Leeds LS8 5RL | Tel: 0113 249 5562 | Mon-Sun 9am-8pm
 - City Centre: 1-19 New York Street, Leeds | Tel: 0113 242 6262 | Mon-Sun 9am-7pm
-- Online: cchairandbeauty.com | 9am-5pm
+- Online: cchairandbeauty.com | Mon-Sun 9am-5pm | Free UK delivery over £50
+
+SOCIAL MEDIA BRANCH RULE: Instagram and Facebook posts must mention all 3 branch locations 
+at the bottom e.g. "Find us: Chapeltown Road · Roundhay Road · City Centre · cchairandbeauty.com"
+This builds awareness of all locations with every single post.
 
 TODAY IS ${dayName}. CONTENT FOCUS: ${focus.hint}
 
@@ -1264,6 +1319,14 @@ SEO RULES:
 - GBP posts can be up to 1,500 characters — NO hashtags in GBP posts
 - Instagram caption under 150 words, NO URL, end with a question to boost engagement
 - Facebook post includes product URL on its own line
+
+GENDER & AUDIENCE TARGETING:
+- If product is clearly for men (beard, shaving, wave, durag, men's grooming) — address men directly
+- If product is clearly for women — address women directly  
+- If product is for children — address parents
+- If product is unisex — address everyone
+- Always mention the target audience in the first line of Instagram and Facebook posts
+- Examples: "Gentlemen, this one's for you 💈" / "Ladies, your hair routine just got better ✨" / "For the naturals in Leeds 🌿"
 
 NEVER:
 - Never name competitors (Kashmir, Julia, Laila's, Pak Cosmetics, Sabina, Shaba)
@@ -1859,30 +1922,30 @@ function applyTheme(theme) {
   localStorage.setItem('cc_theme', theme);
   const root = document.documentElement;
   if (theme === 'light') {
-    root.style.setProperty('--dark', '#F8F5FF');
+    root.style.setProperty('--dark', '#F5F5F5');
     root.style.setProperty('--dark2', '#FFFFFF');
-    root.style.setProperty('--dark3', '#EEE8F8');
-    root.style.setProperty('--surface', '#EDE8F5');
-    root.style.setProperty('--surface2', '#E2DAF0');
-    root.style.setProperty('--text', '#160830');
-    root.style.setProperty('--text2', '#3A2860');
-    root.style.setProperty('--text3', '#8070A0');
-    root.style.setProperty('--border', 'rgba(74,26,107,0.3)');
-    root.style.setProperty('--border2', 'rgba(74,26,107,0.15)');
+    root.style.setProperty('--dark3', '#EEEEEE');
+    root.style.setProperty('--surface', '#F0F0F0');
+    root.style.setProperty('--surface2', '#E8E8E8');
+    root.style.setProperty('--text', '#0A0A0A');
+    root.style.setProperty('--text2', '#333333');
+    root.style.setProperty('--text3', '#777777');
+    root.style.setProperty('--border', 'rgba(201,168,76,0.4)');
+    root.style.setProperty('--border2', 'rgba(0,0,0,0.08)');
     root.style.setProperty('--green', '#1E8A3C');
     root.style.setProperty('--green-dark', '#166830');
     document.getElementById('themeBtn').textContent = '🌙 Dark';
   } else {
-    root.style.setProperty('--dark', '#0F0A18');
-    root.style.setProperty('--dark2', '#1A1128');
-    root.style.setProperty('--dark3', '#241836');
-    root.style.setProperty('--surface', '#2E2040');
-    root.style.setProperty('--surface2', '#3A2B50');
-    root.style.setProperty('--text', '#F0E8FF');
-    root.style.setProperty('--text2', '#B8A8D8');
-    root.style.setProperty('--text3', '#7A6A90');
-    root.style.setProperty('--border', 'rgba(201,168,76,0.2)');
-    root.style.setProperty('--border2', 'rgba(201,168,76,0.08)');
+    root.style.setProperty('--dark', '#0A0A0A');
+    root.style.setProperty('--dark2', '#111111');
+    root.style.setProperty('--dark3', '#1A1A1A');
+    root.style.setProperty('--surface', '#222222');
+    root.style.setProperty('--surface2', '#2A2A2A');
+    root.style.setProperty('--text', '#FFFFFF');
+    root.style.setProperty('--text2', '#CCCCCC');
+    root.style.setProperty('--text3', '#888888');
+    root.style.setProperty('--border', 'rgba(201,168,76,0.25)');
+    root.style.setProperty('--border2', 'rgba(255,255,255,0.08)');
     root.style.setProperty('--green', '#2ECC71');
     root.style.setProperty('--green-dark', '#1A7A44');
     document.getElementById('themeBtn').textContent = '☀ Light';
@@ -2073,7 +2136,8 @@ async function generateAIImage(handle) {
     imageContext ? imageContext : '',
     `Style: Clean studio background, professional beauty product lighting,`,
     `luxury afro hair and beauty aesthetic. Shot from slight angle showing product clearly.`,
-    `No text overlays. No people. Square composition. High detail, photorealistic.`,
+    `No people. Square composition. High detail, photorealistic.`,
+    `Add a subtle watermark: small semi-transparent white text "cchairandbeauty.com" at the very bottom centre edge.`,
     `Suitable for Instagram, Facebook and Google Business posts for CC Hair & Beauty Leeds.`,
   ].filter(Boolean).join(' ');
 
@@ -2338,7 +2402,7 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
         `Create a realistic image of: ${product.title} by ${product.vendor || 'CC Hair & Beauty'}.`,
         `Setting: ${sceneDesc}.`,
         `The product should look exactly like the real product with correct packaging and label.`,
-        `No people, no faces. Square format. Photorealistic. For CC Hair & Beauty Leeds.`,
+        `No people, no faces. Square format. Photorealistic. Add subtle watermark text 'cchairandbeauty.com' in small semi-transparent white text at the bottom edge.`,
       ].join(' ');
 
       const resp = await fetch('/api/generate-image', {
@@ -2519,6 +2583,37 @@ async function downloadShopifyImage(imgUrl, seoBase) {
     debugLog('DOWNLOAD_FALLBACK', 'Opening in new tab');
     window.open(imgUrl, '_blank');
     showToast('Opened in new tab — right-click → Save image as: ' + filename);
+  }
+}
+
+
+// ── PRE-GENERATE AI IMAGE (before content generation) ────────────────────
+async function preGenerateAIImage() {
+  if (!selectedProduct || !selectedProduct.image) return;
+  const s = getSettings();
+  const btn = event.target.closest('button');
+  const statusEl = document.getElementById('preAiImageStatus');
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px"></div> Generating AI image...';
+  statusEl.style.display = 'block';
+  statusEl.textContent = 'Running in background — click Generate when ready';
+
+  const setting = autoPickSetting(selectedProduct);
+  window._preGenSetting = setting;
+  window._aiImageData = null;
+
+  // Run silently in background
+  try {
+    await generateAIImageAuto(selectedProduct, { image_prompt: '' }, setting);
+    btn.innerHTML = '✓ AI Image Ready — Generate Content Now';
+    btn.style.background = 'linear-gradient(135deg,#2ECC71,#1A7A44)';
+    statusEl.textContent = 'Image ready and waiting in Task 5';
+  } catch(e) {
+    btn.innerHTML = '✗ Image failed — Generate Content anyway';
+    btn.style.background = 'var(--surface)';
+    btn.style.color = 'var(--text3)';
+    btn.disabled = false;
   }
 }
 
