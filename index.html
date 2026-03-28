@@ -593,6 +593,48 @@ body {
         <div style="text-align:center;margin-top:10px">
           <button class="load-btn" onclick="loadMoreProducts()">Load more products</button>
         </div>
+
+        <!-- MANUAL PRODUCT URL INPUT -->
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border2)">
+          <div class="suggested-label">OR PASTE A PRODUCT URL</div>
+          <div style="display:flex;gap:8px;align-items:stretch">
+            <input type="text" id="manualUrl"
+              class="search-input"
+              style="flex:1;padding-left:16px"
+              placeholder="https://cchairandbeauty.com/products/product-name">
+            <button onclick="loadFromUrl()" style="
+              background:var(--gold);color:var(--dark);
+              border:none;border-radius:10px;padding:0 18px;
+              font-size:13px;font-weight:700;cursor:pointer;
+              font-family:inherit;white-space:nowrap;
+            ">Load Product</button>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">
+            Paste any product URL from cchairandbeauty.com and we'll use it to generate content
+          </div>
+        </div>
+
+        <!-- DEBUG SECTION -->
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border2)">
+          <div class="suggested-label">🔧 Connection Debug</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button onclick="runDebug()" class="copy-btn" style="font-size:12px;padding:8px 14px">
+              Test Shopify Connection
+            </button>
+            <button onclick="clearCache()" class="copy-btn" style="font-size:12px;padding:8px 14px">
+              Clear Cache & Reload
+            </button>
+          </div>
+          <div id="debugOutput" style="
+            margin-top:10px;display:none;
+            background:var(--dark3);border:1px solid var(--border2);
+            border-radius:8px;padding:12px;
+            font-size:11px;font-family:'DM Mono',monospace;
+            color:var(--text2);line-height:1.7;
+            max-height:250px;overflow-y:auto;
+          "></div>
+        </div>
+
       </div>
     </div>
 
@@ -1403,6 +1445,165 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+
+// ── MANUAL URL LOAD ────────────────────────────────────────────────────────
+async function loadFromUrl() {
+  const url = document.getElementById('manualUrl').value.trim();
+  if (!url) { showToast('Please paste a product URL'); return; }
+
+  // Extract handle from URL
+  // e.g. https://cchairandbeauty.com/products/cantu-leave-in-repair or just the handle
+  let handle = url;
+  if (url.includes('/products/')) {
+    handle = url.split('/products/')[1].split('?')[0].split('#')[0];
+  }
+
+  showToast('Loading product...');
+
+  try {
+    // Try to fetch product data from Shopify via proxy
+    const s = getSettings();
+    let product = null;
+
+    if (s.shopifyToken && s.shopifyDomain) {
+      try {
+        const resp = await fetch(`/api/shopify?domain=${s.shopifyDomain}&token=${s.shopifyToken}&endpoint=product_by_handle&handle=${handle}`);
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data.product) {
+            const p = data.product;
+            product = {
+              id: p.id,
+              title: p.title,
+              price: p.variants?.[0]?.price ? `£${parseFloat(p.variants[0].price).toFixed(2)}` : '',
+              image: p.images?.[0]?.src || '',
+              tags: p.tags || '',
+              productType: p.product_type || '',
+              vendor: p.vendor || '',
+              description: p.body_html?.replace(/<[^>]+>/g,'').substring(0,500) || '',
+              handle: p.handle,
+            };
+          }
+        }
+      } catch(e) { console.log('Shopify fetch failed, using URL handle'); }
+    }
+
+    // Fallback — build a basic product from the URL handle
+    if (!product) {
+      const title = handle.replace(/-/g, ' ').replace(/\w/g, l => l.toUpperCase());
+      product = {
+        id: handle,
+        title: title,
+        price: '',
+        image: '',
+        tags: '',
+        productType: 'Hair Care',
+        vendor: '',
+        description: `Product from cchairandbeauty.com/products/${handle}`,
+        handle: handle,
+      };
+      showToast('✓ Product loaded from URL — price/image not available');
+    } else {
+      showToast('✓ Product loaded from Shopify');
+    }
+
+    selectProduct(product);
+    document.getElementById('manualUrl').value = '';
+
+  } catch(e) {
+    showToast('Could not load product — check the URL');
+    console.error(e);
+  }
+}
+
+// Allow pressing Enter in the URL field
+document.addEventListener('DOMContentLoaded', () => {
+  const urlInput = document.getElementById('manualUrl');
+  if (urlInput) urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') loadFromUrl(); });
+});
+
+// ── DEBUG ──────────────────────────────────────────────────────────────────
+async function runDebug() {
+  const s = getSettings();
+  const out = document.getElementById('debugOutput');
+  out.style.display = 'block';
+  out.textContent = 'Running connection tests...';
+
+  const lines = [];
+  lines.push('=== CC HAIR & BEAUTY — CONNECTION DEBUG ===');
+  lines.push(`Time: ${new Date().toISOString()}`);
+  lines.push('');
+  lines.push('--- SETTINGS CHECK ---');
+  lines.push(`Shopify Domain: ${s.shopifyDomain || 'NOT SET'}`);
+  lines.push(`Shopify Token: ${s.shopifyToken ? s.shopifyToken.substring(0,12)+'... (set)' : 'NOT SET'}`);
+  lines.push(`Token format OK: ${s.shopifyToken?.startsWith('shpat_') ? '✓ YES' : '✗ NO — must start with shpat_'}`);
+  lines.push(`Anthropic Key: ${s.apiKey ? s.apiKey.substring(0,12)+'... (set)' : 'NOT SET'}`);
+  lines.push(`Anthropic format OK: ${s.apiKey?.startsWith('sk-ant-') ? '✓ YES' : '✗ NO — must start with sk-ant-'}`);
+  lines.push('');
+
+  out.textContent = lines.join('\n');
+
+  // Test the debug endpoint
+  try {
+    lines.push('--- SHOPIFY API TEST ---');
+    out.textContent = lines.join('\n') + '\nConnecting to Shopify...';
+
+    const url = `/api/debug?domain=${s.shopifyDomain}&token=${s.shopifyToken}`;
+    const resp = await fetch(url);
+    const data = await resp.json();
+
+    lines.push(`Debug endpoint status: ${resp.status}`);
+    if (data.shopify_test) {
+      const st = data.shopify_test;
+      lines.push(`Shopify status: ${st.status} ${st.status_text || ''}`);
+      lines.push(`Shopify success: ${st.success ? '✓ CONNECTED' : '✗ FAILED'}`);
+      if (st.response_preview) lines.push(`Response: ${st.response_preview.substring(0,100)}`);
+      if (st.error) lines.push(`Error: ${st.error}`);
+      if (st.skipped) lines.push(`Skipped: ${st.skipped}`);
+    }
+    if (data.anthropic_test) {
+      lines.push('');
+      lines.push('--- ANTHROPIC API TEST ---');
+      const at = data.anthropic_test;
+      lines.push(`Anthropic status: ${at.status || 'N/A'}`);
+      lines.push(`Anthropic success: ${at.success ? '✓ CONNECTED' : '✗ FAILED'}`);
+      if (at.error) lines.push(`Error: ${at.error}`);
+      if (at.skipped) lines.push(`Note: ${at.skipped}`);
+    }
+    if (data.environment) {
+      lines.push('');
+      lines.push('--- ENVIRONMENT ---');
+      lines.push(`Node: ${data.environment.node_version}`);
+      lines.push(`Env ANTHROPIC_API_KEY set: ${data.environment.has_env_anthropic}`);
+    }
+  } catch(e) {
+    lines.push(`Debug endpoint error: ${e.message}`);
+    lines.push('This means the debug.js file is not deployed yet.');
+    lines.push('Deploy api/debug.js to GitHub first.');
+  }
+
+  lines.push('');
+  lines.push('--- QUICK FIX CHECKLIST ---');
+  if (!s.shopifyDomain) lines.push('✗ Add Shopify domain in Settings');
+  else lines.push('✓ Shopify domain set');
+  if (!s.shopifyToken) lines.push('✗ Add Shopify token in Settings');
+  else if (!s.shopifyToken.startsWith('shpat_')) lines.push('✗ Token must start with shpat_');
+  else lines.push('✓ Shopify token set');
+  if (!s.apiKey) lines.push('✗ Add Anthropic API key in Settings');
+  else if (!s.apiKey.startsWith('sk-ant-')) lines.push('✗ API key must start with sk-ant-');
+  else lines.push('✓ Anthropic key set');
+
+  out.textContent = lines.join('\n');
+}
+
+function clearCache() {
+  localStorage.removeItem('cc_products_cache');
+  localStorage.removeItem('cc_products_cache_time');
+  showToast('Cache cleared — reloading products...');
+  allProducts = [];
+  loadProducts();
 }
 
 // ── INIT ───────────────────────────────────────────────────────────────────
