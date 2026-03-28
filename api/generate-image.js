@@ -54,7 +54,7 @@ export default async function handler(req, res) {
   }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { productImageUrl, productName, productType, setting = 'studio', apiKey } = req.body;
+  const { productImageUrl, productName, productType, setting = 'studio', apiKey, textOnly, prompt: customPrompt } = req.body;
 
   const key = apiKey || process.env.OPENAI_API_KEY;
   if (!key) return res.status(400).json({ error: 'Missing OpenAI API key — add it in Settings' });
@@ -64,6 +64,37 @@ export default async function handler(req, res) {
 
   try {
     const openai = new OpenAI({ apiKey: key });
+
+    // TEXT-ONLY MODE (no input image available)
+    if (textOnly || !productImageUrl) {
+      const prompt = customPrompt || [
+        `Professional product photography for social media marketing.`,
+        `Product: ${productName || 'hair care product'}.`,
+        `Type: ${productType || 'beauty product'}.`,
+        (SETTINGS[setting] || SETTINGS.studio).prompt,
+        `No people, no faces. Square format. Photorealistic.`,
+        `Add subtle watermark: small semi-transparent white text 'cchairandbeauty.com' at the bottom edge of the image.`,
+      ].join(' ');
+
+      const result = await openai.images.generate({
+        model: 'gpt-image-1-mini',
+        prompt,
+        n: 1,
+        size: '1024x1024',
+        quality: 'medium',
+      });
+
+      const imageBase64 = result.data?.[0]?.b64_json;
+      if (!imageBase64) throw new Error('No image data returned');
+
+      return res.status(200).json({
+        success: true,
+        image_b64: imageBase64,
+        model: 'gpt-image-1-mini (text only)',
+        setting: (SETTINGS[setting] || SETTINGS.studio).label,
+        estimated_cost: '~$0.02 (~1.5p)',
+      });
+    }
 
     // Step 1: Fetch the Shopify product image as a buffer
     let imageBuffer;
