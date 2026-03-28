@@ -2148,173 +2148,219 @@ function downloadBase64Image(dataUrl, filename) {
 }
 
 
-// ── AUTO AI IMAGE GENERATION (runs in background after content generates) ─
-async function generateAIImageAuto(product, parsedContent) {
-  // Build SEO-friendly filename from product title
-  // e.g. "Cantu Shea Butter Leave-In Repair Cream 453g" 
-  //   → "cantu-shea-butter-leave-in-repair-cream-453g-cc-hair-beauty-leeds.png"
-  function makeSeoFilename(title, vendor) {
-    const clean = (title || '')
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')   // remove special chars
-      .replace(/\s+/g, '-')            // spaces to hyphens
-      .replace(/-+/g, '-')             // collapse multiple hyphens
-      .substring(0, 60)                // max 60 chars for the product part
-      .replace(/-$/, '');              // remove trailing hyphen
-    return `${clean}-cc-hair-beauty-leeds.png`;
-  }
 
-  const seoFilename = makeSeoFilename(product.title, product.vendor);
-  debugLog('AI_IMAGE_AUTO', `SEO filename will be: ${seoFilename}`);
+// ── AUTO AI IMAGE GENERATION ──────────────────────────────────────────────
+// Available settings (mirrors the serverless function)
+const IMAGE_SETTINGS = [
+  { key: 'studio',   emoji: '📦', label: 'Clean Studio',           hint: 'Safe for any product' },
+  { key: 'bathroom', emoji: '🛁', label: 'Bathroom Shelf',         hint: 'Shampoo, conditioner, skin care' },
+  { key: 'barber',   emoji: '💈', label: 'Barber Counter',         hint: 'Clippers, edge control, men\'s' },
+  { key: 'bedroom',  emoji: '🛏', label: 'Bedroom Dressing Table', hint: 'Wigs, makeup, serums' },
+  { key: 'salon',    emoji: '💅', label: 'Beauty Salon Station',   hint: 'Relaxers, dye, treatments' },
+  { key: 'natural',  emoji: '🌿', label: 'Natural & Spa',          hint: 'Oils, shea butter, organic' },
+  { key: 'hands',    emoji: '✋', label: 'Hands Holding',          hint: 'Any product, shows scale' },
+  { key: 'flatlay',  emoji: '🪞', label: 'Flatlay Overhead',       hint: 'Extensions, wigs, accessories' },
+];
 
-  // Store filename globally so download button can use it
-  window._aiImageFilename = seoFilename;
+// Auto-pick the best setting based on product type/tags
+function autoPickSetting(product) {
+  const tags = (product.tags || '').toLowerCase();
+  const type = (product.productType || '').toLowerCase();
+  const title = (product.title || '').toLowerCase();
+  const combined = tags + ' ' + type + ' ' + title;
 
-  // Show "generating" state in the image task immediately
-  const handle = product.handle || product.id;
+  if (combined.includes('clipper') || combined.includes('trimmer') ||
+      combined.includes('menu-electrical') || combined.includes('menu-for-men') ||
+      combined.includes('edge control') || combined.includes('wave') ||
+      combined.includes('beard')) return 'barber';
+
+  if (combined.includes('shampoo') || combined.includes('conditioner') ||
+      combined.includes('menu-shampoo') || combined.includes('menu-conditioners') ||
+      combined.includes('soap') || combined.includes('menu-soaps') ||
+      combined.includes('skin care') || combined.includes('menu-skin-care') ||
+      combined.includes('body') || combined.includes('wash')) return 'bathroom';
+
+  if (combined.includes('wig') || combined.includes('menu-wigs') ||
+      combined.includes('makeup') || combined.includes('menu-makeup') ||
+      combined.includes('eyelash') || combined.includes('serum') ||
+      combined.includes('menu-serums')) return 'bedroom';
+
+  if (combined.includes('relaxer') || combined.includes('menu-relaxers') ||
+      combined.includes('hair dye') || combined.includes('menu-hair-dye') ||
+      combined.includes('treatment') || combined.includes('menu-hair-treatments') ||
+      combined.includes('colour') || combined.includes('color')) return 'salon';
+
+  if (combined.includes('oil') || combined.includes('natural') ||
+      combined.includes('shea') || combined.includes('castor') ||
+      combined.includes('argan') || combined.includes('menu-serums-oils')) return 'natural';
+
+  if (combined.includes('extension') || combined.includes('braid') ||
+      combined.includes('menu-hair-extensions') || combined.includes('pony') ||
+      combined.includes('menu-pony-tails') || combined.includes('accessori') ||
+      combined.includes('menu-accessories')) return 'flatlay';
+
+  return 'studio'; // safe default for anything else
+}
+
+async function generateAIImageAuto(product, parsedContent, settingOverride) {
+  const s = getSettings();
+  if (!s.openaiKey) return; // silently skip if no key
+
+  const handle = product.handle || String(product.id);
   const areaId = 'aiImageArea-' + handle;
 
-  // Wait a tick for the DOM to render the checklist first
-  await new Promise(r => setTimeout(r, 300));
-
+  // Wait for DOM
+  await new Promise(r => setTimeout(r, 400));
   const area = document.getElementById(areaId);
-  if (area) {
-    area.innerHTML = `
-      <div style="background:var(--surface);border-radius:12px;padding:14px;margin-top:8px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+  if (!area) return;
+
+  // Pick setting
+  const setting = settingOverride || autoPickSetting(product);
+  const settingInfo = IMAGE_SETTINGS.find(s => s.key === setting) || IMAGE_SETTINGS[0];
+
+  // Build SEO filename
+  function seoName(t) {
+    return t.toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .substring(0, 55)
+      .replace(/-$/, '') + '-cc-hair-beauty-leeds';
+  }
+  const seoBase = seoName(product.title || 'product');
+  const seoFilename = seoBase + '.png';
+  window._aiImageFilename = seoFilename;
+
+  debugLog('AI_IMAGE_AUTO', `Setting: ${settingInfo.label} | File: ${seoFilename}`);
+
+  // Show setting picker + generating state
+  area.innerHTML = `
+    <div style="margin-top:4px">
+      <div style="font-size:11px;font-weight:700;color:var(--gold);
+                  text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">
+        Setting
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px" id="settingPicker-${handle}">
+        ${IMAGE_SETTINGS.map(s => `
+          <button onclick="generateAIImageAuto(selectedProduct, generatedContent, '${s.key}')"
+            data-setting="${s.key}"
+            style="background:${s.key === setting ? 'var(--gold)' : 'var(--surface)'};
+                   color:${s.key === setting ? '#0F0A18' : 'var(--text2)'};
+                   border:1.5px solid ${s.key === setting ? 'var(--gold)' : 'var(--border)'};
+                   border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;
+                   cursor:pointer;font-family:inherit;
+                   display:flex;align-items:center;gap:5px;white-space:nowrap">
+            ${s.emoji} ${s.label}
+          </button>
+        `).join('')}
+      </div>
+      <div id="aiImageResult-${handle}">
+        <div style="background:var(--surface);border-radius:10px;padding:14px;
+                    display:flex;align-items:center;gap:10px">
           <div class="spinner" style="width:16px;height:16px;border-width:2px;flex-shrink:0"></div>
-          <div style="font-size:13px;color:var(--text2);font-weight:600">
-            Generating AI image in background...
+          <div>
+            <div style="font-size:13px;color:var(--text2);font-weight:600">
+              ${settingInfo.emoji} Generating in ${settingInfo.label} setting...
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">
+              Takes ~15–20 seconds · ~4–5p · No faces · Google policy safe
+            </div>
           </div>
         </div>
-        <div style="font-size:11px;color:var(--text3)">
-          Will be ready by the time you reach this task
-        </div>
+      </div>
+    </div>
+  `;
+
+  if (!product.image) {
+    document.getElementById(`aiImageResult-${handle}`).innerHTML = `
+      <div style="background:rgba(201,168,76,0.1);border:1px solid var(--border);
+                  border-radius:10px;padding:12px;font-size:12px;color:var(--text3)">
+        No product image available in Shopify — AI edit requires the original product photo.<br>
+        <span style="color:var(--text2);margin-top:4px;display:block">
+          Once real Shopify products are loaded, the AI image will generate automatically.
+        </span>
       </div>
     `;
+    return;
   }
 
-  // Build the prompt
-  const productName = product.title || '';
-  const brand = product.vendor || '';
-  const productType = product.productType || 'hair care product';
-  const imageContext = parsedContent.image_prompt || '';
-
-  const prompt = [
-    `Professional product photography for afro hair and beauty social media marketing.`,
-    `Product: ${productName}.`,
-    brand ? `Brand: ${brand}.` : '',
-    `Product type: ${productType}.`,
-    imageContext,
-    `Requirements: Clean white studio background, professional lighting from top-left,`,
-    `product centred and sharp, soft shadow underneath, luxury beauty brand aesthetic.`,
-    `No people, no text, no logos overlaid. Photorealistic. Square 1:1 composition.`,
-    `This image will be used for Instagram, Facebook and Google Business posts.`,
-  ].filter(Boolean).join(' ');
-
-  const s = getSettings();
-
   try {
+    debugLog('AI_IMAGE', `Calling /api/generate-image — ${product.title} — ${settingInfo.label}`);
+
     const resp = await fetch('/api/generate-image', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        prompt: prompt,
+        productImageUrl: product.image,
+        productName: product.title,
+        productType: product.productType || '',
+        setting: setting,
         apiKey: s.openaiKey,
       }),
     });
 
     const data = await resp.json();
-
-    if (!resp.ok || data.error) {
-      throw new Error(data.error || `Error ${resp.status}`);
-    }
+    if (!resp.ok || data.error) throw new Error(data.error || `Error ${resp.status}`);
 
     const b64 = data.image_b64;
     if (!b64) throw new Error('No image data returned');
 
     const imgSrc = 'data:image/png;base64,' + b64;
-    window._aiImageData = imgSrc; // store globally for re-use
+    window._aiImageData = imgSrc;
+    debugLog('AI_IMAGE_OK', `Done — ${settingInfo.label} — save as: ${seoFilename}`);
 
-    debugLog('AI_IMAGE_OK', `AI image ready — filename: ${seoFilename}`);
-
-    // Update the area with the finished image
-    const areaFinal = document.getElementById(areaId);
-    if (areaFinal) {
-      areaFinal.innerHTML = `
-        <div style="margin-top:8px">
-          <div style="font-size:12px;font-weight:700;color:#10a37f;
-                      margin-bottom:8px;display:flex;align-items:center;gap:6px">
-            ✓ AI Image Ready
-          </div>
-          <img src="${imgSrc}"
-            style="width:100%;border-radius:12px;border:2px solid var(--gold);
-                   display:block;cursor:pointer;margin-bottom:10px"
-            onclick="window.open(this.src,'_blank')"
-            title="Click to view full size">
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <button onclick="downloadBase64Image(window._aiImageData, '${seoFilename}')"
-              style="background:var(--gold);color:#0F0A18;border:none;
-                     border-radius:12px;padding:14px 20px;font-size:15px;
-                     font-weight:700;cursor:pointer;font-family:inherit;
-                     display:flex;align-items:center;justify-content:center;gap:8px;">
-              ⬇ Download AI Image
-            </button>
-            <div style="font-size:10px;color:var(--text3);text-align:center;
-                        line-height:1.5;word-break:break-all">
-              Saves as: <span style="color:var(--text2)">${seoFilename}</span>
-            </div>
-            <button onclick="generateAIImageAuto(selectedProduct, generatedContent)"
-              style="background:var(--surface);color:var(--text2);
-                     border:1.5px solid var(--border);border-radius:12px;
-                     padding:10px;font-size:13px;font-weight:500;
-                     cursor:pointer;font-family:inherit;">
-              ↻ Regenerate
-            </button>
+    document.getElementById(`aiImageResult-${handle}`).innerHTML = `
+      <div>
+        <img src="${imgSrc}"
+          style="width:100%;border-radius:12px;border:2px solid var(--gold);
+                 display:block;cursor:pointer;margin-bottom:10px"
+          onclick="window.open(this.src,'_blank')"
+          title="Click to open full size">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button onclick="downloadBase64Image(window._aiImageData, '${seoFilename}')"
+            style="background:var(--gold);color:#0F0A18;border:none;
+                   border-radius:12px;padding:14px;font-size:15px;font-weight:700;
+                   cursor:pointer;font-family:inherit;
+                   display:flex;align-items:center;justify-content:center;gap:8px;">
+            ⬇ Download — ${seoFilename.substring(0, 40)}...
+          </button>
+          <div style="font-size:10px;color:var(--text3);text-align:center">
+            ${data.estimated_cost || '~4-5p'} · ${data.setting || settingInfo.label} · Google policy safe ✓
           </div>
         </div>
-      `;
-    }
-
-    showToast('✓ AI image ready in Task 5');
+      </div>
+    `;
+    showToast(`✓ AI image ready — ${settingInfo.label}`);
 
   } catch(e) {
     debugLog('AI_IMAGE_ERROR', e.message);
-
-    const areaErr = document.getElementById(areaId);
-    if (areaErr) {
-      areaErr.innerHTML = `
-        <div style="background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);
-                    border-radius:10px;padding:12px;margin-top:8px">
-          <div style="font-size:12px;color:#E74C3C;font-weight:600;margin-bottom:4px">
-            AI image failed
-          </div>
-          <div style="font-size:11px;color:var(--text3);margin-bottom:10px;
-                      background:var(--dark3);border-radius:6px;padding:8px;
-                      word-break:break-all;line-height:1.5">
-            ${e.message}
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button onclick="generateAIImageAuto(selectedProduct, generatedContent)"
-              style="background:var(--surface);color:var(--text2);
-                     border:1px solid var(--border);border-radius:8px;
-                     padding:8px 14px;font-size:12px;cursor:pointer;
-                     font-family:inherit;">
-              ↻ Try Again
-            </button>
-            <button onclick="toggleDebugConsole();document.getElementById('debugConsoleBody').style.display='block';renderDebugLogs()"
-              style="background:var(--surface);color:var(--text3);
-                     border:1px solid var(--border);border-radius:8px;
-                     padding:8px 14px;font-size:12px;cursor:pointer;
-                     font-family:inherit;">
-              View Debug Logs
-            </button>
-          </div>
+    document.getElementById(`aiImageResult-${handle}`).innerHTML = `
+      <div style="background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);
+                  border-radius:10px;padding:12px">
+        <div style="font-size:12px;color:#E74C3C;font-weight:600;margin-bottom:6px">
+          AI image failed
         </div>
-      `;
-    }
+        <div style="font-size:11px;color:var(--text3);margin-bottom:10px;
+                    word-break:break-all">${e.message}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="generateAIImageAuto(selectedProduct, generatedContent, '${setting}')"
+            style="background:var(--surface);color:var(--text2);border:1px solid var(--border);
+                   border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;
+                   font-family:inherit;">
+            ↻ Try Again
+          </button>
+          <button onclick="toggleDebugConsole();document.getElementById('debugConsoleBody').style.display='block';renderDebugLogs()"
+            style="background:var(--surface);color:var(--text3);border:1px solid var(--border);
+                   border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;
+                   font-family:inherit;">
+            Debug Logs
+          </button>
+        </div>
+      </div>
+    `;
   }
 }
+
 
 
 // ── DOWNLOAD SHOPIFY PRODUCT IMAGE ────────────────────────────────────────
