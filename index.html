@@ -1106,6 +1106,7 @@ Product URL: https://cchairandbeauty.com/products/${selectedProduct.handle}`;
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 4000,
+        apiKey: s.apiKey,
         system: systemPrompt,
         messages: [{ role: 'user', content: userMessage }]
       })
