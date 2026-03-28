@@ -775,7 +775,7 @@ body {
         ">No logs yet</div>
         <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
           <button class="copy-btn" style="font-size:12px;padding:8px 14px;min-height:36px" onclick="runDebug()">Test Shopify Connection</button>
-          <button class="copy-btn" style="font-size:12px;padding:8px 14px;min-height:36px" onclick="clearCache()">Clear Cache & Reload</button>
+          <button class="copy-btn" style="font-size:12px;padding:8px 14px;min-height:36px;background:var(--gold);color:#0F0A18;border-color:var(--gold);font-weight:700" onclick="clearCache()">⟳ Load Real Products</button>
           <button class="copy-btn" style="font-size:12px;padding:8px 14px;min-height:36px" onclick="testGenerate()">Test Generate (mini)</button>
         </div>
         <div id="debugOutput" style="display:none;margin-top:10px;background:var(--dark3);border:1px solid var(--border2);border-radius:8px;padding:12px;font-size:11px;font-family:'DM Mono',monospace;color:var(--text2);line-height:1.7;max-height:250px;overflow-y:auto;"></div>
@@ -1018,13 +1018,32 @@ async function loadProducts() {
 }
 
 function getDemoProducts() {
+  // Demo products with real publicly accessible images for testing
   return [
-    { id:1, title:'Cantu Shea Butter Leave-In Conditioning Repair Cream 453g', price:'£9.99', image:'', tags:'Conditioners,menu-conditioners', productType:'Conditioner', vendor:'Cantu', description:'Cantu Shea Butter leave-in conditioning repair cream for natural hair.', handle:'cantu-leave-in' },
-    { id:2, title:'Dark & Lovely Optimum Care Relaxer Kit - Super', price:'£14.99', image:'', tags:'Relaxers,menu-relaxers', productType:'Relaxer', vendor:'Dark & Lovely', description:'Professional strength no-lye conditioning relaxer for coarse hair.', handle:'dark-lovely-relaxer' },
-    { id:3, title:'Cherish Spiral French Curl 3X Braid Pre-Stretched 22"', price:'£8.99', image:'', tags:'Synthetic Hair Braids,menu-hair-extensions', productType:'Hair Extensions', vendor:'Cherish', description:'Pre-stretched spiral french curl braiding hair for crochet styles.', handle:'cherish-french-curl' },
-    { id:4, title:'Sleek Fashion Idol Brazilian Wig - Natural', price:'£24.99', image:'', tags:'Synthetic Hair Wigs,menu-wigs', productType:'Wigs', vendor:'Sleek', description:'Brazilian style synthetic wig with natural look hairline.', handle:'sleek-wig' },
-    { id:5, title:'BSSET Original Curl Cream 250ml', price:'£11.99', image:'', tags:'Hair Styling,menu-hair-styling', productType:'Hair Styling', vendor:'BSSET', description:'Original curl cream that softens and moisturises curls.', handle:'bsset-curl-cream' },
-    { id:6, title:'Shea Moisture Coconut & Hibiscus Curl & Shine Shampoo 384ml', price:'£12.99', image:'', tags:'Shampoo,menu-shampoo', productType:'Shampoo', vendor:'Shea Moisture', description:'Curl-enhancing shampoo with coconut oil and neem oil.', handle:'shea-moisture-shampoo' },
+    { id:1, title:'Cantu Shea Butter Leave-In Conditioning Repair Cream 453g', price:'£9.99',
+      image:'https://cchairandbeauty.com/cdn/shop/files/cantu-shea-butter-leave-in-conditioning-repair-cream-453g_533x.jpg',
+      tags:'Conditioners,menu-conditioners', productType:'Conditioner', vendor:'Cantu',
+      description:'Cantu Shea Butter leave-in conditioning repair cream for natural hair. Strengthens and restores moisture to dry, damaged hair.', handle:'cantu-shea-butter-leave-in-conditioning-repair-cream-453g' },
+    { id:2, title:'Dark & Lovely Optimum Care Relaxer Kit - Super', price:'£14.99',
+      image:'https://cchairandbeauty.com/cdn/shop/files/dark-lovely-optimum-relaxer_533x.jpg',
+      tags:'Relaxers,menu-relaxers', productType:'Relaxer', vendor:'Dark & Lovely',
+      description:'Professional strength no-lye conditioning relaxer for coarse hair. With pro-vitamin B5 and ceramides for healthy looking hair.', handle:'dark-lovely-optimum-care-relaxer-kit-super' },
+    { id:3, title:'Cherish Spiral French Curl 3X Braid Pre-Stretched 22"', price:'£8.99',
+      image:'https://cchairandbeauty.com/cdn/shop/files/cherish-spiral-french-curl_533x.jpg',
+      tags:'Synthetic Hair Braids,menu-hair-extensions', productType:'Hair Extensions', vendor:'Cherish',
+      description:'Pre-stretched spiral french curl braiding hair for crochet styles. 3X pack, heat resistant fibre.', handle:'cherish-spiral-french-curl-3x-braid-pre-stretched-22' },
+    { id:4, title:'Sleek Fashion Idol Brazilian Wig - Natural', price:'£24.99',
+      image:'https://cchairandbeauty.com/cdn/shop/files/sleek-fashion-idol-wig_533x.jpg',
+      tags:'Synthetic Hair Wigs,menu-wigs', productType:'Wigs', vendor:'Sleek',
+      description:'Brazilian style synthetic wig with natural look hairline. Heat resistant. One size.', handle:'sleek-fashion-idol-brazilian-wig-natural' },
+    { id:5, title:'BSSET Original Curl Cream 250ml', price:'£11.99',
+      image:'https://cchairandbeauty.com/cdn/shop/files/bsset-original-curl-cream_533x.jpg',
+      tags:'Hair Styling,menu-hair-styling', productType:'Hair Styling', vendor:'BSSET',
+      description:'Original curl cream that softens and moisturises curls with Jamaican Black Castor Oil and Olive Oil.', handle:'bsset-original-curl-cream-250ml' },
+    { id:6, title:'Shea Moisture Coconut & Hibiscus Curl & Shine Shampoo 384ml', price:'£12.99',
+      image:'https://cchairandbeauty.com/cdn/shop/files/shea-moisture-coconut-hibiscus-shampoo_533x.jpg',
+      tags:'Shampoo,menu-shampoo', productType:'Shampoo', vendor:'Shea Moisture',
+      description:'Curl-enhancing shampoo with coconut oil and neem oil. Sulfate-free formula for natural hair.', handle:'shea-moisture-coconut-hibiscus-curl-shine-shampoo-384ml' },
   ];
 }
 
@@ -1798,8 +1817,12 @@ async function runDebug() {
 function clearCache() {
   localStorage.removeItem('cc_products_cache');
   localStorage.removeItem('cc_products_cache_time');
-  showToast('Cache cleared — reloading products...');
   allProducts = [];
+  filteredProducts = [];
+  document.getElementById('productGrid').innerHTML = '<div class="empty-state"><div class="spinner" style="margin:auto;width:24px;height:24px"></div><p style="margin-top:8px">Loading your real products...</p></div>';
+  document.getElementById('suggestedGrid').innerHTML = '<div class="empty-state"><div class="spinner" style="margin:auto;width:24px;height:24px"></div></div>';
+  showToast('Cache cleared — loading real products now...');
+  debugLog('CACHE', 'Cache cleared — reloading from Shopify');
   loadProducts();
 }
 
@@ -2272,15 +2295,79 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
   `;
 
   if (!product.image) {
-    document.getElementById(`aiImageResult-${handle}`).innerHTML = `
-      <div style="background:rgba(201,168,76,0.1);border:1px solid var(--border);
-                  border-radius:10px;padding:12px;font-size:12px;color:var(--text3)">
-        No product image available in Shopify — AI edit requires the original product photo.<br>
-        <span style="color:var(--text2);margin-top:4px;display:block">
-          Once real Shopify products are loaded, the AI image will generate automatically.
-        </span>
-      </div>
-    `;
+    debugLog('AI_IMAGE_SKIP', 'No product image — using text-only generation instead');
+
+    // Fall back to text-only generation (no input image)
+    try {
+      const settingConfig = {
+        bathroom: 'marble bathroom shelf, soft warm lighting, white towels background',
+        barber: 'barbershop counter, dark wood surface, chrome accents, mirror background',
+        bedroom: 'bedroom vanity dressing table, warm soft lighting, round mirror background',
+        salon: 'professional beauty salon counter, salon tools visible in background',
+        natural: 'wooden surface surrounded by natural botanicals, eucalyptus, soft window light',
+        studio: 'clean white studio surface, soft grey gradient background, professional lighting',
+        hands: 'held in well-manicured hands at slight angle, clean neutral background',
+        flatlay: 'flat lay overhead on light marble surface, small beauty accessories around it',
+      };
+      const sceneDesc = settingConfig[setting] || settingConfig.studio;
+      const fallbackPrompt = [
+        `Professional product photography for social media.`,
+        `Create a realistic image of: ${product.title} by ${product.vendor || 'CC Hair & Beauty'}.`,
+        `Setting: ${sceneDesc}.`,
+        `The product should look exactly like the real product with correct packaging and label.`,
+        `No people, no faces. Square format. Photorealistic. For CC Hair & Beauty Leeds.`,
+      ].join(' ');
+
+      const resp = await fetch('/api/generate-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productName: product.title,
+          productType: product.productType || '',
+          prompt: fallbackPrompt,
+          setting: setting,
+          apiKey: s.openaiKey,
+          textOnly: true,
+        }),
+      });
+
+      const data = await resp.json();
+      if (!resp.ok || data.error) throw new Error(data.error);
+      const b64 = data.image_b64;
+      if (!b64) throw new Error('No image data');
+      const imgSrc = 'data:image/png;base64,' + b64;
+      window._aiImageData = imgSrc;
+
+      document.getElementById(`aiImageResult-${handle}`).innerHTML = `
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:8px">
+            ⚠ Generated from product name (no Shopify image available)
+          </div>
+          <img src="${imgSrc}"
+            style="width:100%;border-radius:12px;border:2px solid var(--gold);
+                   display:block;cursor:pointer;margin-bottom:10px"
+            onclick="window.open(this.src,'_blank')">
+          <button onclick="downloadBase64Image(window._aiImageData, '${seoFilename}')"
+            style="background:var(--gold);color:#0F0A18;border:none;border-radius:12px;
+                   padding:13px;font-size:14px;font-weight:700;cursor:pointer;
+                   font-family:inherit;width:100%;display:flex;align-items:center;
+                   justify-content:center;gap:8px;">
+            ⬇ Download AI Image
+          </button>
+        </div>
+      `;
+      showToast('✓ AI image ready (text-only mode)');
+    } catch(e2) {
+      debugLog('AI_IMAGE_FALLBACK_ERROR', e2.message);
+      document.getElementById(`aiImageResult-${handle}`).innerHTML = `
+        <div style="background:var(--surface);border-radius:10px;padding:12px;
+                    font-size:12px;color:var(--text3);line-height:1.6">
+          <strong style="color:var(--text2)">No product image in Shopify.</strong><br>
+          Load your real Shopify products (add token in Settings → Clear Cache & Reload) 
+          to enable AI image editing with your actual product photos.
+        </div>
+      `;
+    }
     return;
   }
 
