@@ -297,26 +297,27 @@ body {
 .task-item.done { border-color: rgba(46,204,113,0.3); background: rgba(46,204,113,0.03); }
 .task-header {
   display: flex; align-items: center; gap: 12px;
-  padding: 12px 14px;
+  padding: 16px 14px;
   cursor: pointer;
 }
 .task-check {
-  width: 22px; height: 22px;
+  width: 30px; height: 30px;
   border: 2px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 16px;
 }
 .task-item.done .task-check {
   background: var(--green); border-color: var(--green);
   color: white;
 }
 .task-info { flex: 1; }
-.task-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.task-name { font-size: 15px; font-weight: 700; color: var(--text); }
 .task-item.done .task-name { color: var(--text3); text-decoration: line-through; }
-.task-hint { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.task-hint { font-size: 12px; color: var(--text3); margin-top: 3px; line-height:1.4; }
 .task-time {
   font-size: 11px; color: var(--text3);
   background: var(--surface); border-radius: 4px;
@@ -325,21 +326,23 @@ body {
 .task-actions { display: flex; gap: 6px; align-items: center; }
 
 .copy-btn {
-  background: var(--surface); border: 1px solid var(--border);
-  color: var(--text2); border-radius: 7px;
-  padding: 5px 10px; font-size: 11px; font-weight: 500;
+  background: var(--surface); border: 1.5px solid var(--border);
+  color: var(--text2); border-radius: 10px;
+  padding: 10px 18px; font-size: 14px; font-weight: 600;
   cursor: pointer; font-family: inherit;
   transition: all 0.15s; white-space: nowrap;
+  min-height: 42px;
 }
 .copy-btn:hover { background: var(--surface2); border-color: var(--gold); color: var(--gold); }
 .copy-btn.copied { background: var(--green-dark); border-color: var(--green); color: #fff; }
 .open-btn {
-  background: var(--purple); border: 1px solid rgba(123,63,160,0.5);
-  color: #D8B8FF; border-radius: 7px;
-  padding: 5px 10px; font-size: 11px; font-weight: 500;
+  background: var(--purple); border: 1.5px solid rgba(123,63,160,0.5);
+  color: #D8B8FF; border-radius: 10px;
+  padding: 10px 18px; font-size: 14px; font-weight: 600;
   cursor: pointer; font-family: inherit; text-decoration: none;
-  display: inline-flex; align-items: center; gap: 4px;
+  display: inline-flex; align-items: center; gap: 6px;
   transition: all 0.15s; white-space: nowrap;
+  min-height: 42px;
 }
 .open-btn:hover { background: var(--purple-light); }
 
@@ -535,7 +538,8 @@ body {
     </div>
   </div>
   <div class="header-right">
-    <button class="load-btn" onclick="loadProducts()">↻ Refresh Products</button>
+    <button class="load-btn" onclick="loadProducts()">↻ Refresh</button>
+    <button class="settings-btn" id="themeBtn" onclick="toggleTheme()">🌙 Dark</button>
     <button class="settings-btn" onclick="openSettings()">⚙ Settings</button>
   </div>
 </div>
@@ -786,7 +790,8 @@ function saveSettings() {
   localStorage.setItem('cc_review_citycentre', document.getElementById('reviewCityCentre').value.trim());
   closeSettings();
   showToast('Settings saved ✓');
-  loadProducts();
+  applyTheme(currentTheme);
+loadProducts();
 }
 
 // ── HISTORY ────────────────────────────────────────────────────────────────
@@ -1136,7 +1141,8 @@ OUTPUT: Return ONLY a valid JSON object with exactly these keys (no markdown, no
   "review_request_instore": "short friendly in-store verbal script for staff to say at till",
   "qr_card_text": "text for printing on a QR code review card for this product",
   "menu_tags": ["array","of","applicable","menu-tags"],
-  "shopify_tags": "comma,separated,shopify,tags"
+  "shopify_tags": "comma,separated,shopify,tags",
+  "image_prompt": "detailed description of a social media graphic for this product — what to show, colours, mood, text overlay suggestions"
 }`;
 
   const userMessage = `Generate all content for this product:
@@ -1247,8 +1253,18 @@ function showChecklist(content) {
       sections: [{ label: 'Post text — copy then click Add Update on your GBP listing', content: content.gbp_city_centre, badge: `${(content.gbp_city_centre||'').length}/1500 chars` }]
     },
     {
+      id: 'image',
+      name: '5. Product Image',
+      hint: 'Right-click or long-press the image → Save Image. Use this photo for all your posts.',
+      time: '~5 sec',
+      openUrl: null,
+      openLabel: null,
+      sections: [],
+      isImageTask: true,
+    },
+    {
       id: 'instagram',
-      name: '5. Instagram',
+      name: '6. Instagram',
       hint: 'Open Instagram app → + New Post → add product photo → paste caption → paste hashtags → share',
       time: '~1 min',
       openUrl: 'https://www.instagram.com',
@@ -1260,7 +1276,7 @@ function showChecklist(content) {
     },
     {
       id: 'facebook',
-      name: '6. Facebook',
+      name: '7. Facebook',
       hint: 'Open Facebook → Create Post → paste text → add product photo → post',
       time: '~30 sec',
       openUrl: 'https://www.facebook.com/cchairandbeauty',
@@ -1281,7 +1297,7 @@ function showChecklist(content) {
     },
     {
       id: 'review_instore',
-      name: '8. In-Store Review Request Script',
+      name: '9. In-Store Review Request Script',
       hint: 'Say this to customers at the till after a positive interaction',
       time: '~5 sec',
       sections: [
@@ -1291,7 +1307,7 @@ function showChecklist(content) {
     },
     {
       id: 'tags',
-      name: '9. Check Shopify Tags',
+      name: '10. Check Shopify Tags',
       hint: 'Make sure these tags are applied to the product in Shopify for the right collections',
       time: '~1 min',
       sections: [],
@@ -1309,6 +1325,7 @@ function showChecklist(content) {
     const firstContent = document.getElementById('content-blog');
     if (firstContent) firstContent.classList.add('visible');
   }, 100);
+
 }
 
 function renderTaskList(containerId, tasks, isBonus) {
@@ -1320,9 +1337,13 @@ function renderTaskList(containerId, tasks, isBonus) {
     item.className = 'task-item';
     item.id = `task-${task.id}`;
 
-    const actionsHtml = `
+    const actionsHtml = task.isImageTask ? `
       <div class="task-actions">
-        ${task.sections && task.sections.length > 0 ? `<button class="copy-btn" onclick="copyTaskContent('${task.id}',event)">Copy</button>` : ''}
+        <button class="copy-btn" onclick="expandTask('image',event)">View Image</button>
+      </div>
+    ` : `
+      <div class="task-actions">
+        ${task.sections && task.sections.length > 0 ? `<button class="copy-btn" onclick="copyTaskContent('${task.id}',event)">Copy All</button>` : ''}
         ${task.openUrl ? `<a href="${task.openUrl}" target="_blank" class="open-btn">${task.openLabel || 'Open ↗'}</a>` : ''}
         <button class="copy-btn" onclick="expandTask('${task.id}',event)">View</button>
       </div>
@@ -1338,7 +1359,8 @@ function renderTaskList(containerId, tasks, isBonus) {
         <div class="task-time">${task.time}</div>
         ${actionsHtml}
       </div>
-      <div class="task-content" id="content-${task.id}">
+      <div class="task-content" id="content-${task.id}" ${task.isImageTask ? 'class="task-content visible"' : ''}>
+        ${task.isImageTask ? buildImageSection() : ''}
         ${task.tags && task.tags.length > 0 ? `
           <div class="tags-display">${task.tags.map(t => `<div class="tag-pill">${t}</div>`).join('')}</div>
         ` : ''}
@@ -1349,7 +1371,9 @@ function renderTaskList(containerId, tasks, isBonus) {
               ${s.badge ? `<div style="font-size:10px;color:var(--gold);background:rgba(201,168,76,0.1);padding:2px 6px;border-radius:4px">${s.badge}</div>` : ''}
             </div>
             <div class="content-box" id="cb-${task.id}-${si}">${(s.content||'No content generated').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-            <button class="copy-btn" style="margin-top:6px" onclick="copyText(${JSON.stringify(s.content||'')},this)">Copy ${s.label.split('(')[0].trim()}</button>
+            <button class="copy-btn" style="margin-top:8px;width:100%;font-size:15px;padding:13px 18px;border-radius:10px;" 
+              data-copy-text="${encodeURIComponent(s.content||'')}"
+              onclick="copyEncoded(this)">⎘ Copy ${s.label.split('(')[0].trim()}</button>
           </div>
         `).join('')}
       </div>
@@ -1367,44 +1391,27 @@ function expandTask(taskId, e) {
 function copyTaskContent(taskId, e) {
   if(e) e.stopPropagation();
   const task = document.getElementById(`task-${taskId}`);
-  // Get all content boxes and join them
-  const boxes = task.querySelectorAll('.content-box');
-  const texts = Array.from(boxes).map(b => b.textContent.trim()).filter(Boolean);
-  const combined = texts.join('\n\n');
+  // Get decoded text from the copy buttons' data attributes (most reliable)
+  const copyBtns = task.querySelectorAll('[data-copy-text]');
+  let combined = '';
+  if (copyBtns.length > 0) {
+    combined = Array.from(copyBtns)
+      .map(b => decodeURIComponent(b.getAttribute('data-copy-text') || ''))
+      .filter(Boolean)
+      .join('\n\n');
+  } else {
+    // Fallback: get textContent from content boxes
+    const boxes = task.querySelectorAll('.content-box');
+    combined = Array.from(boxes).map(b => b.textContent.trim()).filter(Boolean).join('\n\n');
+  }
   if (combined) {
-    navigator.clipboard.writeText(combined).then(() => {
-      const btn = e.target;
-      const orig = btn.textContent;
-      btn.textContent = '✓ Copied!';
-      btn.classList.add('copied');
-      // Also expand the content so they can see what was copied
-      const contentDiv = document.getElementById(`content-${taskId}`);
-      if (contentDiv) contentDiv.classList.add('visible');
-      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2500);
-    }).catch(() => {
-      // Fallback for older browsers
-      const ta = document.createElement('textarea');
-      ta.value = combined;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      const btn = e.target;
-      btn.textContent = '✓ Copied!';
-      btn.classList.add('copied');
-      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2500);
-    });
+    const contentDiv = document.getElementById(`content-${taskId}`);
+    if (contentDiv) contentDiv.classList.add('visible');
+    copyText(combined, e ? e.target : null);
   }
 }
 
-function copyText(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    const orig = btn.textContent;
-    btn.textContent = '✓ Copied!';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
-  });
-}
+// copyText defined below
 
 function toggleTask(taskId, e) {
   if(e) e.stopPropagation();
@@ -1633,6 +1640,173 @@ function clearCache() {
   showToast('Cache cleared — reloading products...');
   allProducts = [];
   loadProducts();
+}
+
+
+
+// ── THEME TOGGLE ──────────────────────────────────────────────────────────
+let currentTheme = localStorage.getItem('cc_theme') || 'dark';
+
+function applyTheme(theme) {
+  currentTheme = theme;
+  localStorage.setItem('cc_theme', theme);
+  const root = document.documentElement;
+  if (theme === 'light') {
+    root.style.setProperty('--dark', '#F8F5FF');
+    root.style.setProperty('--dark2', '#FFFFFF');
+    root.style.setProperty('--dark3', '#EEE8F8');
+    root.style.setProperty('--surface', '#EDE8F5');
+    root.style.setProperty('--surface2', '#E2DAF0');
+    root.style.setProperty('--text', '#160830');
+    root.style.setProperty('--text2', '#3A2860');
+    root.style.setProperty('--text3', '#8070A0');
+    root.style.setProperty('--border', 'rgba(74,26,107,0.3)');
+    root.style.setProperty('--border2', 'rgba(74,26,107,0.15)');
+    root.style.setProperty('--green', '#1E8A3C');
+    root.style.setProperty('--green-dark', '#166830');
+    document.getElementById('themeBtn').textContent = '🌙 Dark';
+  } else {
+    root.style.setProperty('--dark', '#0F0A18');
+    root.style.setProperty('--dark2', '#1A1128');
+    root.style.setProperty('--dark3', '#241836');
+    root.style.setProperty('--surface', '#2E2040');
+    root.style.setProperty('--surface2', '#3A2B50');
+    root.style.setProperty('--text', '#F0E8FF');
+    root.style.setProperty('--text2', '#B8A8D8');
+    root.style.setProperty('--text3', '#7A6A90');
+    root.style.setProperty('--border', 'rgba(201,168,76,0.2)');
+    root.style.setProperty('--border2', 'rgba(201,168,76,0.08)');
+    root.style.setProperty('--green', '#2ECC71');
+    root.style.setProperty('--green-dark', '#1A7A44');
+    document.getElementById('themeBtn').textContent = '☀ Light';
+  }
+}
+
+function toggleTheme() {
+  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+}
+
+// ── IMAGE SECTION ─────────────────────────────────────────────────────────
+function buildImageSection() {
+  if (!selectedProduct) return '';
+  const img = selectedProduct.image;
+  const title = selectedProduct.title || '';
+  const handle = selectedProduct.handle || '';
+  const productUrl = 'https://cchairandbeauty.com/products/' + handle;
+
+  if (!img) {
+    return `
+      <div style="padding:12px 0">
+        <div style="font-size:13px;color:var(--text3);margin-bottom:12px">
+          No product image found — open the product page to save the image manually.
+        </div>
+        <a href="${productUrl}" target="_blank" class="open-btn">
+          Open Product Page ↗
+        </a>
+      </div>
+    `;
+  }
+
+  // Build a proxy URL that forces download (avoids CORS issues on mobile)
+  const downloadUrl = img;
+
+  return `
+    <div style="padding:6px 0">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.6">
+        📱 <strong>Mobile:</strong> Tap and hold image → Save to Photos<br>
+        💻 <strong>Desktop:</strong> Right-click image → Save image as
+      </div>
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex-shrink:0">
+          <img src="${img}" 
+            style="width:180px;height:180px;border-radius:14px;object-fit:cover;
+                   border:3px solid var(--gold);display:block;cursor:pointer"
+            alt="${title}"
+            title="Long press or right-click to save"
+            onclick="window.open('${img}','_blank')">
+          <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:5px">
+            Tap to open full size
+          </div>
+        </div>
+        <div style="flex:1;min-width:160px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-size:13px;font-weight:600;color:var(--text);line-height:1.4">${title}</div>
+          <a href="${downloadUrl}" target="_blank" 
+            style="background:var(--gold);color:#0F0A18;border-radius:12px;
+                   padding:14px 20px;font-size:15px;font-weight:700;
+                   text-decoration:none;display:flex;align-items:center;
+                   justify-content:center;gap:8px;text-align:center;">
+            ⬇ Open Full Image
+          </a>
+          <a href="${productUrl}" target="_blank"
+            style="background:var(--surface);color:var(--text2);
+                   border:1.5px solid var(--border);border-radius:12px;
+                   padding:12px 20px;font-size:14px;font-weight:500;
+                   text-decoration:none;display:flex;align-items:center;
+                   justify-content:center;gap:6px;">
+            View Product Page ↗
+          </a>
+          <div style="font-size:11px;color:var(--text3);line-height:1.6;
+                      background:var(--dark3);border-radius:8px;padding:10px 12px;">
+            Save this image then attach it when posting on Instagram, Facebook and Google.
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ── COPY TEXT (FIXED) ─────────────────────────────────────────────────────
+function copyEncoded(btn) {
+  // Reads from data-copy-text attribute (URL encoded) so no JS escaping issues
+  const encoded = btn.getAttribute('data-copy-text') || '';
+  const text = decodeURIComponent(encoded);
+  copyText(text, btn);
+}
+
+function copyText(text, btn) {
+  const decoded = text
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(decoded).then(() => {
+      showCopied(btn);
+    }).catch(() => fallbackCopy(decoded, btn));
+  } else {
+    fallbackCopy(decoded, btn);
+  }
+}
+
+function fallbackCopy(text, btn) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  ta.style.top = '-9999px';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    document.execCommand('copy');
+    showCopied(btn);
+  } catch(e) {
+    btn.textContent = 'Failed — select manually';
+  }
+  document.body.removeChild(ta);
+}
+
+function showCopied(btn) {
+  if (!btn) return;
+  const orig = btn.textContent;
+  btn.textContent = '✓ Copied!';
+  btn.classList.add('copied');
+  setTimeout(() => {
+    btn.textContent = orig;
+    btn.classList.remove('copied');
+  }, 2500);
 }
 
 // ── INIT ───────────────────────────────────────────────────────────────────
