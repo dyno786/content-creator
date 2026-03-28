@@ -1119,6 +1119,10 @@ function selectProduct(product) {
   document.getElementById('selectedName').textContent = product.title;
   document.getElementById('selectedPrice').textContent = product.price;
 
+  // Reset any previous AI image data
+  window._aiImageData = null;
+  window._aiImageFilename = null;
+
   // COLLAPSE step 1 panel and show generate button prominently
   document.getElementById('step1Panel').style.display = 'none';
   document.getElementById('selectedBar').style.display = 'flex';
@@ -1319,7 +1323,15 @@ Product URL: https://cchairandbeauty.com/products/${selectedProduct.handle}`;
     addToHistory(selectedProduct);
     addToPostLog(selectedProduct, parsed);
     showChecklist(parsed);
-    debugLog('SUCCESS', `Content generated and checklist shown`);
+    debugLog('SUCCESS', 'Content generated and checklist shown');
+
+    // Kick off AI image generation in background immediately
+    // so it's ready by the time staff reach Task 5
+    const s2 = getSettings();
+    if (s2.openaiKey) {
+      debugLog('AI_IMAGE', 'Starting background AI image generation...');
+      generateAIImageAuto(selectedProduct, parsed);
+    }
 
   } catch(err) {
     clearInterval(stepInterval);
@@ -1898,17 +1910,16 @@ function buildImageSection() {
                    justify-content:center;gap:6px;">
             View Product Page ↗
           </a>
-          <div id="aiImageArea-${handle}" style="margin-top:4px">
-            <button onclick="generateAIImage('${handle}')"
-              style="background:linear-gradient(135deg,#10a37f,#1a7a5e);color:#fff;
-                     border:none;border-radius:12px;padding:12px 20px;
-                     font-size:14px;font-weight:600;cursor:pointer;
-                     font-family:inherit;display:flex;align-items:center;
-                     justify-content:center;gap:8px;width:100%">
-              ✦ Generate AI Image (ChatGPT)
-            </button>
-            <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:4px">
-              Needs OpenAI key in Settings · ~4p per image
+          <div id="aiImageArea-${handle}" style="margin-top:8px">
+            <div style="background:var(--surface);border-radius:10px;padding:12px;
+                        font-size:12px;color:var(--text3);text-align:center">
+              ${window._aiImageData ? 
+                '<span style="color:#10a37f;font-weight:600">✓ AI image ready — scroll down to download</span>' :
+                (getSettings().openaiKey ? 
+                  'AI image generating automatically...' : 
+                  '<span>Add OpenAI key in ⚙ Settings to enable AI images</span>'
+                )
+              }
             </div>
           </div>
         </div>
@@ -2134,13 +2145,177 @@ async function generateAIImage(handle) {
 
 // ── DOWNLOAD BASE64 IMAGE ─────────────────────────────────────────────────
 function downloadBase64Image(dataUrl, filename) {
+  if (!dataUrl) { showToast('No image to download yet'); return; }
   const a = document.createElement('a');
   a.href = dataUrl;
-  a.download = 'cc-ai-' + (filename || 'product') + '.png';
+  // filename is already SEO-friendly when passed from generateAIImageAuto
+  // e.g. "cantu-shea-butter-leave-in-repair-cream-cc-hair-beauty-leeds.png"
+  a.download = filename || 'cc-hair-beauty-product.png';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  showToast('AI image downloaded ✓');
+  showToast('Image downloaded: ' + a.download);
+  debugLog('DOWNLOAD', 'Image saved as: ' + a.download);
+}
+
+
+// ── AUTO AI IMAGE GENERATION (runs in background after content generates) ─
+async function generateAIImageAuto(product, parsedContent) {
+  // Build SEO-friendly filename from product title
+  // e.g. "Cantu Shea Butter Leave-In Repair Cream 453g" 
+  //   → "cantu-shea-butter-leave-in-repair-cream-453g-cc-hair-beauty-leeds.png"
+  function makeSeoFilename(title, vendor) {
+    const clean = (title || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')   // remove special chars
+      .replace(/\s+/g, '-')            // spaces to hyphens
+      .replace(/-+/g, '-')             // collapse multiple hyphens
+      .substring(0, 60)                // max 60 chars for the product part
+      .replace(/-$/, '');              // remove trailing hyphen
+    return `${clean}-cc-hair-beauty-leeds.png`;
+  }
+
+  const seoFilename = makeSeoFilename(product.title, product.vendor);
+  debugLog('AI_IMAGE_AUTO', `SEO filename will be: ${seoFilename}`);
+
+  // Store filename globally so download button can use it
+  window._aiImageFilename = seoFilename;
+
+  // Show "generating" state in the image task immediately
+  const handle = product.handle || product.id;
+  const areaId = 'aiImageArea-' + handle;
+
+  // Wait a tick for the DOM to render the checklist first
+  await new Promise(r => setTimeout(r, 300));
+
+  const area = document.getElementById(areaId);
+  if (area) {
+    area.innerHTML = `
+      <div style="background:var(--surface);border-radius:12px;padding:14px;margin-top:8px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+          <div class="spinner" style="width:16px;height:16px;border-width:2px;flex-shrink:0"></div>
+          <div style="font-size:13px;color:var(--text2);font-weight:600">
+            Generating AI image in background...
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text3)">
+          Will be ready by the time you reach this task
+        </div>
+      </div>
+    `;
+  }
+
+  // Build the prompt
+  const productName = product.title || '';
+  const brand = product.vendor || '';
+  const productType = product.productType || 'hair care product';
+  const imageContext = parsedContent.image_prompt || '';
+
+  const prompt = [
+    `Professional product photography for afro hair and beauty social media marketing.`,
+    `Product: ${productName}.`,
+    brand ? `Brand: ${brand}.` : '',
+    `Product type: ${productType}.`,
+    imageContext,
+    `Requirements: Clean white studio background, professional lighting from top-left,`,
+    `product centred and sharp, soft shadow underneath, luxury beauty brand aesthetic.`,
+    `No people, no text, no logos overlaid. Photorealistic. Square 1:1 composition.`,
+    `This image will be used for Instagram, Facebook and Google Business posts.`,
+  ].filter(Boolean).join(' ');
+
+  const s = getSettings();
+
+  try {
+    const resp = await fetch('/api/generate-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt: prompt,
+        apiKey: s.openaiKey,
+      }),
+    });
+
+    const data = await resp.json();
+
+    if (!resp.ok || data.error) {
+      throw new Error(data.error || `Error ${resp.status}`);
+    }
+
+    const b64 = data.image_b64;
+    if (!b64) throw new Error('No image data returned');
+
+    const imgSrc = 'data:image/png;base64,' + b64;
+    window._aiImageData = imgSrc; // store globally for re-use
+
+    debugLog('AI_IMAGE_OK', `AI image ready — filename: ${seoFilename}`);
+
+    // Update the area with the finished image
+    const areaFinal = document.getElementById(areaId);
+    if (areaFinal) {
+      areaFinal.innerHTML = `
+        <div style="margin-top:8px">
+          <div style="font-size:12px;font-weight:700;color:#10a37f;
+                      margin-bottom:8px;display:flex;align-items:center;gap:6px">
+            ✓ AI Image Ready
+          </div>
+          <img src="${imgSrc}"
+            style="width:100%;border-radius:12px;border:2px solid var(--gold);
+                   display:block;cursor:pointer;margin-bottom:10px"
+            onclick="window.open(this.src,'_blank')"
+            title="Click to view full size">
+          <div style="font-size:11px;color:var(--text3);background:var(--surface);
+                      border-radius:8px;padding:8px 10px;margin-bottom:10px;
+                      word-break:break-all;line-height:1.6">
+            <strong style="color:var(--gold)">SEO filename:</strong><br>
+            ${seoFilename}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button onclick="downloadBase64Image(window._aiImageData, '${seoFilename}')"
+              style="background:var(--gold);color:#0F0A18;border:none;
+                     border-radius:12px;padding:14px 20px;font-size:15px;
+                     font-weight:700;cursor:pointer;font-family:inherit;
+                     display:flex;align-items:center;justify-content:center;gap:8px;">
+              ⬇ Download AI Image
+            </button>
+            <button onclick="generateAIImageAuto(selectedProduct, generatedContent)"
+              style="background:var(--surface);color:var(--text2);
+                     border:1.5px solid var(--border);border-radius:12px;
+                     padding:10px;font-size:13px;font-weight:500;
+                     cursor:pointer;font-family:inherit;">
+              ↻ Regenerate
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    showToast('✓ AI image ready in Task 5');
+
+  } catch(e) {
+    debugLog('AI_IMAGE_ERROR', e.message);
+
+    const areaErr = document.getElementById(areaId);
+    if (areaErr) {
+      areaErr.innerHTML = `
+        <div style="background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);
+                    border-radius:10px;padding:12px;margin-top:8px">
+          <div style="font-size:12px;color:#E74C3C;font-weight:600;margin-bottom:4px">
+            AI image failed
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:10px">
+            ${e.message}
+          </div>
+          <button onclick="generateAIImageAuto(selectedProduct, generatedContent)"
+            style="background:var(--surface);color:var(--text2);
+                   border:1px solid var(--border);border-radius:8px;
+                   padding:8px 14px;font-size:12px;cursor:pointer;
+                   font-family:inherit;">
+            Try Again
+          </button>
+        </div>
+      `;
+    }
+  }
 }
 
 // ── DEBUG CONSOLE ─────────────────────────────────────────────────────────
