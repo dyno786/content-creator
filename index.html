@@ -1004,11 +1004,14 @@ function selectProduct(product) {
   document.getElementById('selectedImg').style.display = product.image ? 'block' : 'none';
   document.getElementById('selectedName').textContent = product.title;
   document.getElementById('selectedPrice').textContent = product.price;
+
+  // COLLAPSE step 1 panel and show generate button prominently
+  document.getElementById('step1Panel').style.display = 'none';
   document.getElementById('selectedBar').style.display = 'flex';
   document.getElementById('generateBtn').style.display = 'flex';
 
-  // Scroll to generate button
-  document.getElementById('generateBtn').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  // Scroll to top so generate button is visible
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function changeProduct() {
@@ -1016,9 +1019,14 @@ function changeProduct() {
   document.getElementById('selectedBar').style.display = 'none';
   document.getElementById('generateBtn').style.display = 'none';
   document.getElementById('checklistPanel').style.display = 'none';
+  document.getElementById('loadingPanel').style.display = 'none';
   document.getElementById('step1Panel').style.display = 'block';
   document.querySelectorAll('.product-card, .suggested-card').forEach(c => c.classList.remove('selected'));
-  setStep(1);
+  // Reset step indicators
+  document.getElementById('step1-indicator').className = 'step active';
+  document.getElementById('step1-indicator').innerHTML = '<div class="step-num">1</div> Pick a Product';
+  document.getElementById('step2-indicator').className = 'step inactive';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function resetToStep1() {
@@ -1093,7 +1101,7 @@ SEO RULES:
 - Blog must include 2 internal links: one to a relevant cchairandbeauty.com collection, one to another product
 - Meta title MUST be under 60 characters — count carefully
 - Meta description MUST be under 155 characters — count carefully
-- GBP posts MUST be under 150 words — NO hashtags in GBP posts
+- GBP posts can be up to 1,500 characters — NO hashtags in GBP posts
 - Instagram caption under 150 words, NO URL, end with a question to boost engagement
 - Facebook post includes product URL on its own line
 
@@ -1118,9 +1126,9 @@ OUTPUT: Return ONLY a valid JSON object with exactly these keys (no markdown, no
   "blog_tags": "comma,separated,tags",
   "blog_alt_text": "string describing the product image for SEO",
   "blog_html": "full HTML blog post 1200+ words",
-  "gbp_chapeltown": "100-150 words NO hashtags ends with Chapeltown address",
-  "gbp_roundhay": "100-150 words NO hashtags ends with Roundhay address",
-  "gbp_city_centre": "100-150 words NO hashtags ends with City Centre address",
+  "gbp_chapeltown": "300-400 words up to 1500 chars NO hashtags ends with Chapeltown address and URL",
+  "gbp_roundhay": "300-400 words up to 1500 chars NO hashtags ends with Roundhay address and URL",
+  "gbp_city_centre": "300-400 words up to 1500 chars NO hashtags ends with City Centre address and URL",
   "instagram_caption": "punchy under 150 words no URL ends with question",
   "instagram_hashtags": "20 hashtags starting with #cchairandbeauty",
   "facebook_post": "conversational with URL on own line and address at bottom",
@@ -1203,40 +1211,40 @@ function showChecklist(content) {
       openUrl: 'https://admin.shopify.com/store/cchairandbeauty/articles/new',
       openLabel: 'Open Shopify ↗',
       sections: [
-        { label: 'Meta Title (paste into SEO title field)', content: content.blog_meta_title, badge: `${(content.blog_meta_title||'').length}/60 chars` },
-        { label: 'Meta Description (paste into SEO description field)', content: content.blog_meta_description, badge: `${(content.blog_meta_description||'').length}/155 chars` },
-        { label: 'Tags', content: content.blog_tags },
-        { label: 'Image Alt Text', content: content.blog_alt_text },
-        { label: 'Excerpt', content: content.blog_excerpt },
-        { label: 'Blog HTML (paste into body — use HTML mode)', content: content.blog_html },
+        { label: '① Title — paste into Title field at top', content: content.blog_meta_title, badge: `${(content.blog_meta_title||'').length} chars` },
+        { label: '② Content — click the <> icon in toolbar then paste HTML', content: content.blog_html },
+        { label: '③ Excerpt — paste into Excerpt section', content: content.blog_excerpt },
+        { label: '④ Page title (SEO) — paste into Search engine listing → Page title', content: content.blog_meta_title, badge: `${(content.blog_meta_title||'').length}/70 chars` },
+        { label: '⑤ Meta description (SEO) — paste into Search engine listing → Meta description', content: content.blog_meta_description, badge: `${(content.blog_meta_description||'').length}/160 chars` },
+        { label: '⑥ Tags — paste into Tags field on right side', content: content.blog_tags },
       ]
     },
     {
       id: 'gbp1',
       name: '2. GBP Post — Chapeltown Road',
-      hint: 'Go to business.google.com → select Chapeltown branch → Add Update → paste → add photo → publish',
+      hint: 'Search "CC Hair Beauty Chapeltown Leeds" on Google → click Your Business panel → Posts → + Add update → paste → publish',
       time: '~30 sec',
-      openUrl: 'https://business.google.com',
-      openLabel: 'Open Google ↗',
-      sections: [{ label: 'Post text (copy and paste)', content: content.gbp_chapeltown }]
+      openUrl: 'https://www.google.com/search?q=CC+Hair+%26+Beauty+Chapeltown+Road+Leeds+LS7',
+      openLabel: 'Open GBP ↗',
+      sections: [{ label: 'Post text — copy then click Add Update on your GBP listing', content: content.gbp_chapeltown, badge: `${(content.gbp_chapeltown||'').length}/1500 chars` }]
     },
     {
       id: 'gbp2',
       name: '3. GBP Post — Roundhay Road',
-      hint: 'Go to business.google.com → select Roundhay branch → Add Update → paste → add photo → publish',
+      hint: 'Search "CC Hair Beauty Roundhay Leeds" on Google → click Your Business panel → Posts → + Add update → paste → publish',
       time: '~30 sec',
-      openUrl: 'https://business.google.com',
-      openLabel: 'Open Google ↗',
-      sections: [{ label: 'Post text (copy and paste)', content: content.gbp_roundhay }]
+      openUrl: 'https://www.google.com/search?q=CC+Hair+%26+Beauty+Roundhay+Road+Leeds+LS8',
+      openLabel: 'Open GBP ↗',
+      sections: [{ label: 'Post text — copy then click Add Update on your GBP listing', content: content.gbp_roundhay, badge: `${(content.gbp_roundhay||'').length}/1500 chars` }]
     },
     {
       id: 'gbp3',
       name: '4. GBP Post — City Centre',
-      hint: 'Go to business.google.com → select City Centre branch → Add Update → paste → add photo → publish',
+      hint: 'Search "CC Hair Beauty City Centre Leeds" on Google → click Your Business panel → Posts → + Add update → paste → publish',
       time: '~30 sec',
-      openUrl: 'https://business.google.com',
-      openLabel: 'Open Google ↗',
-      sections: [{ label: 'Post text (copy and paste)', content: content.gbp_city_centre }]
+      openUrl: 'https://www.google.com/search?q=CC+Hair+%26+Beauty+New+York+Street+Leeds',
+      openLabel: 'Open GBP ↗',
+      sections: [{ label: 'Post text — copy then click Add Update on your GBP listing', content: content.gbp_city_centre, badge: `${(content.gbp_city_centre||'').length}/1500 chars` }]
     },
     {
       id: 'instagram',
@@ -1295,6 +1303,12 @@ function showChecklist(content) {
   renderTaskList('bonusList', bonusTasks, true);
   showHistory();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Auto-expand the first task so staff can see content immediately
+  setTimeout(() => {
+    const firstContent = document.getElementById('content-blog');
+    if (firstContent) firstContent.classList.add('visible');
+  }, 100);
 }
 
 function renderTaskList(containerId, tasks, isBonus) {
@@ -1352,18 +1366,33 @@ function expandTask(taskId, e) {
 
 function copyTaskContent(taskId, e) {
   if(e) e.stopPropagation();
-  // Find the main content for this task
   const task = document.getElementById(`task-${taskId}`);
-  const firstBox = task.querySelector('.content-box');
-  if (firstBox) {
-    const text = firstBox.textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      // Find the copy button
+  // Get all content boxes and join them
+  const boxes = task.querySelectorAll('.content-box');
+  const texts = Array.from(boxes).map(b => b.textContent.trim()).filter(Boolean);
+  const combined = texts.join('\n\n');
+  if (combined) {
+    navigator.clipboard.writeText(combined).then(() => {
       const btn = e.target;
       const orig = btn.textContent;
-      btn.textContent = '✓ Copied';
+      btn.textContent = '✓ Copied!';
       btn.classList.add('copied');
-      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+      // Also expand the content so they can see what was copied
+      const contentDiv = document.getElementById(`content-${taskId}`);
+      if (contentDiv) contentDiv.classList.add('visible');
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2500);
+    }).catch(() => {
+      // Fallback for older browsers
+      const ta = document.createElement('textarea');
+      ta.value = combined;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      const btn = e.target;
+      btn.textContent = '✓ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2500);
     });
   }
 }
