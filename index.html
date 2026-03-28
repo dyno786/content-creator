@@ -24,6 +24,7 @@
   --green-dark: #1A7A44;
   --red: #E74C3C;
   --border: rgba(201,168,76,0.2);
+  --red: #E74C3C;
   --border2: rgba(201,168,76,0.08);
 }
 
@@ -812,6 +813,11 @@ body {
       <label class="form-label">Google Review Link — City Centre Branch</label>
       <input class="form-input" type="text" id="reviewCityCentre" placeholder="https://g.page/r/...">
     </div>
+    <div class="form-group">
+      <label class="form-label">OpenAI API Key (optional — for AI image generation)</label>
+      <input class="form-input" type="password" id="openaiKey" placeholder="sk-...">
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">~4p per image (DALL-E 3). Get from platform.openai.com</div>
+    </div>
     <div class="modal-actions">
       <button class="cancel-btn" onclick="closeSettings()">Cancel</button>
       <button class="save-btn" onclick="saveSettings()">Save Settings</button>
@@ -841,6 +847,7 @@ function getSettings() {
     reviewChapeltown: localStorage.getItem('cc_review_chapeltown') || '',
     reviewRoundhay: localStorage.getItem('cc_review_roundhay') || '',
     reviewCityCentre: localStorage.getItem('cc_review_citycentre') || '',
+    openaiKey: localStorage.getItem('cc_openai_key') || '',
   };
 }
 function openSettings() {
@@ -851,6 +858,7 @@ function openSettings() {
   document.getElementById('reviewChapeltown').value = s.reviewChapeltown;
   document.getElementById('reviewRoundhay').value = s.reviewRoundhay;
   document.getElementById('reviewCityCentre').value = s.reviewCityCentre;
+  document.getElementById('openaiKey').value = s.openaiKey;
   document.getElementById('settingsModal').classList.add('open');
 }
 function closeSettings() { document.getElementById('settingsModal').classList.remove('open'); }
@@ -861,6 +869,7 @@ function saveSettings() {
   localStorage.setItem('cc_review_chapeltown', document.getElementById('reviewChapeltown').value.trim());
   localStorage.setItem('cc_review_roundhay', document.getElementById('reviewRoundhay').value.trim());
   localStorage.setItem('cc_review_citycentre', document.getElementById('reviewCityCentre').value.trim());
+  localStorage.setItem('cc_openai_key', document.getElementById('openaiKey').value.trim());
   closeSettings();
   showToast('Settings saved ✓');
   applyTheme(currentTheme);
@@ -1353,6 +1362,7 @@ function showChecklist(content) {
         { label: '④ Page title (SEO) — paste into Search engine listing → Page title', content: content.blog_meta_title, badge: `${(content.blog_meta_title||'').length}/70 chars` },
         { label: '⑤ Meta description (SEO) — paste into Search engine listing → Meta description', content: content.blog_meta_description, badge: `${(content.blog_meta_description||'').length}/160 chars` },
         { label: '⑥ Tags — paste into Tags field on right side', content: content.blog_tags },
+        { label: '⑦ Image Alt Text — when you add the blog image, paste this into the alt text field', content: content.blog_alt_text },
       ]
     },
     {
@@ -1826,67 +1836,87 @@ function buildImageSection() {
   const title = selectedProduct.title || '';
   const handle = selectedProduct.handle || '';
   const productUrl = 'https://cchairandbeauty.com/products/' + handle;
+  const altText = (generatedContent && generatedContent.blog_alt_text) ? generatedContent.blog_alt_text : title + ' available at CC Hair & Beauty Leeds';
 
   if (!img) {
     return `
       <div style="padding:12px 0">
         <div style="font-size:13px;color:var(--text3);margin-bottom:12px">
-          No product image found — open the product page to save the image manually.
+          No product image in Shopify — open the product page to save the image manually.
         </div>
-        <a href="${productUrl}" target="_blank" class="open-btn">
-          Open Product Page ↗
-        </a>
+        <a href="${productUrl}" target="_blank" class="open-btn">Open Product Page ↗</a>
       </div>
     `;
   }
-
-  // Build a proxy URL that forces download (avoids CORS issues on mobile)
-  const downloadUrl = img;
 
   return `
     <div style="padding:6px 0">
       <div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.6">
         📱 <strong>Mobile:</strong> Tap and hold image → Save to Photos<br>
-        💻 <strong>Desktop:</strong> Right-click image → Save image as
+        💻 <strong>Desktop:</strong> Right-click image → Save image as...<br>
+        Or use the Open button to view full size then save from there.
       </div>
       <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
         <div style="flex-shrink:0">
-          <img src="${img}" 
+          <img src="${img}"
             style="width:180px;height:180px;border-radius:14px;object-fit:cover;
                    border:3px solid var(--gold);display:block;cursor:pointer"
             alt="${title}"
             title="Long press or right-click to save"
             onclick="window.open('${img}','_blank')">
           <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:5px">
-            Tap to open full size
+            Tap image to open full size
           </div>
         </div>
-        <div style="flex:1;min-width:160px;display:flex;flex-direction:column;gap:10px">
+        <div style="flex:1;min-width:160px;display:flex;flex-direction:column;gap:8px">
           <div style="font-size:13px;font-weight:600;color:var(--text);line-height:1.4">${title}</div>
-          <a href="${downloadUrl}" target="_blank" 
+          <div style="font-size:11px;color:var(--text3);background:var(--surface);
+                      border-radius:8px;padding:8px 10px;line-height:1.5">
+            <strong style="color:var(--gold)">Alt text for this image:</strong><br>
+            ${altText}
+          </div>
+          <a href="${img}" target="_blank"
             style="background:var(--gold);color:#0F0A18;border-radius:12px;
                    padding:14px 20px;font-size:15px;font-weight:700;
                    text-decoration:none;display:flex;align-items:center;
                    justify-content:center;gap:8px;text-align:center;">
             ⬇ Open Full Image
           </a>
+          <button onclick="downloadImage('${img}','${handle}')"
+            style="background:var(--surface);color:var(--text2);
+                   border:1.5px solid var(--border);border-radius:12px;
+                   padding:12px 20px;font-size:14px;font-weight:600;
+                   cursor:pointer;font-family:inherit;display:flex;
+                   align-items:center;justify-content:center;gap:6px;">
+            ⬇ Download Image
+          </button>
           <a href="${productUrl}" target="_blank"
             style="background:var(--surface);color:var(--text2);
                    border:1.5px solid var(--border);border-radius:12px;
-                   padding:12px 20px;font-size:14px;font-weight:500;
+                   padding:10px 20px;font-size:13px;font-weight:500;
                    text-decoration:none;display:flex;align-items:center;
                    justify-content:center;gap:6px;">
             View Product Page ↗
           </a>
-          <div style="font-size:11px;color:var(--text3);line-height:1.6;
-                      background:var(--dark3);border-radius:8px;padding:10px 12px;">
-            Save this image then attach it when posting on Instagram, Facebook and Google.
+          <div id="aiImageArea-${handle}" style="margin-top:4px">
+            <button onclick="generateAIImage('${handle}')"
+              style="background:linear-gradient(135deg,#10a37f,#1a7a5e);color:#fff;
+                     border:none;border-radius:12px;padding:12px 20px;
+                     font-size:14px;font-weight:600;cursor:pointer;
+                     font-family:inherit;display:flex;align-items:center;
+                     justify-content:center;gap:8px;width:100%">
+              ✦ Generate AI Image (ChatGPT)
+            </button>
+            <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:4px">
+              Needs OpenAI key in Settings · ~4p per image
+            </div>
           </div>
         </div>
       </div>
     </div>
   `;
 }
+
 
 // ── COPY TEXT (FIXED) ─────────────────────────────────────────────────────
 function copyEncoded(btn) {
@@ -1942,6 +1972,176 @@ function showCopied(btn) {
   }, 2500);
 }
 
+
+
+// ── IMAGE DOWNLOAD ────────────────────────────────────────────────────────
+async function downloadImage(imgUrl, handle) {
+  try {
+    // Fetch the image as a blob via our proxy to bypass CORS
+    const resp = await fetch(`/api/shopify?endpoint=image_proxy&url=${encodeURIComponent(imgUrl)}`);
+    if (resp.ok) {
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `cc-${handle || 'product'}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Image downloaded ✓');
+      return;
+    }
+  } catch(e) {
+    debugLog('IMG_PROXY', 'Proxy failed, trying direct: ' + e.message);
+  }
+  // Fallback — open in new tab for manual save
+  window.open(imgUrl, '_blank');
+  showToast('Image opened in new tab — right-click → Save image as');
+}
+
+// ── AI IMAGE GENERATION (via /api/generate-image serverless function) ──────
+async function generateAIImage(handle) {
+  const s = getSettings();
+  if (!s.openaiKey) {
+    showToast('Add your OpenAI API key in Settings to use AI images');
+    openSettings();
+    return;
+  }
+  if (!selectedProduct || !generatedContent) return;
+
+  const areaId = 'aiImageArea-' + handle;
+  const area = document.getElementById(areaId);
+  if (!area) return;
+
+  // Build a rich prompt using the generated content context
+  const productName = selectedProduct.title || '';
+  const brand = selectedProduct.vendor || '';
+  const productType = selectedProduct.productType || 'hair care product';
+  const imageContext = generatedContent.image_prompt || '';
+
+  const prompt = [
+    `Professional product photography for social media marketing.`,
+    `Product: ${productName}.`,
+    brand ? `Brand: ${brand}.` : '',
+    imageContext ? imageContext : '',
+    `Style: Clean studio background, professional beauty product lighting,`,
+    `luxury afro hair and beauty aesthetic. Shot from slight angle showing product clearly.`,
+    `No text overlays. No people. Square composition. High detail, photorealistic.`,
+    `Suitable for Instagram, Facebook and Google Business posts for CC Hair & Beauty Leeds.`,
+  ].filter(Boolean).join(' ');
+
+  debugLog('AI_IMAGE', 'Generating image via /api/generate-image');
+  debugLog('AI_IMAGE', 'Prompt: ' + prompt.substring(0, 100) + '...');
+
+  area.innerHTML = `
+    <div style="background:var(--surface);border-radius:12px;padding:14px;margin-top:8px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div class="spinner" style="width:18px;height:18px;border-width:2px;flex-shrink:0"></div>
+        <div style="font-size:13px;color:var(--text2);font-weight:500">
+          Generating AI image... (~15 seconds)
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);line-height:1.5">
+        Using gpt-image-1 via your OpenAI account. ~4p per image.
+      </div>
+    </div>
+  `;
+
+  try {
+    const resp = await fetch('/api/generate-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt: prompt,
+        apiKey: s.openaiKey,
+      }),
+    });
+
+    const data = await resp.json();
+
+    if (!resp.ok || data.error) {
+      throw new Error(data.error || `Server error ${resp.status}`);
+    }
+
+    const b64 = data.image_b64;
+    if (!b64) throw new Error('No image data returned');
+
+    const imgSrc = 'data:image/png;base64,' + b64;
+    debugLog('AI_IMAGE_OK', 'Image generated — ' + b64.length + ' bytes base64');
+
+    area.innerHTML = `
+      <div style="margin-top:8px">
+        <div style="font-size:12px;color:#10a37f;font-weight:700;margin-bottom:8px;
+                    display:flex;align-items:center;gap:6px">
+          ✓ AI Image Ready (${data.model || 'gpt-image-1'})
+        </div>
+        <img src="${imgSrc}"
+          style="width:100%;border-radius:12px;border:2px solid var(--gold);
+                 display:block;cursor:pointer;margin-bottom:10px"
+          onclick="window.open(this.src,'_blank')"
+          title="Click to open full size">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button onclick="downloadBase64Image('${imgSrc}','${(productName).replace(/'/g,'').replace(/[^a-zA-Z0-9]/g,'-').toLowerCase()}')"
+            style="background:var(--gold);color:#0F0A18;border:none;border-radius:12px;
+                   padding:13px 20px;font-size:14px;font-weight:700;cursor:pointer;
+                   font-family:inherit;display:flex;align-items:center;
+                   justify-content:center;gap:8px;">
+            ⬇ Download AI Image
+          </button>
+          <button onclick="generateAIImage('${handle}')"
+            style="background:var(--surface);color:var(--text2);
+                   border:1.5px solid var(--border);border-radius:12px;
+                   padding:10px;font-size:13px;font-weight:500;cursor:pointer;
+                   font-family:inherit;">
+            ↻ Regenerate
+          </button>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:8px;text-align:center">
+          Image is stored temporarily. Download it before closing.
+        </div>
+      </div>
+    `;
+
+  } catch(e) {
+    debugLog('AI_IMAGE_ERROR', e.message);
+    area.innerHTML = `
+      <div style="background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);
+                  border-radius:10px;padding:12px;margin-top:8px">
+        <div style="font-size:12px;color:#E74C3C;font-weight:600;margin-bottom:6px">
+          AI image failed
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:10px">${e.message}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="generateAIImage('${handle}')"
+            style="background:var(--surface);color:var(--text2);border:1px solid var(--border);
+                   border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;
+                   font-family:inherit;">
+            Try Again
+          </button>
+          <button onclick="toggleDebugConsole();document.getElementById('debugConsoleBody').style.display='block';renderDebugLogs()"
+            style="background:var(--surface);color:var(--text3);border:1px solid var(--border);
+                   border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;
+                   font-family:inherit;">
+            View Debug Logs
+          </button>
+        </div>
+      </div>
+    `;
+    showToast('AI image error — check the debug console');
+  }
+}
+
+// ── DOWNLOAD BASE64 IMAGE ─────────────────────────────────────────────────
+function downloadBase64Image(dataUrl, filename) {
+  const a = document.createElement('a');
+  a.href = dataUrl;
+  a.download = 'cc-ai-' + (filename || 'product') + '.png';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast('AI image downloaded ✓');
+}
 
 // ── DEBUG CONSOLE ─────────────────────────────────────────────────────────
 const debugLogs = [];
