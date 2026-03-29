@@ -213,7 +213,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .ls.active{color:var(--teal);font-weight:600}
 
 /* ── CHECKLIST ───────────────────────────────────────────────────── */
-.cl-panel{display:none;margin-bottom:16px}
+.cl-panel{display:none;margin-bottom:16px;border-radius:var(--r3);overflow:hidden;box-shadow:var(--shadow2)}
 .cl-hdr{background:var(--teal);border-radius:var(--r3) var(--r3) 0 0;padding:20px 22px}
 .cl-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.7);margin-bottom:6px}
 .cl-product{font-size:18px;font-weight:700;color:#fff;line-height:1.3}
@@ -253,6 +253,20 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .content-box::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 
 /* ── BONUS ───────────────────────────────────────────────────────── */
+.task-section-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;font-size:13px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.8px;
+  color:var(--teal);background:var(--teal-light);
+  border-top:2px solid var(--teal);cursor:pointer;
+  user-select:none;
+}
+.task-section-header:first-child{border-top:none}
+.task-section-header:hover{background:rgba(0,184,148,0.15)}
+.task-section-body{background:var(--card);overflow:hidden}.task-section-body .task-row:last-child{border-bottom:none}
+.task-section-body.collapsed{display:none}
+.section-toggle{font-size:12px;transition:transform .2s}
+.section-toggle.collapsed{transform:rotate(180deg)}
 .bonus-strip{padding:13px 18px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--card2)}
 
 /* ── TAG PILLS ───────────────────────────────────────────────────── */
@@ -427,16 +441,39 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
       </div>
       <div class="prog-wrap">
         <div class="prog-bar-bg"><div class="prog-fill" id="progressFill" style="width:0%"></div></div>
-        <div class="prog-lbl" id="progressText">0 of 6 done</div>
+        <div class="prog-lbl" id="progressText">0 of 8 done</div>
       </div>
     </div>
-    <div class="task-wrap">
-      <div id="taskList"></div>
-      <div class="bonus-strip">Optional extras</div>
-      <div id="bonusList"></div>
-      <div style="padding:14px 18px;border-top:1px solid var(--b1)">
-        <button class="btn btn-ghost-dark" onclick="resetToStep1()" style="width:100%;font-size:14px">← Generate content for a different product</button>
-      </div>
+    <!-- SECTION: BLOG -->
+    <div class="task-section-header" onclick="toggleSection('blogSection')">
+      <span>📝 Shopify Blog Post</span>
+      <span class="section-toggle" id="blogSection-arrow">▼</span>
+    </div>
+    <div class="task-section-body" id="blogSection"><div id="taskList"></div></div>
+
+    <!-- SECTION: GBP -->
+    <div class="task-section-header" onclick="toggleSection('gbpSection')">
+      <span>📍 Google Business Profile — All 3 Branches</span>
+      <span class="section-toggle" id="gbpSection-arrow">▼</span>
+    </div>
+    <div class="task-section-body" id="gbpSection"><div id="gbpList"></div></div>
+
+    <!-- SECTION: SOCIAL + IMAGE + VIDEO -->
+    <div class="task-section-header" onclick="toggleSection('socialSection')">
+      <span>📸 Social Media, Images &amp; Video</span>
+      <span class="section-toggle" id="socialSection-arrow">▼</span>
+    </div>
+    <div class="task-section-body" id="socialSection"><div id="socialList"></div></div>
+
+    <!-- SECTION: REVIEW + TAGS -->
+    <div class="task-section-header" onclick="toggleSection('reviewSection')">
+      <span>⭐ Reviews &amp; Tags</span>
+      <span class="section-toggle" id="reviewSection-arrow">▼</span>
+    </div>
+    <div class="task-section-body" id="reviewSection"><div id="reviewList"></div></div>
+
+    <div style="padding:14px 18px;border-top:1px solid var(--border);background:var(--card);border-radius:0 0 var(--r3) var(--r3)">
+      <button class="btn btn-ghost-dark" onclick="resetToStep1()" style="width:100%;font-size:14px">← Generate content for a different product</button>
     </div>
   </div>
   <div class="bottom-cards">
@@ -521,6 +558,9 @@ const DEFAULTS = {
   gbpCity:    'https://www.google.com/search?q=CC+Hair+Beauty+New+York+Street+Leeds',
   instagram:  'https://www.instagram.com/cchairandbeauty',
   facebook:   'https://www.facebook.com/cchairandbeauty',
+  revChap:    'https://www.google.com/search?q=CC+Hair+Beauty+Chapeltown+Road+Leeds+LS7',
+  revRound:   'https://www.google.com/search?q=CC+Hair+Beauty+Roundhay+Road+Leeds+LS8',
+  revCity:    'https://www.google.com/search?q=CC+Hair+Beauty+New+York+Street+Leeds',
 };
 
 function cfg() {
@@ -635,12 +675,12 @@ function copyDebugLogs() {
 }
 function toggleDebugPanel() {
   const b = document.getElementById('debugBody');
-  b.classList.toggle('vis');
+  b.classList.toggle('open');
   if (b.classList.contains('vis')) renderDebugLog();
 }
 function toggleLogPanel() {
   const b = document.getElementById('logBody');
-  b.classList.toggle('vis');
+  b.classList.toggle('open');
   if (b.classList.contains('vis')) renderPostLog();
 }
 async function runDebug() {
@@ -676,7 +716,7 @@ async function testGenerate() {
     const txt = d.content?.[0]?.text || '';
     dbg(txt.includes('WORKING')?'API_OK':'TEST_WARN','Response: "'+txt+'"');
   } catch(e) { dbg('TEST_ERROR', e.message); }
-  document.getElementById('debugBody').classList.add('vis');
+  document.getElementById('debugBody').classList.add('open');
   renderDebugLog();
 }
 
@@ -1111,104 +1151,216 @@ URL: https://cchairandbeauty.com/products/${selectedProduct.handle}`;
 }
 
 // ── CHECKLIST ──────────────────────────────────────────────────────
-function showChecklist(c) {
-  document.getElementById('loadingPanel').style.display='none';
-  document.getElementById('checklistPanel').style.display='block';
+function showChecklist(content) {
+  tasksDone = new Set();
+  document.getElementById('loadingPanel').style.display = 'none';
+  document.getElementById('checklistPanel').style.display = 'block';
   document.getElementById('clProduct').textContent = selectedProduct.title;
-  document.getElementById('clTime').textContent = '⏰ '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  tasksDone.clear(); updateProgress(); showHistory();
+  document.getElementById('clTime').textContent = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  setStep(1);
+  document.getElementById('sp2').className = 'step-pill active';
 
   const s = cfg();
-  const tasks = [
-    {id:'blog', name:'1. Shopify Blog Post', hint:'Click <> in toolbar → paste HTML. Fill meta title, description, tags.', time:'~2 min',
+
+  // ── SECTION 1: SHOPIFY BLOG ─────────────────────────────────────
+  const blogTasks = [
+    {id:'blog', name:'1. Shopify Blog Post', hint:'Open Shopify → Blog Posts → Add Blog Post → follow the steps below', time:'~3 min',
       openUrl:'https://admin.shopify.com/store/cchairandbeauty/articles/new', openLabel:'Open Shopify ↗',
       sections:[
-        {label:'① Blog Title (Shopify → Blog Posts → Add Blog Post → Title)', content:c.blog_meta_title, badge:`${(c.blog_meta_title||'').length}/70 chars`},
-        {label:'② Blog HTML — click the <> icon in the editor then paste', content:c.blog_html},
-        {label:'③ Excerpt (shown on blog listing page)', content:c.blog_excerpt},
-        {label:'④ SEO Meta Title (Edit website SEO → Page title)', content:c.blog_meta_title, badge:`${(c.blog_meta_title||'').length}/70`},
-        {label:'⑤ SEO Meta Description (Edit website SEO → Description)', content:c.blog_meta_description, badge:`${(c.blog_meta_description||'').length}/160`},
-        {label:'⑥ Focus Keyword', content:c.blog_focus_keyword},
-        {label:'⑦ Shopify Tags (comma separated)', content:c.blog_tags},
-        {label:'⑧ Image Alt Text (upload featured image then set alt text)', content:c.blog_alt_text},
+        {label:'① Title — paste into the Title field at top',           content:content.blog_meta_title,        badge:`${(content.blog_meta_title||'').length}/70`},
+        {label:'② Content — click the <> HTML icon then paste all of this', content:content.blog_html},
+        {label:'③ Excerpt — paste into the Excerpt box',                content:content.blog_excerpt},
+        {label:'④ SEO Title — click "Edit website SEO" → Page title',   content:content.blog_meta_title,        badge:`${(content.blog_meta_title||'').length}/70`},
+        {label:'⑤ SEO Description — Edit website SEO → Description',   content:content.blog_meta_description,  badge:`${(content.blog_meta_description||'').length}/160`},
+        {label:'⑥ Focus Keyword',                                       content:content.blog_focus_keyword},
+        {label:'⑦ Tags — paste into the Tags field (right sidebar)',    content:content.blog_tags},
+        {label:'⑧ Image Alt Text — upload featured image then set alt', content:content.blog_alt_text},
       ]},
-    {id:'gbp', name:'2. Google Business Posts', hint:'Copy each post and add to your GBP listing — links open each branch directly', time:'~1 min',
-      openUrl: s.gbpChap || 'https://www.google.com/search?q=CC+Hair+%26+Beauty+Chapeltown+Road+Leeds', openLabel:'Open GBP ↗',
-      sections:[
-        {label:'📍 Chapeltown Road LS7', content:c.gbp_chapeltown, badge:`${(c.gbp_chapeltown||'').length}/1500 chars`, link: s.gbpChap||DEFAULTS.gbpChap, linkLabel:'Open GBP ↗'},
-        {label:'📍 Roundhay Road LS8', content:c.gbp_roundhay, badge:`${(c.gbp_roundhay||'').length}/1500 chars`, link: s.gbpRound||DEFAULTS.gbpRound, linkLabel:'Open GBP ↗'},
-        {label:'📍 City Centre — New York Street', content:c.gbp_city_centre, badge:`${(c.gbp_city_centre||'').length}/1500 chars`, link: s.gbpCity||DEFAULTS.gbpCity, linkLabel:'Open GBP ↗'},
-      ]},
-    {id:'instagram', name:'3. Instagram', hint:'+ New Post → add image → paste caption → paste hashtags in first comment', time:'~1 min',
-      openUrl: s.instagram || DEFAULTS.instagram, openLabel:'Open Instagram ↗',
-      sections:[{label:'Caption (no URL)', content:c.instagram_caption},{label:'Hashtags', content:c.instagram_hashtags}]},
-    {id:'facebook', name:'4. Facebook', hint:'Create Post → paste text → add image → post', time:'~30 sec',
-      openUrl: s.facebook || DEFAULTS.facebook, openLabel:'Open Facebook ↗',
-      sections:[{label:'Post text', content:c.facebook_post}]},
   ];
 
-  const bonus = [
-    {id:'image', name:'5. Product Image', hint:'Download and use for all posts above.', time:'~30 sec', isImage:true, sections:[]},
-    {id:'review_wp', name:'6. Review Request', hint:'Send to customers who bought this product', time:'~1 min',
-      openUrl: s.revChap || DEFAULTS.gbpChap, openLabel:'Open Review Link ↗',
-      sections:[
-        {label:'WhatsApp Message', content:(c.review_request_whatsapp||'').replace('[GOOGLE_REVIEW_LINK]', s.revChap||DEFAULTS.gbpChap)},
-        {label:'In-Store Verbal Script', content:c.review_request_instore||''},
-        {label:'QR Card Text (print for counter)', content:c.qr_card_text||''},
-      ]},
-    {id:'review_instore', name:'7. In-Store Script', hint:'Say this at the till after a positive interaction', time:'~5 sec',
-      sections:[{label:'What to say at the till', content:c.review_request_instore},{label:'QR card text', content:c.qr_card_text}]},
-    {id:'tags', name:'8. Shopify Tags', hint:'Verify these tags are applied in Shopify for correct collections', time:'~1 min', isTags:true, sections:[], tags:c.menu_tags||[]},
+  // ── SECTION 2: GOOGLE BUSINESS PROFILE ─────────────────────────
+  const gbpTasks = [
+    {id:'gbp_chap', name:'2a. GBP — Chapeltown Road',
+      hint:'Google → Search "CC Hair Beauty Chapeltown" → Your Business → Posts → Add update',
+      time:'~30 sec', openUrl: s.revChap || DEFAULTS.revChap, openLabel:'Open Google ↗',
+      sections:[{label:'Post text (max 1,500 chars)', content:content.gbp_chapeltown, badge:`${(content.gbp_chapeltown||'').length}/1500`}]},
+    {id:'gbp_round', name:'2b. GBP — Roundhay Road',
+      hint:'Google → Search "CC Hair Beauty Roundhay" → Your Business → Posts → Add update',
+      time:'~30 sec', openUrl: s.revRound || DEFAULTS.revRound, openLabel:'Open Google ↗',
+      sections:[{label:'Post text (max 1,500 chars)', content:content.gbp_roundhay, badge:`${(content.gbp_roundhay||'').length}/1500`}]},
+    {id:'gbp_city', name:'2c. GBP — City Centre',
+      hint:'Google → Search "CC Hair Beauty New York Street Leeds" → Your Business → Posts → Add update',
+      time:'~30 sec', openUrl: s.revCity || DEFAULTS.revCity, openLabel:'Open Google ↗',
+      sections:[{label:'Post text (max 1,500 chars)', content:content.gbp_city_centre, badge:`${(content.gbp_city_centre||'').length}/1500`}]},
   ];
 
-  renderTaskList('taskList', tasks, false);
-  renderTaskList('bonusList', bonus, true);
+  // ── SECTION 3: SOCIAL MEDIA + IMAGE ────────────────────────────
+  const socialTasks = [
+    {id:'image', name:'3. Product Image',
+      hint:'Download the original Shopify image + AI-styled version for all posts',
+      time:'~5 sec', isImage:true, sections:[]},
+    {id:'instagram', name:'4. Instagram',
+      hint:'+ New Post → upload image → paste caption → paste hashtags as first comment',
+      time:'~1 min', openUrl: s.instagram || DEFAULTS.instagram, openLabel:'Open Instagram ↗',
+      sections:[
+        {label:'Caption', content:content.instagram_caption},
+        {label:'Hashtags (post as first comment)', content:content.instagram_hashtags},
+      ]},
+    {id:'facebook', name:'5. Facebook',
+      hint:'Create Post → paste text → add image → publish',
+      time:'~30 sec', openUrl: s.facebook || DEFAULTS.facebook, openLabel:'Open Facebook ↗',
+      sections:[{label:'Post text', content:content.facebook_post}]},
+    {id:'tiktok', name:'6. TikTok / Video Script',
+      hint:'Use this script with Kling AI or HeyGen to create a short video',
+      time:'~2 min',
+      sections:[
+        {label:'🎬 Kling AI Prompt (image-to-video, realistic motion)', content:buildKlingScript(selectedProduct, content)},
+        {label:'🎭 HeyGen Script (funny/viral talking head version)',     content:buildHeyGenScript(selectedProduct, content)},
+        {label:'🗣 10-Second Voiceover',                                content:buildVoiceover(selectedProduct, content)},
+      ]},
+  ];
 
-  setTimeout(()=>{
-    const b=document.getElementById('content-blog');
-    if(b) b.classList.add('vis');
-    const imgArea=document.getElementById('aiImageArea');
-    // image section shows placeholder while generating
-  }, 150);
+  // ── SECTION 4: REVIEW + TAGS ────────────────────────────────────
+  const reviewTasks = [
+    {id:'review', name:'7. WhatsApp Review Request',
+      hint:'Send to customers who bought this product — personalise the name if you can',
+      time:'~1 min', openUrl: s.revChap || DEFAULTS.revChap, openLabel:'Open Review Link ↗',
+      sections:[
+        {label:'WhatsApp Message', content:(content.review_request_whatsapp||'')},
+        {label:'In-Store Verbal Script (say at the till)', content:content.review_request_instore||''},
+        {label:'Counter QR Card Text', content:content.qr_card_text||''},
+      ]},
+    {id:'tags', name:'8. Shopify Tags',
+      hint:'Check these are applied in Shopify → Products → select product → Tags',
+      time:'~1 min', isTags:true, sections:[], tags:content.menu_tags||[]},
+  ];
+
+  // Render all sections
+  renderSection('taskList',     blogTasks,   'SHOPIFY BLOG',                '📝', false);
+  renderSection('gbpList',      gbpTasks,    'GOOGLE BUSINESS PROFILE',     '📍', false);
+  renderSection('socialList',   socialTasks, 'SOCIAL MEDIA & IMAGES',       '📸', false);
+  renderSection('reviewList',   reviewTasks, 'REVIEW & TAGS',               '⭐', true);
+
+  updateProgress();
+  window.scrollTo({top: document.getElementById('checklistPanel').offsetTop - 80, behavior:'smooth'});
+
+  // Auto-generate AI image in background
+  if (s.openaiKey && selectedProduct.image && !window._aiImageData) {
+    setTimeout(() => generateAIImageAuto(selectedProduct, content, autoPickSetting(selectedProduct)), 600);
+  }
 }
 
-function renderTaskList(containerId, tasks, isBonus) {
-  const c = document.getElementById(containerId);
-  c.innerHTML = '';
+
+function renderSection(containerId, tasks, sectionTitle, icon, isBonus) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
   tasks.forEach(t => {
     const item = document.createElement('div');
-    item.className='task-row'; item.id=`task-${t.id}`;
-    const btns = t.isImage ? `<button class="copy-btn" onclick="expandTask('${t.id}',event)">View</button>` :
-      `${t.sections?.length?`<button class="copy-btn" onclick="copyTaskAll('${t.id}',event)">Copy All</button>`:''}
-       ${t.openUrl?`<a href="${t.openUrl}" target="_blank" class="open-btn">${t.openLabel||'Open ↗'}</a>`:''}
-       <button class="copy-btn" onclick="expandTask('${t.id}',event)">View</button>`;
+    item.className = 'task-row'; item.id = `task-${t.id}`;
+
+    const btns = t.isImage
+      ? `<button class="copy-btn" onclick="expandTask('${t.id}',event)">View</button>`
+      : `<div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${t.sections?.length ? `<button class="copy-btn" onclick="copyTaskAll('${t.id}',event)">Copy All</button>` : ''}
+          ${t.openUrl ? `<a href="${t.openUrl}" target="_blank" class="open-btn">${t.openLabel||'Open ↗'}</a>` : ''}
+          <button class="copy-btn" onclick="expandTask('${t.id}',event)">View</button>
+        </div>`;
+
+    const sectionsHtml = (t.sections||[]).map((sec,si) => `
+      <div class="content-section">
+        <div class="content-label">
+          <span>${sec.label}</span>
+          ${sec.badge ? `<span class="content-badge">${sec.badge}</span>` : ''}
+        </div>
+        <div class="content-box" id="cb-${t.id}-${si}">${(sec.content||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        <button class="copy-field-btn" data-copy="${encodeURIComponent(sec.content||'')}" onclick="copyEncoded(this)">⎘ Copy ${sec.label.replace(/[①②③④⑤⑥⑦⑧📍📌🎬🎭🗣]/g,'').split('(')[0].split('→')[0].trim()}</button>
+      </div>
+    `).join('');
+
+    const tagsHtml = t.isTags
+      ? `<div class="tag-pills">${(t.tags||[]).map ? (t.tags||[]).map(tg=>`<div class="tag-pill">${tg}</div>`).join('') : String(t.tags||'').split(',').map(tg=>`<div class="tag-pill">${tg.trim()}</div>`).join('')}</div>`
+      : '';
+
     item.innerHTML = `
       <div class="task-hdr" onclick="expandTask('${t.id}',event)">
         <div class="task-check" onclick="toggleTask('${t.id}',event)"></div>
         <div class="task-info">
-          <div class="task-name">${t.name}</div>
+          <div class="task-name">${t.name} <span class="task-time">${t.time}</span></div>
           <div class="task-hint">${t.hint}</div>
         </div>
         <div class="task-btns">${btns}</div>
       </div>
       <div class="task-content" id="content-${t.id}">
         ${t.isImage ? buildImageSection() : ''}
-        ${t.isTags ? `<div class="tag-pills">${(t.tags||[]).map(tg=>`<div class="tag-pill">${tg}</div>`).join('')}</div>` : ''}
-        ${(t.sections||[]).map((sec,si)=>`
-          <div class="content-section">
-            <div class="content-label">
-              <span>${sec.label}</span>
-              ${sec.badge?`<span class="content-badge">${sec.badge}</span>`:''}
-            </div>
-            <div class="content-box" id="cb-${t.id}-${si}">${(sec.content||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-            <button class="copy-field-btn" data-copy="${encodeURIComponent(sec.content||'')}" onclick="copyEncoded(this)">⎘ Copy ${sec.label.replace(/📍 /,'').split('(')[0].split('→')[0].trim()}</button>
-            ${sec.link ? `<a href="${sec.link}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px;background:var(--blue-bg);border:1px solid var(--b2);color:var(--blue);border-radius:var(--r);padding:9px 14px;font-size:13px;font-weight:600;text-decoration:none;width:100%">${sec.linkLabel||'Open ↗'}</a>` : ''}
-          </div>
-        `).join('')}
+        ${tagsHtml}
+        ${sectionsHtml}
       </div>`;
-    c.appendChild(item);
+    container.appendChild(item);
   });
 }
+
+// ── VIDEO SCRIPT BUILDERS ─────────────────────────────────────────
+function buildKlingScript(product, content) {
+  const title = product.title || 'product';
+  const setting = autoPickSetting(product);
+  const settingDesc = {
+    barber:   'barbershop counter with chrome accents and mirror background',
+    bathroom: 'marble bathroom shelf with white towels',
+    bedroom:  'bedroom vanity table with warm lighting',
+    salon:    'beauty salon station, professional lighting',
+    natural:  'wooden surface surrounded by botanicals and flowers',
+    hands:    'held in manicured hands, clean neutral background',
+    flatlay:  'flat lay on marble surface with beauty accessories',
+    studio:   'clean white studio with professional lighting',
+  }[setting] || 'clean studio';
+
+  return `Kling AI Image-to-Video Prompt:
+
+"Camera slowly pushes in towards the ${title} on a ${settingDesc}. The product label is clearly visible. A hand reaches in from the right, picks up the bottle/product, turns it slowly to face camera, then gently places it back down. Soft bokeh background. Cinematic luxury product feel. 10 seconds. No faces."
+
+Settings: Professional Mode · 10 seconds · 1080p
+Cost: ~70 credits (~£0.70)
+Source image: Use the Shopify product image or AI generated image from Task 3`;
+}
+
+function buildHeyGenScript(product, content) {
+  const title = product.title || 'product';
+  const price = product.price || '';
+  const vendor = product.vendor || 'CC Hair & Beauty';
+  const tags = (product.tags || '').toLowerCase();
+  const isMens = tags.includes('men') || tags.includes('barber') || tags.includes('wave');
+
+  return `HeyGen Talking Head Script (funny/viral):
+
+[HOOK - say with energy, pointing to camera]
+"Okay, we need to talk about ${title}... because ${isMens ? 'the guys' : 'ladies'}, this is RIDICULOUS."
+
+[MIDDLE - hold up product or show it on screen]
+"This is ${vendor}'s ${title}. ${content.blog_excerpt ? content.blog_excerpt.split('.')[0]+'.' : 'And honestly? It just works.'}"
+
+[CALL TO ACTION - big energy]
+"You can get it right now at CC Hair and Beauty — Chapeltown, Roundhay, City Centre Leeds — or online at CC Hair and Beauty dot com. Link in bio. Go. Seriously."
+
+Avatar tip: Use a confident avatar, informal clothing, casual background
+Tone: Surprised/impressed, friendly, fun — NOT salesy
+Length: ~25-30 seconds
+Platform: TikTok / Instagram Reels`;
+}
+
+function buildVoiceover(product, content) {
+  const title = product.title || 'product';
+  const price = product.price || '';
+  const vendor = product.vendor || '';
+  return `10-Second Voiceover Script:
+
+"This is the ${vendor} ${title.split(' ').slice(0,4).join(' ')}. Available now at CC Hair and Beauty, Leeds — Chapeltown, Roundhay, City Centre. Shop online at cchairandbeauty.com."
+
+Word count: ~30 words · Spoken pace: normal
+Use with: Kling video, HeyGen, or record yourself
+Add: trending TikTok audio underneath at low volume`;
+}
+
 
 function buildImageSection() {
   if(!selectedProduct) return '';
@@ -1263,7 +1415,7 @@ function copyTaskAll(id, e) {
   const btns = task.querySelectorAll('[data-copy]');
   const combined = Array.from(btns).map(b=>decodeURIComponent(b.getAttribute('data-copy')||'')).filter(Boolean).join('\n\n');
   if(combined) {
-    document.getElementById(`content-${id}`)?.classList.add('vis');
+    document.getElementById(`content-${id}`)?.classList.add('open');
     copyToClipboard(combined, e?.target);
   }
 }
@@ -1276,11 +1428,11 @@ function toggleTask(id, e) {
   updateProgress();
 }
 function updateProgress() {
-  const main = ['blog','gbp','instagram','facebook','image','review_wp'];
+  const main = ['blog','gbp_chap','gbp_round','gbp_city','instagram','facebook','image','review'];
   const done = [...tasksDone].filter(id=>main.includes(id)).length;
-  const pct = Math.round(done/6*100);
+  const pct = Math.round(done/8*100);
   document.getElementById('progressFill').style.width = pct+'%';
-  document.getElementById('progressText').textContent = `${done} of 6 done${done===6?' — 🎉 Complete!':''}`;
+  document.getElementById('progressText').textContent = `${done} of 8 done${done===6?' — 🎉 Complete!':''}`;
 }
 
 // ── COPY UTILITIES ─────────────────────────────────────────────────
@@ -1532,6 +1684,15 @@ function toggleCollapse(id, render) {
     if(id === 'debugBody') renderDebugLog();
     if(id === 'logBody') { renderPostLog(); const lc=document.getElementById('logCount'); if(lc) lc.textContent=getPostLog().length+' entries'; }
   }
+}
+
+
+function toggleSection(id) {
+  const body = document.getElementById(id);
+  const arrow = document.getElementById(id+'-arrow');
+  if (!body) return;
+  body.classList.toggle('collapsed');
+  if (arrow) arrow.classList.toggle('collapsed');
 }
 
 function generateWeekSchedule() {
