@@ -26,7 +26,7 @@ export default async function handler(req, res) {
   }
 
   const endpointMap = {
-    products: `https://${domain}/admin/api/2024-01/products.json?limit=${limit}&fields=id,title,handle,body_html,vendor,product_type,tags,images,variants`,
+    products: `https://${domain}/admin/api/2024-01/products.json?limit=${limit}&status=${req.query.status || 'active'}&order=${req.query.order || 'created_at+DESC'}&fields=id,title,handle,body_html,vendor,product_type,tags,images,variants`,
     product_by_handle: `https://${domain}/admin/api/2024-01/products.json?handle=${handle}&fields=id,title,handle,body_html,vendor,product_type,tags,images,variants`,
     collections: `https://${domain}/admin/api/2024-01/custom_collections.json?limit=${limit}`,
     smart_collections: `https://${domain}/admin/api/2024-01/smart_collections.json?limit=${limit}`,
