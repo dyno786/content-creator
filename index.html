@@ -752,9 +752,9 @@ async function loadProducts() {
   const cacheKey = 'cc_products', cacheTime = 'cc_products_time';
   const cached = localStorage.getItem(cacheKey);
   const cachedAt = localStorage.getItem(cacheTime);
-  const THREE_DAYS = 7*24*60*60*1000;
+  const SEVEN_DAYS = 7*24*60*60*1000;
 
-  if (cached && cachedAt && (Date.now()-parseInt(cachedAt)) < THREE_DAYS) {
+  if (cached && cachedAt && (Date.now()-parseInt(cachedAt)) < SEVEN_DAYS) {
     allProducts = JSON.parse(cached);
     dbg('CACHE', `Loaded ${allProducts.length} products from cache`);
     _loadProductsRunning = false;
@@ -889,16 +889,21 @@ function renderSuggested() {
   const s3 = allProducts.find(p => !used.has(String(p.id)));
   if(s3) suggestions.push({...s3, badge:'Latest added'});
 
-  g.innerHTML = suggestions.length ? suggestions.map(p => `
-    <div class="sug-card" data-id="${p.id}" onclick='selectProduct(${JSON.stringify(p).replace(/'/g,"&#39;")})'>
-      ${p.image ? `<img class="sug-img" src="${p.image}" alt="${p.title}" onerror="this.style.display='none'">` : `<div class="sug-img-ph">✂</div>`}
-      <div>
-        <div class="sug-name">${p.title}</div>
-        <div class="sug-price">${p.price}</div>
-        <div class="sug-badge">${p.badge}</div>
-      </div>
-    </div>
-  `).join('') : '<div class="empty">Loading…</div>';
+  if (!suggestions.length) { g.innerHTML = '<div class="empty">Loading…</div>'; return; }
+  g.innerHTML = '';
+  suggestions.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'sug-card';
+    card.dataset.id = p.id;
+    card.innerHTML = (p.image
+      ? `<img class="sug-img" src="${p.image}" alt="" onerror="this.style.display='none'">`
+      : `<div class="sug-img-ph">✂</div>`) +
+      `<div><div class="sug-name">${p.title.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>` +
+      `<div class="sug-price">${p.price}</div>` +
+      `<div class="sug-badge">${p.badge}</div></div>`;
+    card.onclick = () => selectProduct(p);
+    g.appendChild(card);
+  });
 }
 
 // ── SELECT PRODUCT ─────────────────────────────────────────────────
@@ -972,17 +977,22 @@ function setStep(n) {
 // ── PRE-GENERATE AI ────────────────────────────────────────────────
 async function preGenerateAI() {
   if(!selectedProduct?.image) return;
-  const btn = document.getElementById('preAiBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<div class="inline-spinner"></div> Generating AI image…';
+  const wrap = document.getElementById('preAiBtn');
+  const btn = wrap.querySelector('button');
+  if (btn) btn.disabled = true;
+  wrap.querySelector('.pre-ai-main').innerHTML = '<span class="inline-spinner"></span> Generating AI image…';
+  wrap.querySelector('.pre-ai-hint').textContent = 'Please wait ~15 seconds';
   const setting = autoPickSetting(selectedProduct);
   window._preGenSetting = setting;
   try {
     await generateAIImageAuto(selectedProduct, {image_prompt:''}, setting);
-    btn.innerHTML = '✓ AI Image Ready — Generate Content Now';
-    btn.style.background = '#0D2818'; btn.style.color = '#22C55E';
+    wrap.querySelector('.pre-ai-main').textContent = '✓ AI Image Ready — Generate Content Now';
+    wrap.querySelector('.pre-ai-hint').textContent = 'Image will appear in Task 3';
+    wrap.style.background = 'rgba(0,184,148,0.15)';
+    wrap.style.borderColor = 'var(--teal)';
   } catch(e) {
-    btn.innerHTML = '✗ Image failed — Generate anyway'; btn.disabled=false;
+    wrap.querySelector('.pre-ai-main').textContent = '✗ Image failed — Generate anyway';
+    if (btn) btn.disabled = false;
   }
 }
 
@@ -1243,8 +1253,8 @@ function copyToClipboard(text, btn) {
   const done = () => {
     if(!btn) return;
     const orig = btn.textContent;
-    btn.textContent = '✓ Copied!'; btn.classList.add('ok');
-    setTimeout(()=>{ btn.textContent=orig; btn.classList.remove('ok'); }, 2500);
+    btn.textContent = '✓ Copied!'; btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent=orig; btn.classList.remove('copied'); }, 2500);
   };
   if(navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(decoded).then(done).catch(()=>fallback(decoded,done));
@@ -1315,7 +1325,7 @@ function renderSettingPills(currentSetting) {
   if(!el) return;
   el.innerHTML = IMAGE_SETTINGS.map(s=>`
     <button class="setting-btn ${s.key===currentSetting?'active':''}" 
-      title="${s.hint}"
+      title="${s.label}"
       onclick="generateAIImageAuto(selectedProduct, generatedContent, '${s.key}')">
       ${s.emoji} ${s.label}
     </button>`).join('');
@@ -1422,7 +1432,7 @@ function renderPostLog() {
   if(!c) return;
   if(!log.length) { c.innerHTML='<div class="empty">No posts logged yet</div>'; return; }
   const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const icons={blog:'📝',gbp1:'📍',gbp2:'📍',gbp3:'📍',instagram:'📸',facebook:'👍',image:'🖼',review_wp:'💬'};
+  const icons={blog:'📝',gbp_chap:'📍',gbp_round:'📍',gbp_city:'📍',instagram:'📸',facebook:'👍',image:'🖼',review:'💬'};
   const weeks={};
   log.forEach(e=>{ const d=new Date(e.date); const ws=new Date(d); ws.setDate(d.getDate()-d.getDay()+1); const wk=ws.toISOString().substring(0,10); if(!weeks[wk]) weeks[wk]=[]; weeks[wk].push(e); });
   c.innerHTML = Object.entries(weeks).map(([wk,entries])=>{
@@ -1459,17 +1469,7 @@ function downloadPostLog() {
 
 // ── WEEK SCHEDULE ──────────────────────────────────────────────────
 function toggleWeekGrid() {
-  const g=document.getElementById('weekGrid');
-  if(g.style.display==='grid') { g.style.display='none'; return; }
-  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const focuses=['Hair care','Wigs/extensions','Skin & makeup','Braiding','Relaxers/serums','New arrivals','Community'];
-  const today=(new Date().getDay()+6)%7;
-  if(!allProducts.length) { toast('Load products first'); return; }
-  g.style.display='grid';
-  g.innerHTML=days.map((d,i)=>{
-    const p=allProducts[Math.floor(Math.random()*allProducts.length)];
-    return `<div class="day-card ${i===today?'today':''}"><div class="day-nm">${d}</div><div class="day-product">${p.title.substring(0,20)}…</div><div style="font-size:9px;color:var(--ink3);margin-top:2px">${focuses[i]}</div></div>`;
-  }).join('');
+  // weekGrid id is the progress bar fill - this function is unused (button calls generateWeekSchedule)
 }
 
 // ── TOAST ───────────────────────────────────────────────────────────
@@ -1877,11 +1877,8 @@ function openPostDetail(id) {
         '</div>') +
     '</div></div>' +
 
-    // Content sections
-    buildPPS('📝 Blog Post', [{label:'Title', content:c.blog_meta_title},{label:'Blog HTML', content:c.blog_html},{label:'Excerpt', content:c.blog_excerpt},{label:'SEO Meta Description', content:c.blog_meta_description},{label:'Focus Keyword', content:c.blog_focus_keyword},{label:'Tags', content:c.blog_tags},{label:'Alt Text', content:c.blog_alt_text}]) +
-    buildPPS('📍 Google Business Posts', [{label:'Chapeltown Road', content:c.gbp_chapeltown},{label:'Roundhay Road', content:c.gbp_roundhay},{label:'City Centre', content:c.gbp_city_centre}]) +
-    buildPPS('📸 Social Media', [{label:'Instagram Caption', content:c.instagram_caption},{label:'Instagram Hashtags', content:c.instagram_hashtags},{label:'Facebook Post', content:c.facebook_post}]) +
-    buildPPS('⭐ Review Request', [{label:'WhatsApp Message', content:c.review_request_whatsapp},{label:'In-Store Script', content:c.review_request_instore},{label:'QR Card Text', content:c.qr_card_text}]) +
+    // Content sections — same structure as main checklist
+    (hasContent ? buildPPSChecklist(entry, c) : '') +
     '</div>';
 }
 
@@ -1901,6 +1898,179 @@ function buildPPS(title, fields) {
         '<button data-ppid="' + safeId + '" onclick="copyPPC(this)" style="margin-top:8px;background:var(--teal);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">⎘ Copy ' + f.label + '</button>' +
         '</div>';
     }).join('') + '</div>';
+}
+
+// Renders past post content with same collapsible section style as the main checklist
+function buildPPSChecklist(entry, c) {
+  const s = cfg();
+  const pfx = 'pp_' + entry.id + '_'; // unique prefix to avoid ID collisions
+
+  // Build product object from entry for video scripts
+  const prod = {
+    title: entry.productTitle||'', vendor: entry.vendor||'',
+    tags: '', productType: entry.productType||'', image: entry.productImage||'',
+  };
+  // Fake content object for video builders
+  const fc = { blog_excerpt: c.blog_excerpt||'' };
+
+  const sections = [
+    {
+      icon:'📝', label:'Shopify Blog Post',
+      openUrl:'https://admin.shopify.com/store/cchairandbeauty/articles/new',
+      openLabel:'Open Shopify ↗',
+      tasks:[
+        {id:'blog', name:'1. Shopify Blog Post', time:'~3 min',
+         hint:'Open Shopify → Blog Posts → Add Blog Post → follow steps',
+         sections:[
+           {label:'① Title',                  content:c.blog_meta_title,       badge:(c.blog_meta_title||'').length+'/70'},
+           {label:'② Blog HTML Content',       content:c.blog_html},
+           {label:'③ Excerpt',                 content:c.blog_excerpt},
+           {label:'④ SEO Title',               content:c.blog_meta_title,       badge:(c.blog_meta_title||'').length+'/70'},
+           {label:'⑤ SEO Description',         content:c.blog_meta_description, badge:(c.blog_meta_description||'').length+'/160'},
+           {label:'⑥ Focus Keyword',           content:c.blog_focus_keyword},
+           {label:'⑦ Tags',                    content:c.blog_tags},
+           {label:'⑧ Image Alt Text',          content:c.blog_alt_text},
+         ]},
+      ]
+    },
+    {
+      icon:'📍', label:'Google Business Profile — All 3 Branches',
+      tasks:[
+        {id:'gbp_chap', name:'2a. GBP — Chapeltown Road', time:'~30 sec',
+         hint:'Google → Your Business → Posts → Add update',
+         openUrl:s.gbpChap||DEFAULTS.gbpChap, openLabel:'Open Google ↗',
+         sections:[{label:'Post text', content:c.gbp_chapeltown, badge:(c.gbp_chapeltown||'').length+'/1500'}]},
+        {id:'gbp_round', name:'2b. GBP — Roundhay Road', time:'~30 sec',
+         hint:'Google → Your Business → Posts → Add update',
+         openUrl:s.gbpRound||DEFAULTS.gbpRound, openLabel:'Open Google ↗',
+         sections:[{label:'Post text', content:c.gbp_roundhay, badge:(c.gbp_roundhay||'').length+'/1500'}]},
+        {id:'gbp_city', name:'2c. GBP — City Centre', time:'~30 sec',
+         hint:'Google → Your Business → Posts → Add update',
+         openUrl:s.gbpCity||DEFAULTS.gbpCity, openLabel:'Open Google ↗',
+         sections:[{label:'Post text', content:c.gbp_city_centre, badge:(c.gbp_city_centre||'').length+'/1500'}]},
+      ]
+    },
+    {
+      icon:'📸', label:'Social Media',
+      tasks:[
+        {id:'instagram', name:'4. Instagram', time:'~1 min',
+         hint:'New Post → upload image → paste caption → hashtags as first comment',
+         openUrl:s.instagram||DEFAULTS.instagram, openLabel:'Open Instagram ↗',
+         sections:[
+           {label:'Caption', content:c.instagram_caption},
+           {label:'Hashtags (post as first comment)', content:c.instagram_hashtags},
+         ]},
+        {id:'facebook', name:'5. Facebook', time:'~30 sec',
+         hint:'Create Post → paste text → add image → publish',
+         openUrl:s.facebook||DEFAULTS.facebook, openLabel:'Open Facebook ↗',
+         sections:[{label:'Post text', content:c.facebook_post}]},
+        {id:'tiktok', name:'6. Video Script for TikTok', time:'~2 min',
+         hint:'Use with Kling AI or HeyGen to create a short video',
+         sections:[
+           {label:'🎬 Kling AI Prompt', content:buildKlingScript(prod, fc)},
+           {label:'🎭 HeyGen Script',   content:buildHeyGenScript(prod, fc)},
+           {label:'🗣 10-Second Voiceover', content:buildVoiceover(prod, fc)},
+         ]},
+      ]
+    },
+    {
+      icon:'⭐', label:'Reviews & Tags',
+      tasks:[
+        {id:'review', name:'7. Review Request', time:'~1 min',
+         hint:'Send WhatsApp to recent customers · use in-store script at the till',
+         openUrl:s.gbpChap||DEFAULTS.gbpChap, openLabel:'Open Review Link ↗',
+         sections:[
+           {label:'WhatsApp Message', content:c.review_request_whatsapp||''},
+           {label:'In-Store Verbal Script', content:c.review_request_instore||''},
+           {label:'Counter QR Card Text', content:c.qr_card_text||''},
+         ]},
+        {id:'tags', name:'8. Shopify Tags', time:'~1 min',
+         hint:'Check these are applied in Shopify → Products → select product → Tags',
+         isTags:true, sections:[], tags:c.menu_tags||[]},
+      ]
+    },
+  ];
+
+  const done = entry.tasksCompleted || [];
+
+  return sections.map(sec => {
+    const secId = pfx + sec.label.replace(/\W+/g,'_');
+    const tasksHtml = sec.tasks.map(t => {
+      const tid = pfx + t.id;
+      const isDone = done.includes(t.id);
+
+      const copyAllBtn = (t.sections && t.sections.length)
+        ? `<button class="copy-btn" onclick="ppCopyAll('${tid}',event)">Copy All</button>` : '';
+      const openBtn = t.openUrl
+        ? `<a href="${t.openUrl}" target="_blank" class="open-btn">${t.openLabel||'Open ↗'}</a>` : '';
+      const viewBtn = `<button class="copy-btn" onclick="ppExpand('${tid}',event)">View</button>`;
+      const btns = t.isImage ? viewBtn : copyAllBtn + openBtn + viewBtn;
+
+      const tagsHtml = t.isTags
+        ? '<div class="tag-pills">' +
+          (Array.isArray(t.tags) ? t.tags : String(t.tags||'').split(','))
+            .filter(x=>x&&x.trim())
+            .map(tg=>'<div class="tag-pill">'+tg.trim()+'</div>')
+            .join('') + '</div>'
+        : '';
+
+      const sectHtml = (t.sections||[]).map((sec2, si) => {
+        const escaped = (sec2.content||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        const lbl = sec2.label.replace(/[①②③④⑤⑥⑦⑧🎬🎭🗣📍]/g,'').split('(')[0].split('—')[0].trim();
+        return '<div class="content-section">' +
+          '<div class="content-label"><span>' + sec2.label + '</span>' +
+          (sec2.badge ? '<span class="content-badge">' + sec2.badge + '</span>' : '') + '</div>' +
+          '<div class="content-box">' + escaped + '</div>' +
+          '<button class="copy-field-btn" data-copy="' + encodeURIComponent(sec2.content||'') + '" onclick="copyEncoded(this)">⎘ Copy ' + lbl + '</button>' +
+          '</div>';
+      }).join('');
+
+      return '<div class="task-row' + (isDone?' done':'') + '" id="task-'+tid+'">' +
+        '<div class="task-hdr" onclick="ppExpand(\''+tid+'\',event)">' +
+          '<div class="task-check" onclick="ppToggle(\''+entry.id+'\',\''+t.id+'\',event)">' + (isDone?'✓':'') + '</div>' +
+          '<div class="task-info">' +
+            '<div class="task-name">'+t.name+' <span class="task-time">'+(t.time||'')+'</span></div>' +
+            '<div class="task-hint">'+t.hint+'</div>' +
+          '</div>' +
+          '<div class="task-btns">'+btns+'</div>' +
+        '</div>' +
+        '<div class="task-content" id="content-'+tid+'">' + tagsHtml + sectHtml + '</div>' +
+      '</div>';
+    }).join('');
+
+    return '<div style="border-radius:var(--r3);overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px">' +
+      '<div class="task-sec-hdr" onclick="ppSecToggle(\''+secId+'\')">' +
+        '<span>'+sec.icon+' '+sec.label+'</span>' +
+        '<span class="sec-arrow" id="'+secId+'-arrow">▼</span>' +
+      '</div>' +
+      '<div class="task-sec-body" id="'+secId+'">' + tasksHtml + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// Past post helpers (pp prefix to avoid conflicts with live checklist)
+function ppExpand(tid, e) {
+  if(e) e.stopPropagation();
+  document.getElementById('content-'+tid)?.classList.toggle('open');
+}
+function ppCopyAll(tid, e) {
+  if(e) e.stopPropagation();
+  const task = document.getElementById('task-'+tid);
+  if(!task) return;
+  const btns = task.querySelectorAll('[data-copy]');
+  const text = Array.from(btns).map(b=>decodeURIComponent(b.getAttribute('data-copy')||'')).filter(Boolean).join('\n\n');
+  if(text) { document.getElementById('content-'+tid)?.classList.add('open'); copyToClipboard(text, e?.target); }
+}
+function ppToggle(entryId, taskId, e) {
+  if(e) e.stopPropagation();
+  togglePastPostTask(Number(entryId), taskId);
+}
+function ppSecToggle(id) {
+  const body = document.getElementById(id);
+  const arrow = document.getElementById(id+'-arrow');
+  if(!body) return;
+  body.classList.toggle('collapsed');
+  if(arrow) arrow.classList.toggle('collapsed');
 }
 
 function copyPPC(btn) {
@@ -1983,6 +2153,8 @@ function addToPostLog(product, content) {
     productPrice: product.price||'', productHandle: product.handle||'',
     productImage: product.image||'', productType: product.productType||'',
     vendor: product.vendor||'',
+    blogTitle: content.blog_meta_title||'',
+    blogMetaDesc: content.blog_meta_description||'',
     content: {
       blog_meta_title: content.blog_meta_title||'',
       blog_meta_description: content.blog_meta_description||'',
