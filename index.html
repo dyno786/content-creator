@@ -357,6 +357,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
   </div>
   <div class="hdr-r">
     <button class="btn btn-ghost" onclick="loadProducts()">↻ Refresh</button>
+    <button class="btn btn-ghost" id="pastPostsBtn" onclick="openPastPosts()">📋 Past Posts</button>
     <button class="btn btn-ghost" id="themeBtn" onclick="toggleTheme()">🌙 Dark</button>
     <button class="btn btn-ghost-dark" onclick="openSettings()">⚙ Settings</button>
   </div>
@@ -511,6 +512,57 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
     </div>
   </div>
 </div>
+<!-- PAST POSTS MODAL -->
+<div class="modal-bg" id="pastPostsModal" style="align-items:flex-start;padding:0">
+  <div style="
+    background:var(--bg);width:100%;max-width:100%;height:100vh;
+    display:flex;flex-direction:column;overflow:hidden;
+  ">
+    <!-- Header -->
+    <div style="
+      background:var(--teal);padding:16px 24px;
+      display:flex;align-items:center;justify-content:space-between;
+      flex-shrink:0;
+    ">
+      <div>
+        <div style="font-size:18px;font-weight:700;color:#fff">📋 Past Posts</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:2px">
+          All generated content — click any post to view and share with staff
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="postSearch" placeholder="Search posts…"
+          oninput="filterPastPosts(this.value)"
+          style="padding:8px 14px;border-radius:20px;border:none;font-size:14px;
+                 font-family:inherit;width:220px;outline:none;background:rgba(255,255,255,0.2);
+                 color:#fff;::placeholder:{color:rgba(255,255,255,0.6)}">
+        <button onclick="closePastPosts()" style="
+          background:rgba(255,255,255,0.2);border:none;color:#fff;
+          border-radius:8px;padding:8px 16px;font-size:14px;
+          font-weight:600;cursor:pointer;font-family:inherit;
+        ">✕ Close</button>
+      </div>
+    </div>
+    <!-- Body -->
+    <div style="display:flex;flex:1;overflow:hidden">
+      <!-- LEFT: Post list -->
+      <div style="
+        width:340px;flex-shrink:0;
+        border-right:1px solid var(--border);
+        overflow-y:auto;background:var(--card);
+      " id="pastPostsList"></div>
+      <!-- RIGHT: Post detail -->
+      <div style="flex:1;overflow-y:auto;padding:24px;" id="pastPostDetail">
+        <div style="text-align:center;padding:60px 20px;color:var(--ink3)">
+          <div style="font-size:48px;margin-bottom:16px">📄</div>
+          <div style="font-size:16px;font-weight:600;color:var(--ink2);margin-bottom:8px">Select a post to view</div>
+          <div style="font-size:14px">Click any post on the left to see the full content and share with staff</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-bg" id="settingsModal">
   <div class="modal">
     <div class="modal-title">Settings</div>
@@ -1596,14 +1648,49 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
 
 // ── POST LOG ────────────────────────────────────────────────────────
 function getPostLog() { try { return JSON.parse(localStorage.getItem('cc_post_log')||'[]'); } catch { return []; } }
-function addToPostLog(product, c) {
+function addToPostLog(product, content) {
   const log = getPostLog();
-  log.unshift({id:Date.now(), date:new Date().toISOString(), productId:product.id, productTitle:product.title, productPrice:product.price, productHandle:product.handle, productType:product.productType||'', vendor:product.vendor||'', blogTitle:c.blog_meta_title||'', blogMetaDesc:c.blog_meta_description||'', tasksCompleted:[]});
-  if(log.length>365) log.pop();
+  const id = Date.now();
+  const entry = {
+    id,
+    shareId: btoa(String(id)).replace(/=/g,''),  // short shareable ID
+    date: new Date().toISOString(),
+    productId: product.id,
+    productTitle: product.title,
+    productPrice: product.price || '',
+    productHandle: product.handle || '',
+    productImage: product.image || '',
+    productType: product.productType || '',
+    vendor: product.vendor || '',
+    // Full content saved for sharing
+    content: {
+      blog_meta_title:       content.blog_meta_title || '',
+      blog_meta_description: content.blog_meta_description || '',
+      blog_focus_keyword:    content.blog_focus_keyword || '',
+      blog_excerpt:          content.blog_excerpt || '',
+      blog_tags:             content.blog_tags || '',
+      blog_alt_text:         content.blog_alt_text || '',
+      blog_html:             content.blog_html || '',
+      gbp_chapeltown:        content.gbp_chapeltown || '',
+      gbp_roundhay:          content.gbp_roundhay || '',
+      gbp_city_centre:       content.gbp_city_centre || '',
+      instagram_caption:     content.instagram_caption || '',
+      instagram_hashtags:    content.instagram_hashtags || '',
+      facebook_post:         content.facebook_post || '',
+      review_request_whatsapp: content.review_request_whatsapp || '',
+      review_request_instore:  content.review_request_instore || '',
+      qr_card_text:          content.qr_card_text || '',
+      menu_tags:             content.menu_tags || '',
+      shopify_tags:          content.shopify_tags || '',
+    },
+    tasksCompleted: [],
+  };
+  log.unshift(entry);
+  if (log.length > 365) log.pop();
   localStorage.setItem('cc_post_log', JSON.stringify(log));
-  dbg('LOG_SAVED','Post logged: '+product.title);
-  const el=document.getElementById('logCount');
-  if(el) el.textContent = getPostLog().length+' entries';
+  dbg('LOG_SAVED', product.title + ' — shareId: ' + entry.shareId);
+  const el = document.getElementById('logCount');
+  if (el) el.textContent = getPostLog().length + ' entries';
 }
 function updatePostLogTasks(productId, taskId) {
   const log=getPostLog();
@@ -1704,9 +1791,310 @@ function generateWeekSchedule() {
   navigator.clipboard.writeText(msg).catch(()=>{});
   toast('Week plan copied ✓','success');
 }
+
+// ── PAST POSTS ────────────────────────────────────────────────────
+let _currentPostId = null;
+let _filteredPosts = [];
+
+function openPastPosts() {
+  const modal = document.getElementById('pastPostsModal');
+  modal.classList.add('open');
+  renderPastPostsList(getPostLog());
+
+  // Check if URL has a shareId to auto-open
+  const hash = window.location.hash.replace('#post-','');
+  if (hash) {
+    const entry = getPostLog().find(e => e.shareId === hash);
+    if (entry) openPostDetail(entry.id);
+  }
+}
+
+function closePastPosts() {
+  document.getElementById('pastPostsModal').classList.remove('open');
+  // Clean up URL hash
+  history.replaceState(null, '', window.location.pathname);
+}
+
+function filterPastPosts(q) {
+  const log = getPostLog();
+  const filtered = q
+    ? log.filter(e => 
+        (e.productTitle||'').toLowerCase().includes(q.toLowerCase()) ||
+        (e.vendor||'').toLowerCase().includes(q.toLowerCase()) ||
+        (e.content?.blog_meta_title||'').toLowerCase().includes(q.toLowerCase())
+      )
+    : log;
+  renderPastPostsList(filtered);
+}
+
+function renderPastPostsList(posts) {
+  _filteredPosts = posts;
+  const container = document.getElementById('pastPostsList');
+  if (!container) return;
+
+  if (!posts.length) {
+    container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--ink3);font-size:14px">No posts found</div>';
+    return;
+  }
+
+  // Group by week
+  const groups = {};
+  posts.forEach(e => {
+    const d = new Date(e.date);
+    const mon = new Date(d); mon.setDate(d.getDate() - ((d.getDay()+6)%7));
+    const wk = mon.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    if (!groups[wk]) groups[wk] = [];
+    groups[wk].push(e);
+  });
+
+  container.innerHTML = Object.entries(groups).map(([week, entries]) => `
+    <div>
+      <div style="
+        padding:8px 16px;font-size:10px;font-weight:700;
+        text-transform:uppercase;letter-spacing:1px;
+        color:var(--ink3);background:var(--bg);
+        border-bottom:1px solid var(--border);
+        position:sticky;top:0;
+      ">Week of ${week}</div>
+      ${entries.map(e => {
+        const done = (e.tasksCompleted||[]).length;
+        const total = 8;
+        const pct = Math.round(done/total*100);
+        const isSelected = _currentPostId === e.id;
+        const day = new Date(e.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+        const time = new Date(e.date).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+        return `
+          <div onclick="openPostDetail(${e.id})" style="
+            padding:14px 16px;border-bottom:1px solid var(--border);
+            cursor:pointer;transition:background .15s;
+            background:${isSelected ? 'var(--teal-light)' : 'var(--card)'};
+            border-left:3px solid ${isSelected ? 'var(--teal)' : 'transparent'};
+          " onmouseover="this.style.background='var(--teal-light)'" onmouseout="this.style.background='${isSelected?'var(--teal-light)':'var(--card)'}'">
+            <div style="display:flex;align-items:flex-start;gap:10px">
+              ${e.productImage 
+                ? `<img src="${e.productImage}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--bg)">`
+                : `<div style="width:40px;height:40px;border-radius:8px;background:var(--teal-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px">✂</div>`
+              }
+              <div style="flex:1;min-width:0">
+                <div style="font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.productTitle||'Unknown product'}</div>
+                <div style="font-size:11px;color:var(--ink3);margin-top:2px">${e.vendor||''} · ${day} ${time}</div>
+                <div style="margin-top:6px;display:flex;align-items:center;gap:8px">
+                  <div style="flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+                    <div style="width:${pct}%;height:100%;background:${pct===100?'var(--green)':'var(--teal)'};border-radius:2px"></div>
+                  </div>
+                  <span style="font-size:10px;font-weight:700;color:${pct===100?'var(--green)':'var(--ink3)'}">
+                    ${pct===100?'✓ Done':done+'/'+total}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
+function openPostDetail(id) {
+  _currentPostId = id;
+  const log = getPostLog();
+  const entry = log.find(e => e.id === id);
+  if (!entry) return;
+
+  // Update URL hash for sharing
+  const shareUrl = window.location.origin + window.location.pathname + '#post-' + entry.shareId;
+  history.replaceState(null, '', '#post-' + entry.shareId);
+
+  // Re-render list to show selected
+  renderPastPostsList(_filteredPosts.length ? _filteredPosts : log);
+
+  const detail = document.getElementById('pastPostDetail');
+  const done = entry.tasksCompleted || [];
+  const tasks = [
+    {id:'blog',      label:'Blog Post',          icon:'📝'},
+    {id:'gbp_chap',  label:'GBP Chapeltown',      icon:'📍'},
+    {id:'gbp_round', label:'GBP Roundhay',        icon:'📍'},
+    {id:'gbp_city',  label:'GBP City Centre',     icon:'📍'},
+    {id:'instagram', label:'Instagram',            icon:'📸'},
+    {id:'facebook',  label:'Facebook',             icon:'👍'},
+    {id:'image',     label:'Product Image',        icon:'🖼'},
+    {id:'review',    label:'Review Request',       icon:'⭐'},
+  ];
+
+  const c = entry.content || {};
+  const day = new Date(entry.date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  detail.innerHTML = `
+    <div style="max-width:800px">
+      <!-- Top bar -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:14px">
+          ${entry.productImage
+            ? `<img src="${entry.productImage}" style="width:64px;height:64px;border-radius:12px;object-fit:cover;border:2px solid var(--teal)">`
+            : `<div style="width:64px;height:64px;border-radius:12px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:28px">✂</div>`
+          }
+          <div>
+            <div style="font-size:20px;font-weight:700;color:var(--ink)">${entry.productTitle}</div>
+            <div style="font-size:13px;color:var(--ink2);margin-top:3px">${entry.vendor||''} ${entry.productPrice ? '· '+entry.productPrice : ''}</div>
+            <div style="font-size:12px;color:var(--ink3);margin-top:2px">${day}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="copyShareLink('${shareUrl}')" style="
+            background:var(--teal);color:#fff;border:none;border-radius:8px;
+            padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;
+            font-family:inherit;display:flex;align-items:center;gap:6px;
+          ">🔗 Copy Share Link</button>
+          <button onclick="deletePastPost(${id})" style="
+            background:transparent;border:1px solid var(--border2);color:var(--ink3);
+            border-radius:8px;padding:9px 14px;font-size:13px;cursor:pointer;font-family:inherit;
+          ">🗑</button>
+        </div>
+      </div>
+
+      <!-- Share link box -->
+      <div style="
+        background:var(--teal-light);border:1px solid var(--teal);
+        border-radius:12px;padding:12px 16px;margin-bottom:20px;
+        display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+      ">
+        <span style="font-size:13px;font-weight:600;color:var(--teal)">🔗 Staff link:</span>
+        <span style="font-size:12px;color:var(--ink2);flex:1;word-break:break-all;font-family:monospace">${shareUrl}</span>
+        <button onclick="copyShareLink('${shareUrl}')" style="
+          background:var(--teal);color:#fff;border:none;border-radius:6px;
+          padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;
+        ">Copy</button>
+      </div>
+
+      <!-- Task checklist -->
+      <div style="background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:20px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--ink)">
+          Task Progress — ${done.length}/${tasks.length} done
+        </div>
+        ${tasks.map(t => `
+          <div style="
+            display:flex;align-items:center;gap:12px;padding:12px 18px;
+            border-bottom:1px solid var(--border);
+            background:${done.includes(t.id)?'var(--teal-light)':'var(--card)'};
+            cursor:pointer;transition:background .15s;
+          " onclick="togglePastPostTask(${id},'${t.id}')">
+            <div style="
+              width:28px;height:28px;border-radius:7px;flex-shrink:0;
+              border:2px solid ${done.includes(t.id)?'var(--teal)':'var(--border2)'};
+              background:${done.includes(t.id)?'var(--teal)':'transparent'};
+              display:flex;align-items:center;justify-content:center;
+              font-size:14px;color:#fff;font-weight:700;
+            ">${done.includes(t.id)?'✓':''}</div>
+            <span style="font-size:14px;font-weight:500;color:${done.includes(t.id)?'var(--teal)':'var(--ink)'}">
+              ${t.icon} ${t.label}
+            </span>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Content sections -->
+      ${buildPastPostSection('📝 Blog Post', [
+        {label:'Title', content: c.blog_meta_title},
+        {label:'Excerpt', content: c.blog_excerpt},
+        {label:'SEO Meta Description', content: c.blog_meta_description},
+        {label:'Focus Keyword', content: c.blog_focus_keyword},
+        {label:'Tags', content: c.blog_tags},
+        {label:'Alt Text', content: c.blog_alt_text},
+        {label:'Blog HTML', content: c.blog_html},
+      ])}
+      ${buildPastPostSection('📍 Google Business Posts', [
+        {label:'Chapeltown Road', content: c.gbp_chapeltown},
+        {label:'Roundhay Road', content: c.gbp_roundhay},
+        {label:'City Centre', content: c.gbp_city_centre},
+      ])}
+      ${buildPastPostSection('📸 Social Media', [
+        {label:'Instagram Caption', content: c.instagram_caption},
+        {label:'Instagram Hashtags', content: c.instagram_hashtags},
+        {label:'Facebook Post', content: c.facebook_post},
+      ])}
+      ${buildPastPostSection('⭐ Review Request', [
+        {label:'WhatsApp Message', content: c.review_request_whatsapp},
+        {label:'In-Store Script', content: c.review_request_instore},
+        {label:'QR Card Text', content: c.qr_card_text},
+      ])}
+    </div>
+  `;
+}
+
+function buildPastPostSection(title, fields) {
+  const hasContent = fields.some(f => f.content && f.content.trim());
+  if (!hasContent) return '';
+  return `
+    <div style="background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:16px;overflow:hidden">
+      <div style="
+        padding:13px 18px;background:var(--teal-light);
+        border-bottom:1px solid var(--teal);
+        font-size:12px;font-weight:700;text-transform:uppercase;
+        letter-spacing:.8px;color:var(--teal);
+      ">${title}</div>
+      ${fields.filter(f=>f.content&&f.content.trim()).map(f=>`
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border)">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);margin-bottom:8px">${f.label}</div>
+          <div style="
+            font-size:13px;color:var(--ink2);line-height:1.7;
+            background:var(--bg);border-radius:8px;padding:10px 12px;
+            max-height:200px;overflow-y:auto;white-space:pre-wrap;
+            font-family:'DM Mono',monospace;border:1px solid var(--border);
+          ">${(f.content||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+          <button onclick="navigator.clipboard.writeText(${JSON.stringify(f.content||'')}).then(()=>toast('Copied ✓','success'))"
+            style="
+              margin-top:7px;background:var(--teal);color:#fff;border:none;
+              border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;
+              cursor:pointer;font-family:inherit;
+            ">⎘ Copy ${f.label}</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function togglePastPostTask(id, taskId) {
+  const log = getPostLog();
+  const entry = log.find(e => e.id === id);
+  if (!entry) return;
+  if (!entry.tasksCompleted) entry.tasksCompleted = [];
+  const idx = entry.tasksCompleted.indexOf(taskId);
+  if (idx > -1) entry.tasksCompleted.splice(idx, 1);
+  else entry.tasksCompleted.push(taskId);
+  localStorage.setItem('cc_post_log', JSON.stringify(log));
+  openPostDetail(id); // re-render
+}
+
+function deletePastPost(id) {
+  if (!confirm('Delete this post from the log?')) return;
+  const log = getPostLog().filter(e => e.id !== id);
+  localStorage.setItem('cc_post_log', JSON.stringify(log));
+  _currentPostId = null;
+  document.getElementById('pastPostDetail').innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--ink3);font-size:14px">Post deleted</div>';
+  renderPastPostsList(log);
+  toast('Post deleted');
+}
+
+function copyShareLink(url) {
+  navigator.clipboard.writeText(url).then(() => toast('Link copied! Share with staff 🔗','success'));
+}
+
+// Auto-open if URL has a post hash on page load
+function checkUrlHash() {
+  const hash = window.location.hash;
+  if (hash && hash.startsWith('#post-')) {
+    const shareId = hash.replace('#post-','');
+    const entry = getPostLog().find(e => e.shareId === shareId);
+    if (entry) {
+      openPastPosts();
+      setTimeout(() => openPostDetail(entry.id), 100);
+    }
+  }
+}
+
 migrateSettings();
 if(typeof applyTheme==="function") applyTheme(_theme);
 loadProducts();
+checkUrlHash();
 const lc=document.getElementById('logCount');
 if(lc) lc.textContent=getPostLog().length+' entries';
 
