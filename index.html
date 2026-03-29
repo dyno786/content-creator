@@ -120,7 +120,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .btn-sm:hover{background:var(--teal-light);border-color:var(--teal);color:var(--teal)}
 
 /* ── LAYOUT ──────────────────────────────────────────────────────── */
-.page{max-width:980px;margin:0 auto;padding:24px 18px}
+.page{max-width:1100px;width:100%;margin:0 auto;padding:24px 20px}
 
 /* ── STEP PILLS ──────────────────────────────────────────────────── */
 .step-pills{display:flex;background:var(--card);border-radius:var(--r2);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
@@ -288,7 +288,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .setting-btn{background:var(--card);border:2px solid var(--border2);color:var(--ink2);border-radius:var(--r);padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap}
 .setting-btn:hover{border-color:var(--teal);color:var(--teal)}
 .setting-btn.active{background:var(--teal);border-color:var(--teal);color:#fff}
-.ai-status-box{background:var(--bg);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:11px;border:2px dashed var(--border2)}
+.ai-status-box{background:var(--card2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:11px;border:2px dashed var(--border2)}
 .ai-status-text .t1{font-size:14px;font-weight:600;color:var(--ink)}
 .ai-status-text .t2{font-size:12px;color:var(--ink2);margin-top:2px}
 .ai-result-img{width:100%;border-radius:var(--r2);border:2px solid var(--teal);cursor:pointer;margin-bottom:8px;transition:all .2s}
@@ -376,13 +376,13 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
     <div class="history-inner">
       <span class="history-label">Done this week</span>
       <div class="history-chips" id="historyChips"></div>
-      <span id="historyCount" style="font-size:12px;color:var(--t3);white-space:nowrap"></span>
+      <span id="historyCount" style="font-size:12px;color:var(--ink3);white-space:nowrap"></span>
     </div>
   </div>
   <div id="step1">
     <div class="sec-lbl" id="todayLabel">Suggested Today</div>
     <div class="sug-grid" id="sugGrid"><div class="empty">Loading products…</div></div>
-    <div class="sec-lbl" style="margin-top:6px">All Products <span style="font-size:11px;color:var(--t3);font-weight:400;text-transform:none;letter-spacing:0">Active only · Newest first</span></div>
+    <div class="sec-lbl" style="margin-top:6px">All Products <span style="font-size:11px;color:var(--ink3);font-weight:400;text-transform:none;letter-spacing:0">Active only · Newest first</span></div>
     <div class="search-wrap">
       <span class="search-ico">🔍</span>
       <input class="search-inp" id="searchInput" type="text" placeholder="Search by product name or brand…" oninput="filterProducts(this.value)">
@@ -394,13 +394,13 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
       <input class="url-inp" id="urlInput" type="text" placeholder="https://cchairandbeauty.com/products/…">
       <button class="btn btn-teal" onclick="loadFromUrl()">Load</button>
     </div>
-    <p style="font-size:13px;color:var(--t3);margin-bottom:24px">Paste any product URL — we'll load the details automatically</p>
+    <p style="font-size:13px;color:var(--ink3);margin-bottom:24px">Paste any product URL — we'll load the details automatically</p>
     <div style="display:flex;gap:7px;flex-wrap:wrap">
       <button class="btn-sm" onclick="runDebug()">Test Connection</button>
       <button class="btn-sm" onclick="clearCache()">⟳ Reload Products</button>
       <button class="btn-sm" onclick="testGenerate()">Test API</button>
     </div>
-    <div id="debugOutput" style="display:none;margin-top:10px;background:var(--bg);border:1px solid var(--b2);border-radius:var(--r);padding:12px 14px;font-size:12px;font-family:'DM Mono',monospace;color:var(--t2);line-height:1.7;max-height:180px;overflow-y:auto;white-space:pre-wrap"></div>
+    <div id="debugOutput" style="display:none;margin-top:10px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--r);padding:12px 14px;font-size:12px;font-family:'DM Mono',monospace;color:var(--ink2);line-height:1.7;max-height:180px;overflow-y:auto;white-space:pre-wrap"></div>
   </div>
   <div class="sel-bar" id="selectedBar">
     <img class="sel-bar-img" id="selImg" src="" alt="">
@@ -481,13 +481,13 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
       <div class="collapse-hdr" onclick="toggleCollapse('logBody',true)">
         <span class="collapse-title">📋 Post Log</span>
         <div class="collapse-acts">
-          <span id="logCount" style="font-size:13px;color:var(--t3)"></span>
+          <span id="logCount" style="font-size:13px;color:var(--ink3)"></span>
           <button class="btn-sm" onclick="event.stopPropagation();downloadPostLog()">⬇ Export</button>
           <button class="btn-sm" onclick="event.stopPropagation();clearPostLog()">🗑 Clear</button>
         </div>
       </div>
       <div class="collapse-body" id="logBody">
-        <p style="font-size:14px;color:var(--t3);margin-bottom:14px">Every piece of content you generate is logged here.</p>
+        <p style="font-size:14px;color:var(--ink3);margin-bottom:14px">Every piece of content you generate is logged here.</p>
         <div id="postLogContainer"></div>
       </div>
     </div>
@@ -500,7 +500,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
         </div>
       </div>
       <div class="collapse-body" id="debugBody">
-        <p style="font-size:14px;color:var(--t3);margin-bottom:12px">If something goes wrong, copy these logs and paste them for help.</p>
+        <p style="font-size:14px;color:var(--ink3);margin-bottom:12px">If something goes wrong, copy these logs and paste them for help.</p>
         <div class="mono-out" id="debugConsoleOutput">No logs yet</div>
         <div class="debug-btns">
           <button class="btn-sm" onclick="runDebug()">Test Shopify</button>
@@ -521,14 +521,14 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
     <div class="form-grp"><label class="form-lbl">Google Review Link — Chapeltown</label><input class="form-inp" type="text" id="s_revChap" placeholder="https://g.page/r/…"></div>
     <div class="form-grp"><label class="form-lbl">Google Review Link — Roundhay</label><input class="form-inp" type="text" id="s_revRound" placeholder="https://g.page/r/…"></div>
     <div class="form-grp"><label class="form-lbl">Google Review Link — City Centre</label><input class="form-inp" type="text" id="s_revCity" placeholder="https://g.page/r/…"></div>
-    <div style="border-top:1px solid var(--b2);margin:18px 0 14px;padding-top:18px">
-      <div style="font-size:13px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Branch Links</div>
+    <div style="border-top:1px solid var(--border2);margin:18px 0 14px;padding-top:18px">
+      <div style="font-size:13px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Branch Links</div>
       <div class="form-grp"><label class="form-lbl">GBP — Chapeltown Road</label><input class="form-inp" type="text" id="s_gbpChap" placeholder="https://g.page/r/… or Google Maps link"></div>
       <div class="form-grp"><label class="form-lbl">GBP — Roundhay Road</label><input class="form-inp" type="text" id="s_gbpRound" placeholder="https://g.page/r/…"></div>
       <div class="form-grp"><label class="form-lbl">GBP — City Centre</label><input class="form-inp" type="text" id="s_gbpCity" placeholder="https://g.page/r/…"></div>
     </div>
-    <div style="border-top:1px solid var(--b2);margin-bottom:14px;padding-top:14px">
-      <div style="font-size:13px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Social Media Links</div>
+    <div style="border-top:1px solid var(--border2);margin-bottom:14px;padding-top:14px">
+      <div style="font-size:13px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Social Media Links</div>
       <div class="form-grp"><label class="form-lbl">Instagram Profile URL</label><input class="form-inp" type="text" id="s_instagram" placeholder="https://www.instagram.com/cchairandbeauty"></div>
       <div class="form-grp"><label class="form-lbl">Facebook Page URL</label><input class="form-inp" type="text" id="s_facebook" placeholder="https://www.facebook.com/cchairandbeauty"></div>
     </div>
@@ -1379,7 +1379,7 @@ function buildImageSection() {
              <div class="img-alt"><strong>Alt text:</strong> ${altText}</div>
              <button class="copy-field-btn" onclick="downloadShopifyImage('${img}','${seoBase}')">⬇ Download — ${seoBase}.jpg</button>
              <div class="img-filename">Saves as: ${seoBase}.jpg</div>`
-          : `<div style="background:var(--s3);border-radius:var(--r2);aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--t3);margin-bottom:8px;padding:20px;text-align:center">No image in Shopify — load real products in ⚙ Settings</div>`
+          : `<div style="background:var(--s3);border-radius:var(--r2);aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--ink3);margin-bottom:8px;padding:20px;text-align:center">No image in Shopify — load real products in ⚙ Settings</div>`
         }
       </div>
     </div>
@@ -1392,7 +1392,7 @@ function buildImageSection() {
         <div id="aiImageArea">
           ${cfg().openaiKey
             ? `<div class="ai-status-box"><span class="inline-spinner"></span><div class="ai-status-text"><div class="t1">Generating AI image…</div><div class="t2">~15 sec · ~4p · no faces · Google-safe</div></div></div>`
-            : `<div class="ai-status-box"><div class="ai-status-text"><div class="t1" style="color:var(--t3)">Add OpenAI key in ⚙ Settings to enable AI images</div><div class="t2">~4p per image · styled scenes · Google-safe</div></div></div>`
+            : `<div class="ai-status-box"><div class="ai-status-text"><div class="t1" style="color:var(--ink3)">Add OpenAI key in ⚙ Settings to enable AI images</div><div class="t2">~4p per image · styled scenes · Google-safe</div></div></div>`
           }
         </div>
       </div>
@@ -1537,16 +1537,16 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
 
   renderSettingPills(setting);
   area.innerHTML = `
-    <div style="background:var(--c-surface3);border-radius:var(--radius);padding:12px;display:flex;align-items:center;gap:8px">
+    <div style="background:var(--card2);border-radius:var(--r);padding:12px;display:flex;align-items:center;gap:8px">
       <div class="inline-spinner"></div>
       <div>
-        <div style="font-size:12px;font-weight:600;color:var(--c-text)">${settingInfo.emoji} ${settingInfo.label}</div>
-        <div style="font-size:11px;color:var(--c-text3);margin-top:2px">~15 seconds · no faces · Google safe ✓</div>
+        <div style="font-size:12px;font-weight:600;color:var(--ink)">${settingInfo.emoji} ${settingInfo.label}</div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:2px">~15 seconds · no faces · Google safe ✓</div>
       </div>
     </div>`;
 
   if(!product.image) {
-    area.innerHTML=`<div style="font-size:12px;color:var(--c-text3);padding:8px 0">No product image — load real Shopify products for AI editing</div>`;
+    area.innerHTML=`<div style="font-size:12px;color:var(--ink3);padding:8px 0">No product image — load real Shopify products for AI editing</div>`;
     return;
   }
 
@@ -1577,18 +1577,18 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
 
     area.innerHTML = `
       <div>
-        <img src="${imgSrc}" style="width:100%;border-radius:var(--radius);border:1px solid var(--c-border);display:block;cursor:pointer;margin-bottom:8px" onclick="window.open(this.src,'_blank')" title="Click for full size">
+        <img src="${imgSrc}" style="width:100%;border-radius:var(--r);border:1px solid var(--border);display:block;cursor:pointer;margin-bottom:8px" onclick="window.open(this.src,'_blank')" title="Click for full size">
         <button class="copy-field-btn" onclick="downloadBase64Image(window._aiImageData,'${seoFilename}')">⬇ Download AI Image</button>
         <div class="img-filename" style="margin-top:4px">Saves as: ${seoFilename}</div>
-        <div style="font-size:10px;color:var(--c-text3);margin-top:4px">${d.estimated_cost||'~4p'} · ${settingInfo.label}</div>
+        <div style="font-size:10px;color:var(--ink3);margin-top:4px">${d.estimated_cost||'~4p'} · ${settingInfo.label}</div>
       </div>`;
     showToast && toast('✓ AI image ready in Task 7','success');
   } catch(e) {
     dbg('AI_IMAGE_ERROR', e.message);
     area.innerHTML=`
-      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius);padding:10px">
-        <div style="font-size:12px;color:var(--c-red);font-weight:600;margin-bottom:4px">AI image failed</div>
-        <div style="font-size:11px;color:var(--c-text3);margin-bottom:8px;word-break:break-all">${e.message}</div>
+      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:var(--r);padding:10px">
+        <div style="font-size:12px;color:var(--red);font-weight:600;margin-bottom:4px">AI image failed</div>
+        <div style="font-size:11px;color:var(--ink3);margin-bottom:8px;word-break:break-all">${e.message}</div>
         <button class="btn-sm" onclick="generateAIImageAuto(selectedProduct,generatedContent,'${setting}')">↻ Try Again</button>
       </div>`;
   }
@@ -1633,7 +1633,7 @@ function renderPostLog() {
             <div class="log-task-icons">${Object.entries(icons).map(([tid,ico])=>`<span class="log-task-icon" style="opacity:${tasks.includes(tid)?1:0.2}" title="${tid}">${ico}</span>`).join('')}</div>
           </div>
           <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-            <a href="https://cchairandbeauty.com/products/${e.productHandle}" target="_blank" style="font-size:11px;color:var(--c-gold);text-decoration:none">View product ↗</a>
+            <a href="https://cchairandbeauty.com/products/${e.productHandle}" target="_blank" style="font-size:11px;color:var(--teal);text-decoration:none">View product ↗</a>
           </div>
         </div>`;
       }).join('');
@@ -1661,7 +1661,7 @@ function toggleWeekGrid() {
   g.style.display='grid';
   g.innerHTML=days.map((d,i)=>{
     const p=allProducts[Math.floor(Math.random()*allProducts.length)];
-    return `<div class="day-card ${i===today?'today':''}"><div class="day-nm">${d}</div><div class="day-product">${p.title.substring(0,20)}…</div><div style="font-size:9px;color:var(--c-text3);margin-top:2px">${focuses[i]}</div></div>`;
+    return `<div class="day-card ${i===today?'today':''}"><div class="day-nm">${d}</div><div class="day-product">${p.title.substring(0,20)}…</div><div style="font-size:9px;color:var(--ink3);margin-top:2px">${focuses[i]}</div></div>`;
   }).join('');
 }
 
