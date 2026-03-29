@@ -4,891 +4,364 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CC Hair & Beauty — Content Studio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-
-/* ── TOKENS ── */
-:root {
-  --c-bg:       #0C0C0C;
-  --c-surface:  #141414;
-  --c-surface2: #1C1C1C;
-  --c-surface3: #242424;
-  --c-border:   #2A2A2A;
-  --c-border2:  #333333;
-  --c-text:     #F0F0F0;
-  --c-text2:    #A0A0A0;
-  --c-text3:    #606060;
-  --c-gold:     #C9A84C;
-  --c-gold2:    #E8C878;
-  --c-green:    #22C55E;
-  --c-red:      #EF4444;
-  --c-blue:     #3B82F6;
-  --radius:     8px;
-  --radius-lg:  12px;
-  --radius-xl:  16px;
-}
-.light {
-  --c-bg:       #FAFAFA;
-  --c-surface:  #FFFFFF;
-  --c-surface2: #F4F4F4;
-  --c-surface3: #EBEBEB;
-  --c-border:   #E0E0E0;
-  --c-border2:  #CECECE;
-  --c-text:     #0C0C0C;
-  --c-text2:    #555555;
-  --c-text3:    #999999;
-}
-
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--c-bg);
-  color: var(--c-text);
-  min-height: 100vh;
-  font-size: 14px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ── HEADER ── */
-.header {
-  position: sticky; top: 0; z-index: 100;
-  background: var(--c-surface);
-  border-bottom: 1px solid var(--c-border);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 24px; height: 56px;
-}
-.brand { display: flex; align-items: center; gap: 12px; }
-.brand-mark {
-  width: 32px; height: 32px;
-  background: var(--c-gold);
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.brand-mark svg { width: 18px; height: 18px; }
-.brand-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 15px; font-weight: 600;
-  color: var(--c-text); letter-spacing: 0.2px;
-}
-.brand-tag {
-  font-size: 10px; color: var(--c-text3);
-  letter-spacing: 0.5px; text-transform: uppercase;
-  margin-top: 1px;
-}
-.header-actions { display: flex; gap: 6px; align-items: center; }
-.btn-sm {
-  height: 32px; padding: 0 12px;
-  background: var(--c-surface2);
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius);
-  color: var(--c-text2); font-size: 12px; font-weight: 500;
-  cursor: pointer; font-family: inherit;
-  transition: all 0.15s;
-  display: flex; align-items: center; gap: 6px;
-}
-.btn-sm:hover { background: var(--c-surface3); color: var(--c-text); border-color: var(--c-border2); }
-
-/* ── MAIN ── */
-.main { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
-
-/* ── WEEK BAR ── */
-.week-bar {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 20px; flex-wrap: wrap;
-}
-.week-btn {
-  flex: 1; min-width: 200px;
-  height: 40px; background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius); color: var(--c-text2);
-  font-size: 13px; font-weight: 500; cursor: pointer;
-  font-family: inherit; display: flex; align-items: center;
-  justify-content: center; gap: 8px; transition: all 0.15s;
-}
-.week-btn:hover { border-color: var(--c-gold); color: var(--c-gold); }
-.week-counter {
-  height: 40px; padding: 0 16px;
-  background: var(--c-surface); border: 1px solid var(--c-border);
-  border-radius: var(--radius); font-size: 13px; font-weight: 600;
-  color: var(--c-gold); display: flex; align-items: center; gap: 6px;
-  white-space: nowrap;
-}
-
-/* ── STEP PILLS ── */
-.steps {
-  display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
-}
-.step-pill {
-  display: flex; align-items: center; gap: 6px;
-  padding: 6px 14px; border-radius: 100px;
-  font-size: 12px; font-weight: 600; transition: all 0.2s;
-}
-.step-pill.active { background: var(--c-gold); color: #0C0C0C; }
-.step-pill.done   { background: rgba(34,197,94,0.15); color: var(--c-green); border: 1px solid rgba(34,197,94,0.3); }
-.step-pill.idle   { background: var(--c-surface2); color: var(--c-text3); border: 1px solid var(--c-border); }
-.step-num {
-  width: 18px; height: 18px; border-radius: 50%;
-  background: rgba(0,0,0,0.2); display: flex;
-  align-items: center; justify-content: center; font-size: 10px;
-}
-.step-line { flex: 1; height: 1px; background: var(--c-border); }
-
-/* ── HISTORY ── */
-.history-bar {
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius-lg);
-  padding: 10px 14px; margin-bottom: 16px;
-  display: none;
-}
-.history-label {
-  font-size: 10px; font-weight: 700; letter-spacing: 1px;
-  text-transform: uppercase; color: var(--c-text3);
-  margin-bottom: 8px;
-}
-.history-chips { display: flex; flex-wrap: wrap; gap: 5px; }
-.chip {
-  font-size: 11px; background: var(--c-surface2);
-  border: 1px solid var(--c-border); color: var(--c-text3);
-  border-radius: 100px; padding: 3px 10px;
-}
-.chip-day { color: var(--c-gold); font-weight: 700; margin-right: 2px; }
-
-/* ── CARD ── */
-.card {
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius-xl);
-  overflow: hidden; margin-bottom: 12px;
-}
-.card-header {
-  padding: 14px 18px; border-bottom: 1px solid var(--c-border);
-  display: flex; align-items: center; justify-content: space-between;
-}
-.card-title {
-  font-size: 11px; font-weight: 700; letter-spacing: 1px;
-  text-transform: uppercase; color: var(--c-gold);
-}
-.card-body { padding: 18px; }
-
-/* ── SUGGESTED ── */
-.suggested-grid {
-  display: grid; grid-template-columns: repeat(3,1fr); gap: 8px;
-  margin-bottom: 18px;
-}
-.sug-card {
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  border-radius: var(--radius-lg); padding: 10px;
-  cursor: pointer; transition: all 0.15s;
-  display: flex; align-items: center; gap: 10px;
-}
-.sug-card:hover, .sug-card.sel {
-  border-color: var(--c-gold);
-  background: var(--c-surface3);
-}
-.sug-card.sel { box-shadow: 0 0 0 1px var(--c-gold); }
-.sug-img {
-  width: 48px; height: 48px; border-radius: var(--radius);
-  object-fit: cover; background: var(--c-surface3); flex-shrink: 0;
-}
-.sug-img-placeholder {
-  width: 48px; height: 48px; border-radius: var(--radius);
-  background: var(--c-surface3); flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px; color: var(--c-border2);
-}
-.sug-title { font-size: 12px; font-weight: 500; color: var(--c-text); line-height: 1.3; }
-.sug-price { font-size: 11px; color: var(--c-gold); margin-top: 2px; }
-.sug-badge {
-  display: inline-block; font-size: 9px; font-weight: 700;
-  letter-spacing: 0.5px; text-transform: uppercase;
-  background: rgba(201,168,76,0.12); color: var(--c-gold);
-  border-radius: 4px; padding: 2px 6px; margin-top: 3px;
-}
-
-/* ── SEARCH ── */
-.search-wrap { position: relative; margin-bottom: 12px; }
-.search-input {
-  width: 100%; height: 40px; padding: 0 14px 0 38px;
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  border-radius: var(--radius); color: var(--c-text); font-size: 13px;
-  font-family: inherit; outline: none; transition: border-color 0.15s;
-}
-.search-input:focus { border-color: var(--c-gold); }
-.search-input::placeholder { color: var(--c-text3); }
-.search-icon {
-  position: absolute; left: 12px; top: 50%;
-  transform: translateY(-50%); color: var(--c-text3); font-size: 15px;
-}
-.section-label {
-  font-size: 10px; font-weight: 700; letter-spacing: 1px;
-  text-transform: uppercase; color: var(--c-text3);
-  margin-bottom: 8px; margin-top: 16px;
-  padding-bottom: 6px; border-bottom: 1px solid var(--c-border);
-}
-
-/* ── PRODUCT GRID ── */
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 6px; max-height: 280px; overflow-y: auto; padding-right: 4px;
-}
-.product-grid::-webkit-scrollbar { width: 3px; }
-.product-grid::-webkit-scrollbar-thumb { background: var(--c-border2); border-radius: 2px; }
-.p-card {
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  border-radius: var(--radius-lg); padding: 8px;
-  cursor: pointer; transition: all 0.15s; text-align: center;
-}
-.p-card:hover, .p-card.sel {
-  border-color: var(--c-gold); background: var(--c-surface3);
-}
-.p-card.sel { box-shadow: 0 0 0 1px var(--c-gold); }
-.p-card img {
-  width: 100%; aspect-ratio: 1; object-fit: cover;
-  border-radius: 6px; background: var(--c-surface3); margin-bottom: 5px;
-}
-.p-card-img-placeholder {
-  width: 100%; aspect-ratio: 1; background: var(--c-surface3);
-  border-radius: 6px; margin-bottom: 5px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 24px; color: var(--c-border2);
-}
-.p-name { font-size: 10px; color: var(--c-text); line-height: 1.3; }
-.p-price { font-size: 10px; color: var(--c-gold); margin-top: 2px; font-weight: 600; }
-
-/* ── URL INPUT ── */
-.url-row { display: flex; gap: 8px; margin-top: 16px; }
-.url-input {
-  flex: 1; height: 40px; padding: 0 14px;
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  border-radius: var(--radius); color: var(--c-text); font-size: 13px;
-  font-family: inherit; outline: none; transition: border-color 0.15s;
-}
-.url-input:focus { border-color: var(--c-gold); }
-.url-input::placeholder { color: var(--c-text3); }
-.btn-gold {
-  height: 40px; padding: 0 18px;
-  background: var(--c-gold); color: #0C0C0C;
-  border: none; border-radius: var(--radius);
-  font-size: 13px; font-weight: 700; cursor: pointer;
-  font-family: inherit; white-space: nowrap;
-  transition: all 0.15s;
-}
-.btn-gold:hover { background: var(--c-gold2); }
-.btn-gold:disabled { opacity: 0.4; cursor: not-allowed; }
-
-/* ── SELECTED BAR ── */
-.selected-bar {
-  background: var(--c-surface);
-  border: 1px solid var(--c-gold);
-  border-radius: var(--radius-xl); padding: 14px 18px;
-  display: none; align-items: center; gap: 14px;
-  margin-bottom: 10px;
-}
-.sel-img {
-  width: 52px; height: 52px; border-radius: var(--radius);
-  object-fit: cover; background: var(--c-surface2); flex-shrink: 0;
-}
-.sel-name { font-size: 14px; font-weight: 600; color: var(--c-text); }
-.sel-price { font-size: 12px; color: var(--c-gold); margin-top: 2px; }
-.sel-hint { font-size: 11px; color: var(--c-text3); margin-top: 3px; }
-.btn-outline {
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  color: var(--c-text2); border-radius: var(--radius); height: 32px;
-  padding: 0 14px; font-size: 12px; font-weight: 500; cursor: pointer;
-  font-family: inherit; transition: all 0.15s; white-space: nowrap;
-}
-.btn-outline:hover { border-color: var(--c-border2); color: var(--c-text); }
-
-/* ── GENERATE BUTTON ── */
-.gen-btn {
-  width: 100%; height: 52px;
-  background: var(--c-gold); color: #0C0C0C;
-  border: none; border-radius: var(--radius-xl);
-  font-size: 15px; font-weight: 700; cursor: pointer;
-  font-family: inherit; display: none; align-items: center;
-  justify-content: center; gap: 10px;
-  transition: all 0.2s; margin-bottom: 8px;
-  letter-spacing: 0.2px;
-}
-.gen-btn:hover { background: var(--c-gold2); transform: translateY(-1px); }
-.gen-btn:active { transform: translateY(0); }
-.gen-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-.gen-sub { font-size: 11px; font-weight: 400; opacity: 0.7; }
-
-.pre-ai-btn {
-  width: 100%; height: 40px; display: none;
-  background: #0D2218; border: 1px solid #1A5C38;
-  border-radius: var(--radius); color: #22C55E;
-  font-size: 13px; font-weight: 600; cursor: pointer;
-  font-family: inherit; align-items: center;
-  justify-content: center; gap: 8px; transition: all 0.15s;
-  margin-bottom: 10px;
-}
-.pre-ai-btn:hover { background: #102D1F; }
-
-/* ── LOADING ── */
-.loading-panel {
-  background: var(--c-surface); border: 1px solid var(--c-border);
-  border-radius: var(--radius-xl); padding: 40px 20px;
-  text-align: center; display: none;
-}
-.spinner {
-  width: 36px; height: 36px; margin: 0 auto 16px;
-  border: 2px solid var(--c-border);
-  border-top-color: var(--c-gold); border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
-.loading-steps { display: flex; flex-direction: column; gap: 4px; }
-.ls { font-size: 12px; color: var(--c-text3); transition: color 0.3s; }
-.ls.on { color: var(--c-gold); }
-
-/* ── CHECKLIST ── */
-.checklist-header {
-  padding: 16px 18px;
-  border-bottom: 1px solid var(--c-border);
-  background: var(--c-surface);
-}
-.cl-product { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-.cl-meta { font-size: 11px; color: var(--c-text3); display: flex; gap: 14px; flex-wrap: wrap; }
-.progress-bar {
-  height: 3px; background: var(--c-surface3);
-  border-radius: 2px; margin-top: 12px; overflow: hidden;
-}
-.progress-fill {
-  height: 100%; background: var(--c-gold);
-  border-radius: 2px; transition: width 0.4s ease;
-}
-.progress-text { font-size: 10px; color: var(--c-text3); margin-top: 5px; }
-
-.task-list { padding: 10px; }
-.task-item {
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius-lg);
-  margin-bottom: 6px; overflow: hidden;
-  transition: border-color 0.2s;
-}
-.task-item.done {
-  border-color: rgba(34,197,94,0.3);
-  background: rgba(34,197,94,0.03);
-}
-.task-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 14px; cursor: pointer;
-}
-.task-check {
-  width: 24px; height: 24px; border-radius: 6px;
-  border: 1.5px solid var(--c-border);
-  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: all 0.2s; font-size: 13px;
-  background: var(--c-surface2);
-}
-.task-check:hover { border-color: var(--c-green); }
-.task-item.done .task-check {
-  background: var(--c-green); border-color: var(--c-green); color: #fff;
-}
-.task-info { flex: 1; min-width: 0; }
-.task-name {
-  font-size: 13px; font-weight: 600; color: var(--c-text);
-}
-.task-item.done .task-name {
-  color: var(--c-text3); text-decoration: line-through;
-  text-decoration-color: var(--c-green);
-}
-.task-hint { font-size: 11px; color: var(--c-text3); margin-top: 2px; line-height: 1.4; }
-.task-time {
-  font-size: 10px; font-weight: 600; color: var(--c-text3);
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  border-radius: 4px; padding: 2px 7px; white-space: nowrap;
-}
-.task-item.done .task-time { color: var(--c-green); background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.2); }
-.task-btns { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
-.copy-btn {
-  height: 34px; padding: 0 14px;
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  border-radius: var(--radius); color: var(--c-text2);
-  font-size: 12px; font-weight: 600; cursor: pointer;
-  font-family: inherit; transition: all 0.15s; white-space: nowrap;
-}
-.copy-btn:hover { border-color: var(--c-gold); color: var(--c-gold); background: var(--c-surface3); }
-.copy-btn.ok { background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.4); color: var(--c-green); }
-.open-btn {
-  height: 34px; padding: 0 14px;
-  background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.3);
-  border-radius: var(--radius); color: var(--c-gold);
-  font-size: 12px; font-weight: 600; cursor: pointer;
-  font-family: inherit; text-decoration: none;
-  display: inline-flex; align-items: center; gap: 4px;
-  transition: all 0.15s; white-space: nowrap;
-}
-.open-btn:hover { background: rgba(201,168,76,0.15); }
-
-/* ── CONTENT AREA ── */
-.task-content { border-top: 1px solid var(--c-border); padding: 12px 14px; display: none; }
-.task-content.vis { display: block; }
-.content-section { margin-bottom: 12px; }
-.content-label {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
-  text-transform: uppercase; color: var(--c-text3);
-  margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
-}
-.content-badge {
-  font-size: 10px; color: var(--c-gold);
-  background: rgba(201,168,76,0.1); border-radius: 4px; padding: 1px 6px;
-}
-.content-box {
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  border-radius: var(--radius); padding: 10px 12px;
-  font-size: 12px; color: var(--c-text2); line-height: 1.6;
-  max-height: 180px; overflow-y: auto;
-  white-space: pre-wrap; font-family: 'Inter', monospace;
-}
-.content-box::-webkit-scrollbar { width: 3px; }
-.content-box::-webkit-scrollbar-thumb { background: var(--c-border2); }
-.copy-field-btn {
-  width: 100%; height: 36px; margin-top: 6px;
-  background: var(--c-surface3); border: 1px solid var(--c-border);
-  border-radius: var(--radius); color: var(--c-text2);
-  font-size: 12px; font-weight: 600; cursor: pointer;
-  font-family: inherit; transition: all 0.15s;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.copy-field-btn:hover { border-color: var(--c-gold); color: var(--c-gold); }
-.copy-field-btn.ok { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); color: var(--c-green); }
-
-/* ── IMAGE SECTION ── */
-.img-section { display: flex; gap: 14px; flex-wrap: wrap; }
-.img-box {
-  flex: 1; min-width: 160px;
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  border-radius: var(--radius-lg); overflow: hidden;
-}
-.img-box-header {
-  padding: 8px 12px; border-bottom: 1px solid var(--c-border);
-  font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
-  text-transform: uppercase; color: var(--c-text3);
-}
-.img-box-body { padding: 12px; }
-.product-img {
-  width: 100%; aspect-ratio: 1; object-fit: cover;
-  border-radius: var(--radius); border: 1px solid var(--c-border);
-  display: block; cursor: pointer; margin-bottom: 8px;
-}
-.img-alt {
-  font-size: 11px; color: var(--c-text3);
-  background: var(--c-surface3); border-radius: var(--radius);
-  padding: 6px 8px; line-height: 1.5; margin-bottom: 8px;
-}
-.img-filename {
-  font-size: 10px; color: var(--c-text3);
-  word-break: break-all; line-height: 1.4; margin-top: 4px;
-}
-
-/* ── AI SETTING PILLS ── */
-.setting-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
-.setting-pill {
-  height: 30px; padding: 0 12px;
-  background: var(--c-surface3); border: 1px solid var(--c-border);
-  border-radius: 100px; color: var(--c-text2);
-  font-size: 11px; font-weight: 600; cursor: pointer;
-  font-family: inherit; transition: all 0.15s;
-  display: flex; align-items: center; gap: 5px;
-}
-.setting-pill:hover, .setting-pill.active {
-  background: rgba(201,168,76,0.1);
-  border-color: var(--c-gold); color: var(--c-gold);
-}
-
-/* ── TAGS ── */
-.tag-pills { display: flex; flex-wrap: wrap; gap: 5px; padding: 8px 0; }
-.tag-pill {
-  font-size: 11px; color: var(--c-text3);
-  background: var(--c-surface3); border: 1px solid var(--c-border);
-  border-radius: 100px; padding: 3px 10px;
-}
-
-/* ── BONUS ── */
-.bonus-divider {
-  border-top: 1px solid var(--c-border);
-  margin: 4px 10px;
-  padding: 10px 4px 4px;
-  font-size: 10px; font-weight: 700; letter-spacing: 1px;
-  text-transform: uppercase; color: var(--c-text3);
-}
-.new-product-btn {
-  margin: 4px 10px 10px;
-  width: calc(100% - 20px); height: 38px;
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  border-radius: var(--radius); color: var(--c-text2);
-  font-size: 12px; font-weight: 600; cursor: pointer;
-  font-family: inherit; transition: all 0.15s;
-}
-.new-product-btn:hover { border-color: var(--c-gold); color: var(--c-gold); }
-
-/* ── DEBUG + LOG PANELS ── */
-.utility-section { margin-top: 24px; }
-.utility-card {
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius-xl); overflow: hidden; margin-bottom: 8px;
-}
-.utility-header {
-  padding: 12px 16px; border-bottom: 1px solid var(--c-border);
-  display: flex; align-items: center; justify-content: space-between;
-}
-.utility-title {
-  font-size: 12px; font-weight: 600; color: var(--c-text2);
-  display: flex; align-items: center; gap: 6px;
-}
-.utility-body { display: none; padding: 14px 16px; }
-.utility-body.vis { display: block; }
-.debug-log {
-  background: #080808; border: 1px solid var(--c-border);
-  border-radius: var(--radius); padding: 10px 12px;
-  font-family: 'Courier New', monospace; font-size: 11px;
-  max-height: 240px; overflow-y: auto; line-height: 1.7;
-  color: var(--c-text2);
-}
-.debug-log::-webkit-scrollbar { width: 3px; }
-.debug-log::-webkit-scrollbar-thumb { background: var(--c-border2); }
-.log-line { padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-.log-ts { color: #444; font-size: 10px; margin-right: 6px; }
-.log-type { font-weight: 700; margin-right: 6px; font-size: 10px; }
-.log-START,.log-SUCCESS { color: var(--c-gold); }
-.log-ERROR,.log-FAIL,.log-SHOPIFY_ERROR,.log-SHOPIFY_FAIL,.log-AI_IMAGE_ERROR { color: var(--c-red); }
-.log-OK,.log-SHOPIFY_OK,.log-AI_IMAGE_OK,.log-PARSE_OK,.log-DOWNLOAD_OK { color: var(--c-green); }
-.log-HTTP,.log-API,.log-SHOPIFY_FETCH,.log-AI_IMAGE,.log-SHOPIFY_STATUS { color: #6B9FE0; }
-.debug-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
-
-/* ── POST LOG ── */
-.log-entry {
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  border-radius: var(--radius-lg); padding: 12px 14px; margin-bottom: 6px;
-}
-.log-entry-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-.log-day-badge {
-  font-size: 10px; font-weight: 700; background: rgba(201,168,76,0.1);
-  color: var(--c-gold); border-radius: 4px; padding: 2px 7px; white-space: nowrap;
-}
-.log-entry-title { font-size: 13px; font-weight: 600; margin-top: 4px; }
-.log-entry-blog { font-size: 11px; color: var(--c-text3); margin-top: 2px; }
-.log-task-icons { display: flex; gap: 4px; flex-wrap: wrap; }
-.log-task-icon { font-size: 14px; }
-.log-week-header {
-  display: flex; align-items: center; justify-content: space-between;
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  border-radius: var(--radius); padding: 8px 12px; margin-bottom: 6px; margin-top: 14px;
-}
-.log-week-label { font-size: 12px; font-weight: 600; color: var(--c-text2); }
-.log-week-count { font-size: 12px; font-weight: 700; color: var(--c-gold); }
-
-/* ── MODAL ── */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-  display: none; align-items: center; justify-content: center; z-index: 200;
-}
-.modal-overlay.open { display: flex; }
-.modal {
-  background: var(--c-surface); border: 1px solid var(--c-border);
-  border-radius: var(--radius-xl); width: 90%; max-width: 460px;
-  padding: 24px; max-height: 90vh; overflow-y: auto;
-}
-.modal-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
-.form-group { margin-bottom: 14px; }
-.form-label { font-size: 11px; font-weight: 600; color: var(--c-text3); margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
-.form-input {
-  width: 100%; height: 38px; padding: 0 12px;
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  border-radius: var(--radius); color: var(--c-text); font-size: 13px;
-  font-family: inherit; outline: none; transition: border-color 0.15s;
-}
-.form-input:focus { border-color: var(--c-gold); }
-.form-hint { font-size: 11px; color: var(--c-text3); margin-top: 4px; }
-.modal-btns { display: flex; gap: 8px; margin-top: 20px; }
-.btn-cancel {
-  flex: 0; height: 38px; padding: 0 16px;
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  border-radius: var(--radius); color: var(--c-text2);
-  font-size: 13px; cursor: pointer; font-family: inherit;
-}
-
-/* ── TOAST ── */
-.toast {
-  position: fixed; bottom: 20px; right: 20px;
-  background: var(--c-surface); border: 1px solid var(--c-border);
-  color: var(--c-text); border-radius: var(--radius-lg);
-  padding: 10px 16px; font-size: 13px; font-weight: 500;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 300;
-  transform: translateY(60px); opacity: 0; transition: all 0.3s;
-  max-width: 300px;
-}
-.toast.show { transform: translateY(0); opacity: 1; }
-.toast.success { border-color: rgba(34,197,94,0.4); color: var(--c-green); }
-.toast.error { border-color: rgba(239,68,68,0.4); color: var(--c-red); }
-
-/* ── WEEK GRID ── */
-.week-grid {
-  display: grid; grid-template-columns: repeat(7,1fr); gap: 5px;
-  margin-bottom: 12px;
-}
-.day-card {
-  background: var(--c-surface2); border: 1px solid var(--c-border);
-  border-radius: var(--radius); padding: 8px 6px; text-align: center;
-  cursor: pointer; transition: all 0.15s;
-}
-.day-card:hover, .day-card.today { border-color: var(--c-gold); }
-.day-card.today { background: rgba(201,168,76,0.06); }
-.day-nm { font-size: 9px; font-weight: 700; color: var(--c-text3); text-transform: uppercase; }
-.day-product { font-size: 10px; color: var(--c-text); margin-top: 4px; line-height: 1.3; }
-
-/* ── EMPTY / LOADING STATES ── */
-.empty { text-align: center; padding: 30px; color: var(--c-text3); font-size: 13px; }
-.inline-spinner {
-  width: 16px; height: 16px; border: 2px solid var(--c-border);
-  border-top-color: var(--c-gold); border-radius: 50%;
-  animation: spin 0.7s linear infinite; display: inline-block;
-}
-
-/* ── RESPONSIVE ── */
-@media(max-width:600px) {
-  .suggested-grid { grid-template-columns: 1fr 1fr; }
-  .week-grid { grid-template-columns: repeat(4,1fr); }
-  .img-section { flex-direction: column; }
-}
+:root{--bg:#0D0D0D;--s1:#151515;--s2:#1D1D1D;--s3:#252525;--s4:#2E2E2E;--b1:rgba(255,255,255,0.06);--b2:rgba(255,255,255,0.11);--t1:#F2F2F2;--t2:#A8A8A8;--t3:#5A5A5A;--blue:#2563EB;--blue2:#1D4ED8;--blue-bg:rgba(37,99,235,0.10);--green:#16A34A;--green-bg:rgba(22,163,74,0.10);--red:#DC2626;--r:8px;--r2:12px;--r3:16px}
+body.light{--bg:#F7F7F7;--s1:#FFFFFF;--s2:#F0F0F0;--s3:#E8E8E8;--s4:#DEDEDE;--b1:rgba(0,0,0,0.05);--b2:rgba(0,0,0,0.10);--t1:#111111;--t2:#444444;--t3:#888888}
+body.blue{--bg:#F0F4FF;--s1:#FFFFFF;--s2:#E8EEFF;--s3:#D8E2FF;--s4:#C5D1F7;--b1:rgba(37,99,235,0.07);--b2:rgba(37,99,235,0.15);--t1:#1a1a2e;--t2:#374151;--t3:#6B7280;--blue:#1D4ED8;--blue-bg:rgba(29,78,216,0.10)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;line-height:1.55;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+.hdr{position:sticky;top:0;z-index:50;background:var(--s1);border-bottom:1px solid var(--b2);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{width:40px;height:40px;border-radius:10px;background:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-mark svg{width:22px;height:22px;stroke:white;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.brand-name{font-size:16px;font-weight:700;color:var(--t1);letter-spacing:-.3px}
+.brand-sub{font-size:11px;color:var(--t3);margin-top:1px;letter-spacing:.3px}
+.hdr-r{display:flex;align-items:center;gap:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:var(--r);font-family:inherit;font-weight:500;cursor:pointer;transition:all .15s;border:none;white-space:nowrap;text-decoration:none;font-size:14px}
+.btn-ghost{background:transparent;border:1px solid var(--b2);color:var(--t2);padding:8px 14px}
+.btn-ghost:hover{background:var(--s2);color:var(--t1);border-color:var(--blue)}
+.btn-blue{background:var(--blue);color:#fff;padding:10px 20px;font-weight:600}
+.btn-blue:hover{background:var(--blue2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(37,99,235,.3)}
+.btn-blue:active{transform:translateY(0)}
+.btn-blue:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-cta{width:100%;background:var(--blue);color:#fff;font-size:17px;font-weight:700;padding:18px 24px;border-radius:var(--r2);letter-spacing:-.2px;display:flex;flex-direction:column;align-items:center;border:none;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-cta:hover{background:var(--blue2);transform:translateY(-1px);box-shadow:0 6px 22px rgba(37,99,235,.35)}
+.btn-cta:active{transform:translateY(0)}
+.btn-cta:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.cta-sub{font-size:12px;font-weight:400;opacity:.75;margin-top:3px}
+.copy-btn{background:var(--s2);border:1px solid var(--b2);color:var(--t2);padding:8px 16px;font-size:13px;border-radius:var(--r);font-family:inherit;cursor:pointer;font-weight:500;white-space:nowrap;transition:all .15s}
+.copy-btn:hover{background:var(--s3);color:var(--t1)}
+.copy-btn.copied{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.open-btn{background:transparent;border:1px solid var(--b2);color:var(--t2);padding:8px 14px;font-size:13px;border-radius:var(--r);font-family:inherit;cursor:pointer;font-weight:500;white-space:nowrap;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.open-btn:hover{background:var(--s2);color:var(--t1)}
+.copy-field-btn{width:100%;background:var(--s2);border:1px solid var(--b2);color:var(--t2);padding:10px 14px;font-size:13px;border-radius:var(--r);font-family:inherit;cursor:pointer;font-weight:500;margin-top:8px;transition:all .15s}
+.copy-field-btn:hover{background:var(--s3);color:var(--t1)}
+.copy-field-btn.copied{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.btn-sm{background:var(--s2);border:1px solid var(--b2);color:var(--t2);padding:6px 12px;font-size:12px;border-radius:var(--r);font-family:inherit;cursor:pointer;font-weight:500;white-space:nowrap;transition:all .15s}
+.btn-sm:hover{background:var(--s3);color:var(--t1)}
+.page{max-width:980px;margin:0 auto;padding:28px 18px}
+.step-pills{display:flex;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);overflow:hidden;margin-bottom:20px}
+.step-pill{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 16px;font-size:15px;font-weight:500;color:var(--t3);border-right:1px solid var(--b2);cursor:default;transition:all .2s}
+.step-pill:last-child{border-right:none}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .2s}
+.step-pill.active{color:var(--t1);background:var(--blue-bg)}
+.step-pill.active .step-num{background:var(--blue);color:#fff}
+.step-pill.done{color:var(--green)}
+.step-pill.done .step-num{background:var(--green);color:#fff}
+.week-row{display:flex;align-items:center;gap:14px;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);padding:13px 18px;margin-bottom:16px}
+.week-lbl{font-size:13px;color:var(--t3);white-space:nowrap}
+.week-bar-wrap{flex:1;height:5px;background:var(--s3);border-radius:3px;overflow:hidden}
+.week-bar-fill{height:100%;background:var(--blue);border-radius:3px;transition:width .4s}
+.week-num{font-size:14px;font-weight:700;color:var(--t1);white-space:nowrap}
+.week-plan-btn{background:transparent;border:1px solid var(--b2);color:var(--t3);border-radius:var(--r);padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s}
+.week-plan-btn:hover{color:var(--t1)}
+.history-strip{display:none;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);padding:11px 16px;margin-bottom:12px}
+.history-inner{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.history-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--red);white-space:nowrap}
+.history-chips{display:flex;gap:5px;flex-wrap:wrap;flex:1}
+.chip{font-size:11px;background:var(--s3);border:1px solid var(--b1);color:var(--t3);border-radius:4px;padding:2px 8px}
+.chip-day{display:none}
+.sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--t3);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.sug-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:22px}
+.sug-card{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);padding:12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px}
+.sug-card:hover,.sug-card.sel{border-color:var(--blue);background:var(--blue-bg)}
+.sug-img{width:50px;height:50px;border-radius:8px;object-fit:cover;background:var(--s3);flex-shrink:0}
+.sug-img-ph{width:50px;height:50px;border-radius:8px;background:var(--s3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--t3)}
+.sug-info{flex:1;min-width:0}
+.sug-name{font-size:14px;font-weight:500;color:var(--t1);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sug-price{font-size:13px;color:var(--blue);margin-top:2px;font-weight:600}
+.sug-badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);background:var(--s3);border-radius:3px;padding:1px 6px;margin-top:4px}
+.search-wrap{position:relative;margin-bottom:10px}
+.search-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:16px;pointer-events:none}
+.search-inp{width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);color:var(--t1);font-size:15px;font-family:inherit;padding:12px 14px 12px 40px;outline:none;transition:border-color .15s}
+.search-inp:focus{border-color:var(--blue)}
+.search-inp::placeholder{color:var(--t3)}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:6px;max-height:270px;overflow-y:auto;margin-bottom:10px;padding-right:2px}
+.prod-grid::-webkit-scrollbar{width:3px}
+.prod-grid::-webkit-scrollbar-thumb{background:var(--s4);border-radius:2px}
+.p-card{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);padding:8px;cursor:pointer;transition:all .15s;text-align:center}
+.p-card:hover,.p-card.sel{border-color:var(--blue);background:var(--blue-bg)}
+.p-card img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;background:var(--s3);margin-bottom:5px}
+.p-card-img-placeholder{width:100%;aspect-ratio:1;background:var(--s3);border-radius:6px;margin-bottom:5px;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--t3)}
+.p-name{font-size:11px;color:var(--t1);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.p-price{font-size:11px;color:var(--blue);margin-top:3px;font-weight:600}
+.url-row{display:flex;gap:8px;margin-bottom:6px}
+.url-inp{flex:1;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);color:var(--t1);font-size:14px;font-family:inherit;padding:11px 14px;outline:none}
+.url-inp:focus{border-color:var(--blue)}
+.url-inp::placeholder{color:var(--t3)}
+.sel-bar{display:none;background:var(--s1);border:2px solid var(--blue);border-radius:var(--r2);padding:16px 18px;align-items:center;gap:16px;margin-bottom:12px}
+.sel-bar-img{width:58px;height:58px;border-radius:8px;object-fit:cover;background:var(--s3);flex-shrink:0}
+.sel-bar-info{flex:1;min-width:0}
+.sel-bar-name{font-size:16px;font-weight:600;color:var(--t1);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.sel-bar-price{font-size:14px;color:var(--blue);margin-top:3px;font-weight:600}
+.sel-bar-hint{font-size:12px;color:var(--t3);margin-top:4px}
+.pre-ai-row{display:none;background:rgba(22,163,74,.06);border:1px solid rgba(22,163,74,.2);border-radius:var(--r2);padding:13px 18px;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.pre-ai-main{font-size:14px;font-weight:500;color:var(--t1)}
+.pre-ai-hint{font-size:12px;color:var(--t3);margin-top:2px}
+.loading-box{display:none;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);padding:40px 24px;text-align:center;margin-bottom:16px}
+.spin{width:42px;height:42px;border:3px solid var(--b2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 20px}
+.inline-spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--b2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-title{font-size:18px;font-weight:600;color:var(--t1);margin-bottom:6px}
+.load-sub{font-size:14px;color:var(--t3)}
+.load-steps{display:flex;flex-direction:column;gap:6px;margin-top:16px}
+.ls{font-size:14px;color:var(--t3);transition:color .3s}
+.ls.active{color:var(--blue);font-weight:500}
+.cl-panel{display:none;margin-bottom:16px}
+.cl-hdr{background:var(--s1);border:2px solid var(--blue);border-radius:var(--r3) var(--r3) 0 0;padding:20px 22px;border-bottom:none}
+.cl-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:6px}
+.cl-product{font-size:19px;font-weight:700;color:var(--t1);line-height:1.3}
+.cl-meta{display:flex;gap:18px;margin-top:12px;flex-wrap:wrap}
+.cl-meta-item{font-size:13px;color:var(--t3);display:flex;align-items:center;gap:5px}
+.prog-wrap{margin-top:14px}
+.prog-bar-bg{height:5px;background:var(--s3);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--blue);border-radius:3px;transition:width .4s}
+.prog-lbl{font-size:12px;color:var(--t3);margin-top:6px}
+.task-wrap{background:var(--s1);border:2px solid var(--b2);border-top:none;border-radius:0 0 var(--r3) var(--r3);overflow:hidden}
+.task-row{border-bottom:1px solid var(--b1);transition:background .15s}
+.task-row:last-child{border-bottom:none}
+.task-row.done{background:var(--green-bg)}
+.task-hdr{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer}
+.task-check{width:30px;height:30px;flex-shrink:0;border:2px solid var(--b2);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.task-check:hover{border-color:var(--green)}
+.task-row.done .task-check{background:var(--green);border-color:var(--green);color:#fff;font-size:15px}
+.task-info{flex:1;min-width:0}
+.task-name{font-size:15px;font-weight:600;color:var(--t1)}
+.task-row.done .task-name{color:var(--t3);text-decoration:line-through;text-decoration-color:var(--green)}
+.task-hint{font-size:13px;color:var(--t3);margin-top:3px;line-height:1.4}
+.task-time{font-size:11px;color:var(--t3);background:var(--s3);border-radius:4px;padding:3px 9px;white-space:nowrap;flex-shrink:0;font-weight:500}
+.task-row.done .task-time{color:var(--green);background:var(--green-bg)}
+.task-btns{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.task-content{display:none;border-top:1px solid var(--b1);padding:16px 18px}
+.task-content.open{display:block}
+.content-section{margin-bottom:14px}
+.content-section:last-child{margin-bottom:0}
+.content-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.content-badge{font-size:11px;color:var(--blue);font-weight:600;letter-spacing:0;text-transform:none}
+.content-box{background:var(--bg);border:1px solid var(--b2);border-radius:var(--r);padding:12px 14px;font-size:13px;line-height:1.75;color:var(--t2);max-height:220px;overflow-y:auto;white-space:pre-wrap;font-family:'DM Mono',monospace}
+.content-box::-webkit-scrollbar{width:3px}
+.content-box::-webkit-scrollbar-thumb{background:var(--s4);border-radius:2px}
+.bonus-strip{padding:13px 18px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t3);border-top:1px solid var(--b2);border-bottom:1px solid var(--b1);background:var(--bg)}
+.tag-pills{display:flex;flex-wrap:wrap;gap:5px;padding:4px 0}
+.tag-pill{font-size:12px;background:var(--s3);border:1px solid var(--b2);color:var(--t3);border-radius:4px;padding:3px 10px}
+.img-section{display:flex;gap:18px;flex-wrap:wrap;padding:6px 0}
+.img-box{flex:1;min-width:180px}
+.img-box-header{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--b1)}
+.img-box-body{padding:2px 0}
+.product-img{width:100%;border-radius:var(--r2);object-fit:cover;aspect-ratio:1;border:1px solid var(--b2);cursor:pointer;margin-bottom:10px;background:var(--s3)}
+.img-alt{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r);padding:9px 12px;font-size:13px;color:var(--t3);line-height:1.5;margin-bottom:8px}
+.img-filename{font-size:11px;color:var(--t3);margin-top:6px;word-break:break-all;line-height:1.5}
+.setting-pills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.setting-btn{background:var(--s2);border:1px solid var(--b2);color:var(--t2);border-radius:var(--r);padding:7px 12px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.setting-btn:hover{border-color:var(--blue)}
+.setting-btn.active{background:var(--blue-bg);border-color:var(--blue);color:var(--blue)}
+.ai-status-box{background:var(--s2);border-radius:var(--r);padding:13px 15px;display:flex;align-items:center;gap:11px}
+.ai-status-text .t1{font-size:14px;font-weight:600;color:var(--t1)}
+.ai-status-text .t2{font-size:12px;color:var(--t3);margin-top:2px}
+.ai-result-img{width:100%;border-radius:var(--r2);border:1px solid var(--b2);cursor:pointer;margin-bottom:8px}
+.ai-cost-note{font-size:11px;color:var(--t3);text-align:center;margin-bottom:8px}
+.bottom-cards{margin-top:32px;display:flex;flex-direction:column;gap:8px}
+.collapse-card{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);overflow:hidden}
+.collapse-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none}
+.collapse-hdr:hover{background:var(--s2)}
+.collapse-title{font-size:15px;font-weight:600;color:var(--t2)}
+.collapse-acts{display:flex;gap:7px;align-items:center}
+.collapse-body{display:none;border-top:1px solid var(--b2);padding:18px}
+.collapse-body.open{display:block}
+.mono-out{background:var(--bg);border:1px solid var(--b2);border-radius:var(--r);padding:12px 14px;font-family:'DM Mono',monospace;font-size:12px;color:var(--t2);line-height:1.8;max-height:260px;overflow-y:auto}
+.debug-btns{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.log-week-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;margin-top:14px}
+.log-week-header:first-child{margin-top:0}
+.log-week-label{font-size:14px;font-weight:700;color:var(--t1)}
+.log-week-count{font-size:12px;color:var(--t3);font-weight:500}
+.log-entry{background:var(--bg);border:1px solid var(--b2);border-radius:var(--r);padding:12px 14px;margin-bottom:6px}
+.log-entry-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.log-day-badge{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--blue);background:var(--blue-bg);border-radius:3px;padding:1px 6px}
+.log-ts{font-size:11px;color:var(--t3)}
+.log-entry-title{font-size:14px;font-weight:600;color:var(--t1);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-top:3px}
+.log-entry-blog{font-size:12px;color:var(--t3);margin-top:2px}
+.log-task-icons{display:flex;gap:3px;flex-shrink:0}
+.log-task-icon{font-size:14px;opacity:.18}
+.log-task-icon.done{opacity:1}
+.log-line{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-bg.open{display:flex}
+.modal{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r3);width:100%;max-width:500px;padding:28px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:20px;font-weight:700;color:var(--t1);margin-bottom:22px}
+.form-grp{margin-bottom:14px}
+.form-lbl{font-size:12px;font-weight:600;color:var(--t3);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.5px}
+.form-inp{width:100%;padding:11px 14px;background:var(--bg);border:1px solid var(--b2);border-radius:var(--r);color:var(--t1);font-size:15px;font-family:inherit;outline:none;transition:border-color .15s}
+.form-inp:focus{border-color:var(--blue)}
+.form-hint{font-size:12px;color:var(--t3);margin-top:4px}
+.modal-btns{display:flex;gap:8px;margin-top:22px}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--s1);border:1px solid var(--b2);border-radius:var(--r2);padding:12px 20px;font-size:14px;font-weight:500;color:var(--t1);z-index:200;transform:translateY(70px);opacity:0;transition:all .25s;max-width:320px;box-shadow:0 4px 24px rgba(0,0,0,.3)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-color:var(--green);color:var(--green)}
+.toast.error{border-color:var(--red);color:var(--red)}
+.empty{text-align:center;padding:28px;font-size:15px;color:var(--t3)}
+@media(max-width:600px){.hdr{padding:0 16px}.sug-grid{grid-template-columns:1fr 1fr}.week-row{flex-wrap:wrap;gap:10px}.task-btns{flex-wrap:wrap}.img-section{flex-direction:column}.page{padding:20px 12px}}
 </style>
 </head>
 <body>
-
-<!-- HEADER -->
-<header class="header">
+<header class="hdr">
   <div class="brand">
-    <div class="brand-mark">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9-4-9-9-9z" stroke="#0C0C0C" stroke-width="1.5"/>
-        <path d="M9 12l2 2 4-4" stroke="#0C0C0C" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-    </div>
-    <div>
-      <div class="brand-name">CC Hair & Beauty</div>
-      <div class="brand-tag">Content Studio · Leeds Since 1989</div>
-    </div>
+    <div class="brand-mark"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+    <div><div class="brand-name">CC Hair &amp; Beauty</div><div class="brand-sub">Content Studio · Leeds Est. 1989</div></div>
   </div>
-  <div class="header-actions">
-    <button class="btn-sm" onclick="loadProducts()">↻ Refresh</button>
-    <button class="btn-sm" id="themeBtn" onclick="toggleTheme()">☀ Light</button>
-    <button class="btn-sm" onclick="openSettings()">⚙ Settings</button>
+  <div class="hdr-r">
+    <button class="btn btn-ghost" onclick="loadProducts()">↻ Refresh</button>
+    <button class="btn btn-ghost" id="themeBtn" onclick="toggleTheme()">☀ Light</button>
+    <button class="btn btn-ghost" onclick="openSettings()">⚙ Settings</button>
   </div>
 </header>
-
-<!-- MAIN -->
-<div class="main">
-
-  <!-- STEP PILLS -->
-  <div class="steps">
-    <div class="step-pill active" id="sp1"><div class="step-num">1</div>Pick Product</div>
-    <div class="step-line"></div>
-    <div class="step-pill idle" id="sp2"><div class="step-num">2</div>Generate & Publish</div>
+<div class="page">
+  <div class="step-pills">
+    <div class="step-pill active" id="sp1"><div class="step-num">1</div>Pick a Product</div>
+    <div class="step-pill" id="sp2"><div class="step-num">2</div>Generate &amp; Publish</div>
   </div>
-
-  <!-- WEEK BAR -->
-  <div class="week-bar">
-    <button class="week-btn" onclick="toggleWeekGrid()">📅 This Week's Schedule</button>
-    <div class="week-counter" id="weekCounter">📝 0 / 7</div>
+  <div class="week-row">
+    <span class="week-lbl">This week</span>
+    <div class="week-bar-wrap"><div class="week-bar-fill" id="weekGrid" style="width:0%"></div></div>
+    <span class="week-num" id="weekCounter">0 / 7 blogs</span>
+    <button class="week-plan-btn" onclick="generateWeekSchedule()">📅 Plan week</button>
   </div>
-  <div id="weekGrid" style="display:none"></div>
-
-  <!-- HISTORY -->
-  <div class="history-bar" id="historyBar">
-    <div class="history-label">⚠ Done this week — don't repeat</div>
-    <div class="history-chips" id="historyChips"></div>
+  <div class="history-strip" id="historyBar">
+    <div class="history-inner">
+      <span class="history-label">Done this week</span>
+      <div class="history-chips" id="historyChips"></div>
+      <span id="historyCount" style="font-size:12px;color:var(--t3);white-space:nowrap"></span>
+    </div>
   </div>
-
-  <!-- STEP 1: PRODUCT PICKER -->
   <div id="step1">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">✦ Suggested Today</div>
-        <div style="font-size:11px;color:var(--c-text3)" id="todayLabel"></div>
-      </div>
-      <div class="card-body">
-        <div class="suggested-grid" id="sugGrid">
-          <div class="empty"><div class="inline-spinner"></div></div>
-        </div>
-        <div class="section-label">Search All Products</div>
-        <div class="search-wrap">
-          <span class="search-icon">🔍</span>
-          <input class="search-input" id="searchInput" type="text"
-            placeholder="Product name, brand…" oninput="filterProducts(this.value)">
-        </div>
-        <div class="product-grid" id="productGrid">
-          <div class="empty"><div class="inline-spinner"></div></div>
-        </div>
-        <div style="text-align:center;margin-top:10px">
-          <button class="btn-outline" onclick="loadMoreProducts()">Load more</button>
-        </div>
-        <div class="section-label">Paste Product URL</div>
-        <div class="url-row">
-          <input class="url-input" id="urlInput" type="text"
-            placeholder="https://cchairandbeauty.com/products/…"
-            onkeydown="if(event.key==='Enter')loadFromUrl()">
-          <button class="btn-gold" onclick="loadFromUrl()">Load</button>
-        </div>
-        <!-- DEBUG INLINE -->
-        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--c-border)">
-          <div class="history-label" style="margin-bottom:8px">🔧 Connection</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button class="btn-sm" onclick="runDebug()">Test Shopify</button>
-            <button class="btn-sm" onclick="clearCache()" id="clearCacheBtn">⟳ Load Real Products</button>
-            <button class="btn-sm" onclick="testGenerate()">Test API</button>
-          </div>
-          <div id="debugOutput" style="display:none;margin-top:10px;background:#080808;border:1px solid var(--c-border);border-radius:var(--radius);padding:10px;font-family:monospace;font-size:11px;color:var(--c-text2);line-height:1.7;max-height:160px;overflow-y:auto"></div>
-        </div>
-      </div>
+    <div class="sec-lbl" id="todayLabel">Suggested Today</div>
+    <div class="sug-grid" id="sugGrid"><div class="empty">Loading products…</div></div>
+    <div class="sec-lbl" style="margin-top:6px">All Products <span style="font-size:11px;color:var(--t3);font-weight:400;text-transform:none;letter-spacing:0">Active only · Newest first</span></div>
+    <div class="search-wrap">
+      <span class="search-ico">🔍</span>
+      <input class="search-inp" id="searchInput" type="text" placeholder="Search by product name or brand…" oninput="filterProducts(this.value)">
     </div>
-  </div>
-
-  <!-- SELECTED BAR -->
-  <div class="selected-bar" id="selectedBar">
-    <img class="sel-img" id="selImg" src="" alt="">
-    <div style="flex:1">
-      <div class="sel-name" id="selName"></div>
-      <div class="sel-price" id="selPrice"></div>
-      <div class="sel-hint">Ready to generate all content</div>
+    <div class="prod-grid" id="productGrid"><div class="empty">Loading…</div></div>
+    <div style="text-align:center;margin-bottom:22px"><button class="btn btn-ghost" onclick="loadMoreProducts()">Load more products</button></div>
+    <div class="sec-lbl">Or Paste a Product URL</div>
+    <div class="url-row">
+      <input class="url-inp" id="urlInput" type="text" placeholder="https://cchairandbeauty.com/products/…">
+      <button class="btn btn-blue" onclick="loadFromUrl()">Load</button>
     </div>
-    <button class="btn-outline" onclick="changeProduct()">Change</button>
+    <p style="font-size:13px;color:var(--t3);margin-bottom:24px">Paste any product URL — we'll load the details automatically</p>
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      <button class="btn-sm" onclick="runDebug()">Test Connection</button>
+      <button class="btn-sm" onclick="clearCache()">⟳ Reload Products</button>
+      <button class="btn-sm" onclick="testGenerate()">Test API</button>
+    </div>
+    <div id="debugOutput" style="display:none;margin-top:10px;background:var(--bg);border:1px solid var(--b2);border-radius:var(--r);padding:12px 14px;font-size:12px;font-family:'DM Mono',monospace;color:var(--t2);line-height:1.7;max-height:180px;overflow-y:auto;white-space:pre-wrap"></div>
   </div>
-
-  <!-- GENERATE BUTTON -->
-  <button class="gen-btn" id="genBtn" onclick="generateContent()">
-    <span>✦ Generate Today's Content</span>
-    <span class="gen-sub">Blog · 3 GBP posts · Social · AI image</span>
+  <div class="sel-bar" id="selectedBar">
+    <img class="sel-bar-img" id="selImg" src="" alt="">
+    <div class="sel-bar-info">
+      <div class="sel-bar-name" id="selName"></div>
+      <div class="sel-bar-price" id="selPrice"></div>
+      <div class="sel-bar-hint">Ready to generate content for this product</div>
+    </div>
+    <button class="btn btn-ghost" onclick="changeProduct()">Change</button>
+  </div>
+  <div class="pre-ai-row" id="preAiBtn">
+    <div><div class="pre-ai-main">✦ Start AI image now — it'll be ready by Task 5</div><div class="pre-ai-hint">Runs in background · ~15 sec · ~4p per image</div></div>
+    <button class="btn btn-ghost" onclick="preGenerateAI()">Generate Image</button>
+  </div>
+  <button class="btn-cta" id="genBtn" onclick="generateContent()" style="display:none;margin-bottom:10px">
+    Generate Today's Content
+    <span class="cta-sub">Blog · 3 GBP posts · Instagram · Facebook · Review request</span>
   </button>
-
-  <!-- PRE-AI IMAGE BUTTON -->
-  <button class="pre-ai-btn" id="preAiBtn" onclick="preGenerateAI()">
-    ✦ Start AI Image Now (ready in Step 2)
-  </button>
-
-  <!-- LOADING -->
-  <div class="loading-panel" id="loadingPanel">
-    <div class="spinner"></div>
-    <div class="loading-title">Generating all content…</div>
-    <div class="loading-steps">
-      <div class="ls" id="ls1">Writing 1,200+ word blog post…</div>
-      <div class="ls" id="ls2">Creating 3 GBP posts for each branch…</div>
-      <div class="ls" id="ls3">Writing Instagram & Facebook content…</div>
-      <div class="ls" id="ls4">Generating review request messages…</div>
-      <div class="ls" id="ls5">Checking menu tags…</div>
+  <div class="loading-box" id="loadingPanel">
+    <div class="spin"></div>
+    <div class="load-title">Generating your content…</div>
+    <div class="load-sub">Takes about 30–45 seconds</div>
+    <div class="load-steps">
+      <div class="ls" id="ls1">Writing 1,200+ word SEO blog post…</div>
+      <div class="ls" id="ls2">Creating 3 GBP posts — Chapeltown, Roundhay, City Centre…</div>
+      <div class="ls" id="ls3">Writing Instagram &amp; Facebook posts…</div>
+      <div class="ls" id="ls4">Generating WhatsApp review request…</div>
+      <div class="ls" id="ls5">Tagging product categories…</div>
     </div>
   </div>
-
-  <!-- STEP 2: CHECKLIST -->
-  <div class="card" id="checklistPanel" style="display:none">
-    <div class="checklist-header">
-      <div class="card-title">Step 2 — Work through this list</div>
-      <div class="cl-product" id="clProduct"></div>
+  <div class="cl-panel" id="checklistPanel">
+    <div class="cl-hdr">
+      <div class="cl-eyebrow">Step 2 — Work through this list</div>
+      <div class="cl-product" id="clProduct">Loading…</div>
       <div class="cl-meta">
-        <span id="clTime"></span>
-        <span>⏱ 5–8 minutes total</span>
+        <div class="cl-meta-item">🕐 Generated at <span id="clTime"></span></div>
+        <div class="cl-meta-item">⏱ ~5–8 minutes total</div>
       </div>
-      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-      <div class="progress-text" id="progressText">0 of 6 done</div>
+      <div class="prog-wrap">
+        <div class="prog-bar-bg"><div class="prog-fill" id="progressFill" style="width:0%"></div></div>
+        <div class="prog-lbl" id="progressText">0 of 6 done</div>
+      </div>
     </div>
-    <div class="task-list" id="taskList"></div>
-    <div class="bonus-divider">Optional extras</div>
-    <div class="task-list" id="bonusList"></div>
-    <button class="new-product-btn" onclick="resetToStep1()">← Generate content for a different product</button>
+    <div class="task-wrap">
+      <div id="taskList"></div>
+      <div class="bonus-strip">Optional extras</div>
+      <div id="bonusList"></div>
+      <div style="padding:14px 18px;border-top:1px solid var(--b1)">
+        <button class="btn btn-ghost" onclick="resetToStep1()" style="width:100%;font-size:14px">← Generate content for a different product</button>
+      </div>
+    </div>
   </div>
-
+  <div class="bottom-cards">
+    <div class="collapse-card">
+      <div class="collapse-hdr" onclick="toggleCollapse('logBody',true)">
+        <span class="collapse-title">📋 Post Log</span>
+        <div class="collapse-acts">
+          <span id="logCount" style="font-size:13px;color:var(--t3)"></span>
+          <button class="btn-sm" onclick="event.stopPropagation();downloadPostLog()">⬇ Export</button>
+          <button class="btn-sm" onclick="event.stopPropagation();clearPostLog()">🗑 Clear</button>
+        </div>
+      </div>
+      <div class="collapse-body" id="logBody">
+        <p style="font-size:14px;color:var(--t3);margin-bottom:14px">Every piece of content you generate is logged here.</p>
+        <div id="postLogContainer"></div>
+      </div>
+    </div>
+    <div class="collapse-card">
+      <div class="collapse-hdr" onclick="toggleCollapse('debugBody',true)">
+        <span class="collapse-title">🔧 Debug Console</span>
+        <div class="collapse-acts">
+          <button class="btn-sm" id="copyDebugBtn" onclick="event.stopPropagation();copyDebugLogs()">Copy logs</button>
+          <button class="btn-sm" onclick="event.stopPropagation();clearDebugLogs()">Clear</button>
+        </div>
+      </div>
+      <div class="collapse-body" id="debugBody">
+        <p style="font-size:14px;color:var(--t3);margin-bottom:12px">If something goes wrong, copy these logs and paste them for help.</p>
+        <div class="mono-out" id="debugConsoleOutput">No logs yet</div>
+        <div class="debug-btns">
+          <button class="btn-sm" onclick="runDebug()">Test Shopify</button>
+          <button class="btn-sm" onclick="clearCache()">⟳ Reload Products</button>
+          <button class="btn-sm" onclick="testGenerate()">Test API</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
-<!-- UTILITY PANELS -->
-<div class="main" style="padding-top:0">
-  <!-- POST LOG -->
-  <div class="utility-card">
-    <div class="utility-header">
-      <div class="utility-title">📋 Post Log</div>
-      <div style="display:flex;gap:6px;align-items:center">
-        <span style="font-size:11px;color:var(--c-text3)" id="logCount"></span>
-        <button class="btn-sm" onclick="downloadPostLog()">⬇ Export</button>
-        <button class="btn-sm" onclick="toggleLogPanel()">▾ Show</button>
-      </div>
-    </div>
-    <div class="utility-body" id="logBody">
-      <div id="postLogContainer"><div class="empty">No posts logged yet</div></div>
-    </div>
-  </div>
-
-  <!-- DEBUG CONSOLE -->
-  <div class="utility-card">
-    <div class="utility-header">
-      <div class="utility-title">🔧 Debug Console</div>
-      <div style="display:flex;gap:6px">
-        <button class="btn-sm" id="copyDebugBtn" onclick="copyDebugLogs()">Copy</button>
-        <button class="btn-sm" onclick="clearDebugLogs()">Clear</button>
-        <button class="btn-sm" onclick="toggleDebugPanel()">▾ Show</button>
-      </div>
-    </div>
-    <div class="utility-body" id="debugBody">
-      <div class="debug-log" id="debugConsoleOutput">No logs yet</div>
-      <div class="debug-actions">
-        <button class="btn-sm" onclick="runDebug()">Test Shopify</button>
-        <button class="btn-sm" onclick="clearCache()">Clear Cache & Reload</button>
-        <button class="btn-sm" onclick="testGenerate()">Test API (mini)</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SETTINGS MODAL -->
-<div class="modal-overlay" id="settingsModal">
+<div class="modal-bg" id="settingsModal">
   <div class="modal">
-    <div class="modal-title">⚙ Settings</div>
-    <div class="form-group">
-      <label class="form-label">Anthropic API Key</label>
-      <input class="form-input" type="password" id="s_apiKey" placeholder="sk-ant-…">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Shopify Domain</label>
-      <input class="form-input" type="text" id="s_shopDomain" placeholder="cchairandbeauty.myshopify.com">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Shopify Access Token</label>
-      <input class="form-input" type="password" id="s_shopToken" placeholder="shpat_…">
-    </div>
-    <div class="form-group">
-      <label class="form-label">OpenAI API Key (for AI images)</label>
-      <input class="form-input" type="password" id="s_openaiKey" placeholder="sk-…">
-      <div class="form-hint">~4p per image via gpt-image-1 editing</div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Google Review Link — Chapeltown</label>
-      <input class="form-input" type="text" id="s_revChap" placeholder="https://g.page/r/…">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Google Review Link — Roundhay</label>
-      <input class="form-input" type="text" id="s_revRound" placeholder="https://g.page/r/…">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Google Review Link — City Centre</label>
-      <input class="form-input" type="text" id="s_revCity" placeholder="https://g.page/r/…">
-    </div>
+    <div class="modal-title">Settings</div>
+    <div class="form-grp"><label class="form-lbl">Anthropic API Key</label><input class="form-inp" type="password" id="s_apiKey" placeholder="sk-ant-…"></div>
+    <div class="form-grp"><label class="form-lbl">Shopify Store Domain</label><input class="form-inp" type="text" id="s_shopDomain" placeholder="cchairandbeauty.myshopify.com"></div>
+    <div class="form-grp"><label class="form-lbl">Shopify Access Token</label><input class="form-inp" type="password" id="s_shopToken" placeholder="shpat_…"></div>
+    <div class="form-grp"><label class="form-lbl">OpenAI API Key <span style="font-weight:400;text-transform:none;letter-spacing:0">(AI images · ~4p each)</span></label><input class="form-inp" type="password" id="s_openaiKey" placeholder="sk-…"><div class="form-hint">Placed in styled scenes — barber, bathroom, bedroom etc</div></div>
+    <div class="form-grp"><label class="form-lbl">Google Review Link — Chapeltown</label><input class="form-inp" type="text" id="s_revChap" placeholder="https://g.page/r/…"></div>
+    <div class="form-grp"><label class="form-lbl">Google Review Link — Roundhay</label><input class="form-inp" type="text" id="s_revRound" placeholder="https://g.page/r/…"></div>
+    <div class="form-grp"><label class="form-lbl">Google Review Link — City Centre</label><input class="form-inp" type="text" id="s_revCity" placeholder="https://g.page/r/…"></div>
     <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
-      <button class="btn-gold" onclick="saveSettings()">Save Settings</button>
+      <button class="btn btn-ghost" onclick="closeSettings()" style="font-size:15px;padding:11px 20px">Cancel</button>
+      <button class="btn btn-blue" onclick="saveSettings()" style="flex:1;font-size:15px;padding:11px">Save Settings</button>
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
+
 // ── STATE ──────────────────────────────────────────────────────────
 let allProducts = [], filteredProducts = [], selectedProduct = null;
 let generatedContent = null, tasksDone = new Set();
@@ -898,15 +371,34 @@ const debugLogs = [];
 
 // ── SETTINGS ───────────────────────────────────────────────────────
 function cfg() {
+  // Read from both old key names (cc_shopify_*) and new (cc_shop_*)
+  // so existing saved settings continue to work after the redesign
+  const get = (newKey, oldKey) => localStorage.getItem(newKey) || localStorage.getItem(oldKey) || '';
   return {
-    apiKey:      localStorage.getItem('cc_api_key') || '',
-    shopDomain:  localStorage.getItem('cc_shop_domain') || 'cchairandbeauty.myshopify.com',
-    shopToken:   localStorage.getItem('cc_shop_token') || '',
-    openaiKey:   localStorage.getItem('cc_openai_key') || '',
-    revChap:     localStorage.getItem('cc_rev_chap') || '',
-    revRound:    localStorage.getItem('cc_rev_round') || '',
-    revCity:     localStorage.getItem('cc_rev_city') || '',
+    apiKey:     get('cc_api_key', 'cc_api_key'),
+    shopDomain: get('cc_shop_domain', 'cc_shopify_domain') || 'cchairandbeauty.myshopify.com',
+    shopToken:  get('cc_shop_token', 'cc_shopify_token'),
+    openaiKey:  get('cc_openai_key', 'cc_openai_key'),
+    revChap:    get('cc_rev_chap', 'cc_review_chapeltown'),
+    revRound:   get('cc_rev_round', 'cc_review_roundhay'),
+    revCity:    get('cc_rev_city', 'cc_review_citycentre'),
   };
+}
+// Migrate old keys to new keys on first load
+function migrateSettings() {
+  const migrations = [
+    ['cc_shopify_domain', 'cc_shop_domain'],
+    ['cc_shopify_token',  'cc_shop_token'],
+    ['cc_review_chapeltown', 'cc_rev_chap'],
+    ['cc_review_roundhay',   'cc_rev_round'],
+    ['cc_review_citycentre', 'cc_rev_city'],
+  ];
+  migrations.forEach(([oldKey, newKey]) => {
+    const val = localStorage.getItem(oldKey);
+    if (val && !localStorage.getItem(newKey)) {
+      localStorage.setItem(newKey, val);
+    }
+  });
 }
 function openSettings() {
   const s = cfg();
@@ -935,11 +427,22 @@ function saveSettings() {
 
 // ── THEME ──────────────────────────────────────────────────────────
 let _theme = localStorage.getItem('cc_theme') || 'dark';
+// 3 themes: dark → light → gmail → dark
+const THEMES = ['dark','light','gmail'];
+const THEME_LABELS = { dark:'☀ Light', light:'🔵 Gmail', gmail:'🌙 Dark' };
+const THEME_NAMES  = { dark:'Dark', light:'Light', gmail:'Gmail Blue' };
+
 function applyTheme(t) {
   _theme = t;
   localStorage.setItem('cc_theme', t);
-  document.body.className = t === 'light' ? 'light' : '';
-  document.getElementById('themeBtn').textContent = t === 'light' ? '🌙 Dark' : '☀ Light';
+  document.body.className = t === 'dark' ? '' : t;
+  const btn = document.getElementById('themeBtn');
+  if (btn) btn.textContent = THEME_LABELS[t] || '☀ Light';
+}
+function toggleTheme() {
+  const idx = THEMES.indexOf(_theme);
+  const next = THEMES[(idx + 1) % THEMES.length];
+  applyTheme(next);
 }
 function toggleTheme() { applyTheme(_theme === 'dark' ? 'light' : 'dark'); }
 
@@ -1198,15 +701,17 @@ function renderSuggested() {
   if(s3) suggestions.push({...s3, badge:'Latest added'});
 
   g.innerHTML = suggestions.length ? suggestions.map(p => `
-    <div class="sug-card" data-id="${p.id}" onclick='selectProduct(${JSON.stringify(p).replace(/'/g,"&#39;")})'>
-      ${p.image ? `<img class="sug-img" src="${p.image}" alt="${p.title}" onerror="this.style.display='none'">` : `<div class="sug-img-placeholder">✂</div>`}
-      <div>
-        <div class="sug-title">${p.title}</div>
+    <div class="sug-card ${p.selected ? 'sel' : ''}" data-id="${p.id}" onclick='selectProduct(${JSON.stringify(p).replace(/'/g,"&#39;")})'>
+      ${p.image
+        ? `<img class="sug-img" src="${p.image}" alt="${p.title}" onerror="this.style.display='none'">`
+        : `<div class="sug-img-ph">✂</div>`}
+      <div class="sug-info" style="flex:1;min-width:0">
+        <div class="sug-name">${p.title}</div>
         <div class="sug-price">${p.price}</div>
         <div class="sug-badge">${p.badge}</div>
       </div>
     </div>
-  `).join('') : '<div class="empty">Loading…</div>';
+  `).join('') : '<div class="empty">No products — check Settings ⚙</div>';
 }
 
 // ── SELECT PRODUCT ─────────────────────────────────────────────────
@@ -1847,9 +1352,11 @@ function toast(msg, type='') {
 // ── INIT ────────────────────────────────────────────────────────────
 try { const saved=JSON.parse(localStorage.getItem('cc_debug')||'[]'); debugLogs.push(...saved); } catch{}
 applyTheme(_theme);
+migrateSettings();
 loadProducts();
 const lc=document.getElementById('logCount');
 if(lc) lc.textContent=getPostLog().length+' entries';
+
 </script>
 </body>
 </html>
