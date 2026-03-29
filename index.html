@@ -1150,6 +1150,7 @@ function renderTaskList(containerId, tasks, isBonus) {
       `${t.sections?.length?`<button class="copy-btn" onclick="copyTaskAll('${t.id}',event)">Copy All</button>`:''}
        ${t.openUrl?`<a href="${t.openUrl}" target="_blank" class="open-btn">${t.openLabel||'Open ↗'}</a>`:''}
        <button class="copy-btn" onclick="expandTask('${t.id}',event)">View</button>`;
+    const tid = t.id;
     item.innerHTML = `
       <div class="task-hdr" onclick="expandTask('${tid}',event)">
         <div class="task-check" onclick="toggleTask('${tid}',event);event.stopPropagation()"></div>
@@ -1658,12 +1659,7 @@ function buildKlingScript(product, content) {
     flatlay:'flat lay on marble surface with beauty accessories',
     studio:'clean white studio with professional lighting',
   };
-  return 'Kling AI Image-to-Video Prompt:
-
-"Camera slowly pushes in towards the ' + title + ' on a ' + (scenes[setting]||scenes.studio) + '. The product label is clearly visible. A hand reaches in from the right, picks up the bottle/product, turns it slowly to face camera, then places it back down. Soft bokeh background. Cinematic luxury product feel. 10 seconds. No faces."
-
-Settings: Professional Mode · 10 seconds · 1080p · ~70 credits (~70p)
-Source image: Use the Shopify product image or AI generated image from Task 3';
+  return `Kling AI Image-to-Video Prompt:\n\n"Camera slowly pushes in towards the ${title} on a ${scenes[setting]||scenes.studio}. The product label is clearly visible. A hand reaches in from the right, picks up the bottle/product, turns it slowly to face camera, then places it back down. Soft bokeh background. Cinematic luxury product feel. 10 seconds. No faces."\n\nSettings: Professional Mode · 10 seconds · 1080p · ~70 credits (~70p)\nSource image: Use the Shopify product image or AI generated image from Task 3`;
 }
 
 function buildHeyGenScript(product, content) {
@@ -1671,30 +1667,13 @@ function buildHeyGenScript(product, content) {
   const vendor = product.vendor || 'CC Hair & Beauty';
   const tags = (product.tags||'').toLowerCase();
   const isMens = tags.includes('men') || tags.includes('barber') || tags.includes('wave');
-  return 'HeyGen Talking Head Script (funny/viral):
-
-[HOOK - energetic, pointing to camera]
-"Okay, we need to talk about ' + title + '... because ' + (isMens?'the guys':'ladies') + ', this is RIDICULOUS."
-
-[MIDDLE - hold up or show product on screen]
-"This is ' + vendor + ''s ' + title + '. ' + ((content.blog_excerpt||'').split('.')[0]+'.' || 'And honestly? It just works.') + '"
-
-[CALL TO ACTION - big energy]
-"Available now at CC Hair and Beauty — Chapeltown, Roundhay, City Centre Leeds — or online at CC Hair and Beauty dot com. Link in bio. Go."
-
-Avatar: confident, informal, casual background
-Tone: Surprised/impressed, friendly — NOT salesy
-Length: ~25 seconds · Platform: TikTok / Instagram Reels';
+  const excerpt = (content.blog_excerpt||'').split('.')[0] + '.';
+  return `HeyGen Talking Head Script (funny/viral):\n\n[HOOK - energetic, pointing to camera]\n"Okay, we need to talk about ${title}... because ${isMens?'the guys':'ladies'}, this is RIDICULOUS."\n\n[MIDDLE - hold up or show product on screen]\n"This is ${vendor}'s ${title}. ${excerpt || 'And honestly? It just works.'}"\n\n[CALL TO ACTION - big energy]\n"Available now at CC Hair and Beauty — Chapeltown, Roundhay, City Centre Leeds — or online at CC Hair and Beauty dot com. Link in bio. Go."\n\nAvatar: confident, informal, casual background\nTone: Surprised/impressed, friendly — NOT salesy\nLength: ~25 seconds · Platform: TikTok / Instagram Reels`;
 }
 
 function buildVoiceover(product, content) {
   const title = (product.title||'').split(' ').slice(0,5).join(' ');
-  return '10-Second Voiceover:
-
-"This is the ' + title + '. Available now at CC Hair and Beauty Leeds — Chapeltown, Roundhay, City Centre. Shop online at cchairandbeauty.com."
-
-~30 words · Normal speaking pace
-Use with: Kling video, HeyGen, or record yourself';
+  return `10-Second Voiceover:\n\n"This is the ${title}. Available now at CC Hair and Beauty Leeds — Chapeltown, Roundhay, City Centre. Shop online at cchairandbeauty.com."\n\n~30 words · Normal speaking pace\nUse with: Kling video, HeyGen, or record yourself`;
 }
 
 // ── UPDATE PROGRESS ───────────────────────────────────────────────────────────
