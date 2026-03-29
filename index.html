@@ -657,12 +657,12 @@ function copyDebugLogs() {
 }
 function toggleDebugPanel() {
   const b = document.getElementById('debugBody');
-  b.classList.toggle('vis');
+  b.classList.toggle('open');
   if (b.classList.contains('vis')) renderDebugLog();
 }
 function toggleLogPanel() {
   const b = document.getElementById('logBody');
-  b.classList.toggle('vis');
+  b.classList.toggle('open');
   if (b.classList.contains('vis')) renderPostLog();
 }
 async function runDebug() {
@@ -698,7 +698,7 @@ async function testGenerate() {
     const txt = d.content?.[0]?.text || '';
     dbg(txt.includes('WORKING')?'API_OK':'TEST_WARN','Response: "'+txt+'"');
   } catch(e) { dbg('TEST_ERROR', e.message); }
-  document.getElementById('debugBody').classList.add('vis');
+  document.getElementById('debugBody').classList.add('open');
   renderDebugLog();
 }
 
@@ -757,10 +757,12 @@ async function loadProducts() {
   if (cached && cachedAt && (Date.now()-parseInt(cachedAt)) < THREE_DAYS) {
     allProducts = JSON.parse(cached);
     dbg('CACHE', `Loaded ${allProducts.length} products from cache`);
+    _loadProductsRunning = false;
     renderProducts(); renderSuggested(); showHistory(); return;
   }
 
   if (!s.shopToken || !s.shopDomain) {
+    _loadProductsRunning = false;
     allProducts = demoProducts();
     renderProducts(); renderSuggested(); showHistory();
     toast('Add Shopify token in ⚙ Settings to load real products');
@@ -798,10 +800,12 @@ async function loadProducts() {
 
     localStorage.setItem(cacheKey, JSON.stringify(allProducts));
     localStorage.setItem(cacheTime, Date.now().toString());
+    _loadProductsRunning = false;
     dbg('SHOPIFY_OK', `Loaded ${allProducts.length} active products`);
     toast(`✓ ${allProducts.length} products loaded`, 'success');
     renderProducts(); renderSuggested(); showHistory();
   } catch(e) {
+    _loadProductsRunning = false;
     dbg('SHOPIFY_FAIL', e.message);
     allProducts = demoProducts();
     renderProducts(); renderSuggested();
@@ -1185,19 +1189,19 @@ function buildImageSection() {
         <div class="img-box-header">Shopify Product Image</div>
         <div class="img-box-body">
           <img class="product-img" src="${img}" alt="${title}" onclick="window.open('${img}','_blank')" title="Click for full size">
-          <div class="img-alt"><strong style="color:var(--c-gold)">Alt text:</strong> ${altText}</div>
+          <div class="img-alt"><strong style="color:var(--teal)">Alt text:</strong> ${altText}</div>
           <button class="copy-field-btn" onclick="downloadShopifyImage('${img}','${seoBase}')">⬇ Download Product Image</button>
           <div class="img-filename">Saves as: ${seoBase}.jpg</div>
         </div>
-      </div>` : `<div class="img-box" style="flex:1"><div class="img-box-body" style="color:var(--c-text3);font-size:12px">No product image in Shopify</div></div>`}
+      </div>` : `<div class="img-box" style="flex:1"><div class="img-box-body" style="color:var(--ink3);font-size:12px">No product image in Shopify</div></div>`}
       <div class="img-box" style="flex:1;min-width:160px">
         <div class="img-box-header">AI Generated Image (ChatGPT)</div>
         <div class="img-box-body">
           <div class="setting-pills" id="settingPills"></div>
           <div id="aiImageArea">
             ${cfg().openaiKey
-              ? `<div style="background:var(--c-surface3);border-radius:var(--radius);padding:12px;display:flex;align-items:center;gap:8px"><div class="inline-spinner"></div><div style="font-size:12px;color:var(--c-text2)">Generating…</div></div>`
-              : `<div style="font-size:12px;color:var(--c-text3);padding:8px 0">Add OpenAI key in <button onclick="openSettings()" style="background:none;border:none;color:var(--c-gold);cursor:pointer;font-weight:700;font-family:inherit;padding:0">⚙ Settings</button> to enable AI images (~4p each)</div>`
+              ? `<div style="background:var(--card2);border-radius:var(--r);padding:12px;display:flex;align-items:center;gap:8px"><div class="inline-spinner"></div><div style="font-size:12px;color:var(--ink2)">Generating…</div></div>`
+              : `<div style="font-size:12px;color:var(--ink3);padding:8px 0">Add OpenAI key in <button onclick="openSettings()" style="background:none;border:none;color:var(--teal);cursor:pointer;font-weight:700;font-family:inherit;padding:0">⚙ Settings</button> to enable AI images (~4p each)</div>`
             }
           </div>
         </div>
@@ -1219,7 +1223,7 @@ function copyTaskAll(id, e) {
   const btns = task.querySelectorAll('[data-copy]');
   const combined = Array.from(btns).map(b=>decodeURIComponent(b.getAttribute('data-copy')||'')).filter(Boolean).join('\n\n');
   if(combined) {
-    document.getElementById(`content-${id}`)?.classList.add('vis');
+    document.getElementById(`content-${id}`)?.classList.add('open');
     copyToClipboard(combined, e?.target);
   }
 }
@@ -1302,7 +1306,7 @@ function renderSettingPills(currentSetting) {
   const el = document.getElementById('settingPills');
   if(!el) return;
   el.innerHTML = IMAGE_SETTINGS.map(s=>`
-    <button class="setting-pill ${s.key===currentSetting?'active':''}" 
+    <button class="setting-btn ${s.key===currentSetting?'active':''}" 
       title="${s.hint}"
       onclick="generateAIImageAuto(selectedProduct, generatedContent, '${s.key}')">
       ${s.emoji} ${s.label}
@@ -1324,16 +1328,16 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
 
   renderSettingPills(setting);
   area.innerHTML = `
-    <div style="background:var(--c-surface3);border-radius:var(--radius);padding:12px;display:flex;align-items:center;gap:8px">
+    <div style="background:var(--card2);border-radius:var(--r);padding:12px;display:flex;align-items:center;gap:8px">
       <div class="inline-spinner"></div>
       <div>
-        <div style="font-size:12px;font-weight:600;color:var(--c-text)">${settingInfo.emoji} ${settingInfo.label}</div>
-        <div style="font-size:11px;color:var(--c-text3);margin-top:2px">~15 seconds · no faces · Google safe ✓</div>
+        <div style="font-size:12px;font-weight:600;color:var(--ink)">${settingInfo.emoji} ${settingInfo.label}</div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:2px">~15 seconds · no faces · Google safe ✓</div>
       </div>
     </div>`;
 
   if(!product.image) {
-    area.innerHTML=`<div style="font-size:12px;color:var(--c-text3);padding:8px 0">No product image — load real Shopify products for AI editing</div>`;
+    area.innerHTML=`<div style="font-size:12px;color:var(--ink3);padding:8px 0">No product image — load real Shopify products for AI editing</div>`;
     return;
   }
 
@@ -1367,18 +1371,18 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
 
     area.innerHTML = `
       <div>
-        <img src="${imgSrc}" style="width:100%;border-radius:var(--radius);border:1px solid var(--c-border);display:block;cursor:pointer;margin-bottom:8px" onclick="window.open(this.src,'_blank')" title="Click for full size">
+        <img src="${imgSrc}" style="width:100%;border-radius:var(--r);border:1px solid var(--border);display:block;cursor:pointer;margin-bottom:8px" onclick="window.open(this.src,'_blank')" title="Click for full size">
         <button class="copy-field-btn" onclick="downloadBase64Image(window._aiImageData,'${seoFilename}')">⬇ Download AI Image</button>
         <div class="img-filename" style="margin-top:4px">Saves as: ${seoFilename}</div>
-        <div style="font-size:10px;color:var(--c-text3);margin-top:4px">${d.estimated_cost||'~4p'} · ${settingInfo.label}</div>
+        <div style="font-size:10px;color:var(--ink3);margin-top:4px">${d.estimated_cost||'~4p'} · ${settingInfo.label}</div>
       </div>`;
     showToast && toast('✓ AI image ready in Task 7','success');
   } catch(e) {
     dbg('AI_IMAGE_ERROR', e.message);
     area.innerHTML=`
-      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius);padding:10px">
-        <div style="font-size:12px;color:var(--c-red);font-weight:600;margin-bottom:4px">AI image failed</div>
-        <div style="font-size:11px;color:var(--c-text3);margin-bottom:8px;word-break:break-all">${e.message}</div>
+      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:var(--r);padding:10px">
+        <div style="font-size:12px;color:var(--red);font-weight:600;margin-bottom:4px">AI image failed</div>
+        <div style="font-size:11px;color:var(--ink3);margin-bottom:8px;word-break:break-all">${e.message}</div>
         <button class="btn-sm" onclick="generateAIImageAuto(selectedProduct,generatedContent,'${setting}')">↻ Try Again</button>
       </div>`;
   }
@@ -1415,7 +1419,7 @@ function renderPostLog() {
             <div class="log-task-icons">${Object.entries(icons).map(([tid,ico])=>`<span class="log-task-icon" style="opacity:${tasks.includes(tid)?1:0.2}" title="${tid}">${ico}</span>`).join('')}</div>
           </div>
           <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-            <a href="https://cchairandbeauty.com/products/${e.productHandle}" target="_blank" style="font-size:11px;color:var(--c-gold);text-decoration:none">View product ↗</a>
+            <a href="https://cchairandbeauty.com/products/${e.productHandle}" target="_blank" style="font-size:11px;color:var(--teal);text-decoration:none">View product ↗</a>
           </div>
         </div>`;
       }).join('');
@@ -1443,7 +1447,7 @@ function toggleWeekGrid() {
   g.style.display='grid';
   g.innerHTML=days.map((d,i)=>{
     const p=allProducts[Math.floor(Math.random()*allProducts.length)];
-    return `<div class="day-card ${i===today?'today':''}"><div class="day-nm">${d}</div><div class="day-product">${p.title.substring(0,20)}…</div><div style="font-size:9px;color:var(--c-text3);margin-top:2px">${focuses[i]}</div></div>`;
+    return `<div class="day-card ${i===today?'today':''}"><div class="day-nm">${d}</div><div class="day-product">${p.title.substring(0,20)}…</div><div style="font-size:9px;color:var(--ink3);margin-top:2px">${focuses[i]}</div></div>`;
   }).join('');
 }
 
@@ -1457,8 +1461,6 @@ function toast(msg, type='') {
 
 // ── INIT ────────────────────────────────────────────────────────────
 try { const saved=JSON.parse(localStorage.getItem('cc_debug')||'[]'); debugLogs.push(...saved); } catch{}
-applyTheme(_theme);
-loadProducts();
 const lc=document.getElementById('logCount');
 if(lc) lc.textContent=getPostLog().length+' entries';
 
@@ -1988,6 +1990,17 @@ function addToPostLog(product, content) {
   dbg('LOG_SAVED', product.title + ' — shareId: ' + shareId);
   const el = document.getElementById('logCount');
   if (el) el.textContent = log.length + ' entries';
+}
+
+
+function clearPostLog() {
+  if (!confirm('Clear all post log entries? This cannot be undone.')) return;
+  localStorage.removeItem('cc_post_log');
+  const lc = document.getElementById('logCount');
+  if (lc) lc.textContent = '0 entries';
+  const pc = document.getElementById('postLogContainer');
+  if (pc) pc.innerHTML = '<div class="empty">No posts logged yet</div>';
+  toast('Post log cleared', 'success');
 }
 
 function generateWeekSchedule() {
