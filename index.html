@@ -814,14 +814,17 @@ function todayFocus() {
 }
 
 // ── PRODUCT LOADING ─────────────────────────────────────────────────
+let _loadingProducts = false;
 async function loadProducts() {
+  if (_loadingProducts) { dbg('LOAD','Already loading — skipped'); return; }
+  _loadingProducts = true;
   const s = cfg();
   const cacheKey = 'cc_products', cacheTime = 'cc_products_time';
   const cached = localStorage.getItem(cacheKey);
   const cachedAt = localStorage.getItem(cacheTime);
-  const THREE_DAYS = 3*24*60*60*1000;
+  const SEVEN_DAYS = 7*24*60*60*1000;
 
-  if (cached && cachedAt && (Date.now()-parseInt(cachedAt)) < THREE_DAYS) {
+  if (cached && cachedAt && (Date.now()-parseInt(cachedAt)) < SEVEN_DAYS) {
     allProducts = JSON.parse(cached);
     dbg('CACHE', `Loaded ${allProducts.length} products from cache`);
     renderProducts(); renderSuggested(); showHistory(); return;
@@ -1615,10 +1618,17 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
   dbg('AI_IMAGE', `${settingInfo.label} — ${seoFilename}`);
 
   try {
+    // 55 second timeout (Vercel function is set to 60s)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 55000);
+
     const r = await fetch('/api/generate-image', {
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      signal: controller.signal,
       body: JSON.stringify({productImageUrl:product.image, productName:product.title, productType:product.productType||'', setting, apiKey:s.openaiKey})
     });
+    clearTimeout(timeoutId);
     const d = await r.json();
     if(!r.ok||d.error) throw new Error(d.error||`Error ${r.status}`);
     const b64 = d.image_b64;
@@ -1636,11 +1646,17 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
       </div>`;
     showToast && toast('✓ AI image ready in Task 7','success');
   } catch(e) {
-    dbg('AI_IMAGE_ERROR', e.message);
+    const isTimeout = e.name === 'AbortError' || e.message.includes('abort');
+    const errMsg = isTimeout
+      ? 'Request timed out — image generation takes ~20 seconds. Click Try Again.'
+      : e.message;
+    dbg('AI_IMAGE_ERROR', errMsg);
     area.innerHTML=`
-      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:var(--r);padding:10px">
-        <div style="font-size:12px;color:var(--red);font-weight:600;margin-bottom:4px">AI image failed</div>
-        <div style="font-size:11px;color:var(--ink3);margin-bottom:8px;word-break:break-all">${e.message}</div>
+      <div style="background:rgba(239,68,68,0.08);border:1.5px solid rgba(239,68,68,0.3);border-radius:var(--r);padding:14px">
+        <div style="font-size:14px;color:var(--red);font-weight:700;margin-bottom:6px">
+          ${isTimeout ? '⏱ Timed out' : '✗ AI image failed'}
+        </div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:10px;word-break:break-all">${errMsg}</div>
         <button class="btn-sm" onclick="generateAIImageAuto(selectedProduct,generatedContent,'${setting}')">↻ Try Again</button>
       </div>`;
   }
@@ -1900,179 +1916,226 @@ function openPostDetail(id) {
   const entry = log.find(e => e.id === id);
   if (!entry) return;
 
-  // Update URL hash for sharing
+  // Ensure shareId exists (old entries won't have one)
+  if (!entry.shareId) {
+    entry.shareId = btoa(String(id)).replace(/=/g,'');
+    localStorage.setItem('cc_post_log', JSON.stringify(log));
+  }
+
   const shareUrl = window.location.origin + window.location.pathname + '#post-' + entry.shareId;
   history.replaceState(null, '', '#post-' + entry.shareId);
-
-  // Re-render list to show selected
   renderPastPostsList(_filteredPosts.length ? _filteredPosts : log);
 
   const detail = document.getElementById('pastPostDetail');
   const done = entry.tasksCompleted || [];
+  const c = entry.content || {};
+
   const tasks = [
-    {id:'blog',      label:'Blog Post',          icon:'📝'},
-    {id:'gbp_chap',  label:'GBP Chapeltown',      icon:'📍'},
-    {id:'gbp_round', label:'GBP Roundhay',        icon:'📍'},
-    {id:'gbp_city',  label:'GBP City Centre',     icon:'📍'},
-    {id:'instagram', label:'Instagram',            icon:'📸'},
-    {id:'facebook',  label:'Facebook',             icon:'👍'},
-    {id:'image',     label:'Product Image',        icon:'🖼'},
-    {id:'review',    label:'Review Request',       icon:'⭐'},
+    {id:'blog',      label:'Blog Post',       icon:'📝'},
+    {id:'gbp_chap',  label:'GBP Chapeltown',   icon:'📍'},
+    {id:'gbp_round', label:'GBP Roundhay',      icon:'📍'},
+    {id:'gbp_city',  label:'GBP City Centre',   icon:'📍'},
+    {id:'instagram', label:'Instagram',         icon:'📸'},
+    {id:'facebook',  label:'Facebook',          icon:'👍'},
+    {id:'image',     label:'Product Image',     icon:'🖼'},
+    {id:'review',    label:'Review Request',    icon:'⭐'},
   ];
 
-  const c = entry.content || {};
+  const doneCnt = done.length;
+  const total = tasks.length;
+  const pct = Math.round(doneCnt / total * 100);
   const day = new Date(entry.date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const hasContent = Object.values(c).some(v => v && v.trim && v.trim());
+
+  // Store content in window for re-use buttons (safe, no JSON in onclick)
+  window._pastPostEntry = entry;
 
   detail.innerHTML = `
-    <div style="max-width:800px">
-      <!-- Top bar -->
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap">
+    <div style="max-width:840px">
+
+      <!-- Product header -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:14px">
           ${entry.productImage
-            ? `<img src="${entry.productImage}" style="width:64px;height:64px;border-radius:12px;object-fit:cover;border:2px solid var(--teal)">`
-            : `<div style="width:64px;height:64px;border-radius:12px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:28px">✂</div>`
+            ? `<img src="${entry.productImage}" style="width:68px;height:68px;border-radius:12px;object-fit:cover;border:2px solid var(--teal);flex-shrink:0">`
+            : `<div style="width:68px;height:68px;border-radius:12px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0">✂</div>`
           }
           <div>
-            <div style="font-size:20px;font-weight:700;color:var(--ink)">${entry.productTitle}</div>
-            <div style="font-size:13px;color:var(--ink2);margin-top:3px">${entry.vendor||''} ${entry.productPrice ? '· '+entry.productPrice : ''}</div>
-            <div style="font-size:12px;color:var(--ink3);margin-top:2px">${day}</div>
+            <div style="font-size:20px;font-weight:700;color:var(--ink);line-height:1.2">${entry.productTitle || 'Unknown product'}</div>
+            <div style="font-size:13px;color:var(--ink2);margin-top:4px">${entry.vendor || ''} ${entry.productPrice ? '· '+entry.productPrice : ''}</div>
+            <div style="font-size:12px;color:var(--ink3);margin-top:3px">${day}</div>
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${hasContent ? `
+            <button onclick="reloadIntoTool()" style="
+              background:var(--teal);color:#fff;border:none;border-radius:8px;
+              padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;
+              font-family:inherit;display:flex;align-items:center;gap:6px;
+            ">▶ Continue in Tool</button>` : ''}
           <button onclick="copyShareLink('${shareUrl}')" style="
-            background:var(--teal);color:#fff;border:none;border-radius:8px;
-            padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;
-            font-family:inherit;display:flex;align-items:center;gap:6px;
-          ">🔗 Copy Share Link</button>
+            background:var(--card2);color:var(--ink);border:1px solid var(--border2);
+            border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;
+            cursor:pointer;font-family:inherit;
+          ">🔗 Share Link</button>
           <button onclick="deletePastPost(${id})" style="
             background:transparent;border:1px solid var(--border2);color:var(--ink3);
-            border-radius:8px;padding:9px 14px;font-size:13px;cursor:pointer;font-family:inherit;
+            border-radius:8px;padding:10px 12px;font-size:13px;cursor:pointer;font-family:inherit;
           ">🗑</button>
         </div>
       </div>
 
-      <!-- Share link box -->
-      <div style="
-        background:var(--teal-light);border:1px solid var(--teal);
-        border-radius:12px;padding:12px 16px;margin-bottom:20px;
-        display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-      ">
-        <span style="font-size:13px;font-weight:600;color:var(--teal)">🔗 Staff link:</span>
+      <!-- Share link -->
+      <div style="background:var(--teal-light);border:1px solid var(--teal);border-radius:10px;padding:11px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:12px;font-weight:700;color:var(--teal);white-space:nowrap">🔗 Staff link:</span>
         <span style="font-size:12px;color:var(--ink2);flex:1;word-break:break-all;font-family:monospace">${shareUrl}</span>
-        <button onclick="copyShareLink('${shareUrl}')" style="
-          background:var(--teal);color:#fff;border:none;border-radius:6px;
-          padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;
-        ">Copy</button>
+        <button onclick="copyShareLink('${shareUrl}')" style="background:var(--teal);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Copy</button>
       </div>
 
-      <!-- Task checklist -->
-      <div style="background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:20px;overflow:hidden">
-        <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--ink)">
-          Task Progress — ${done.length}/${tasks.length} done
+      <!-- Progress bar -->
+      <div style="background:var(--card);border-radius:10px;border:1px solid var(--border);padding:14px 18px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:13px;font-weight:700;color:var(--ink)">Task Progress</span>
+          <span style="font-size:13px;font-weight:700;color:${pct===100?'var(--green)':'var(--teal)'}">${pct===100?'✓ All done!':doneCnt+'/'+total+' done'}</span>
         </div>
-        ${tasks.map(t => `
-          <div style="
-            display:flex;align-items:center;gap:12px;padding:12px 18px;
-            border-bottom:1px solid var(--border);
-            background:${done.includes(t.id)?'var(--teal-light)':'var(--card)'};
-            cursor:pointer;transition:background .15s;
-          " onclick="togglePastPostTask(${id},'${t.id}')">
-            <div style="
-              width:28px;height:28px;border-radius:7px;flex-shrink:0;
-              border:2px solid ${done.includes(t.id)?'var(--teal)':'var(--border2)'};
-              background:${done.includes(t.id)?'var(--teal)':'transparent'};
-              display:flex;align-items:center;justify-content:center;
-              font-size:14px;color:#fff;font-weight:700;
-            ">${done.includes(t.id)?'✓':''}</div>
-            <span style="font-size:14px;font-weight:500;color:${done.includes(t.id)?'var(--teal)':'var(--ink)'}">
-              ${t.icon} ${t.label}
-            </span>
-          </div>
-        `).join('')}
+        <div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px">
+          <div style="width:${pct}%;height:100%;background:${pct===100?'var(--green)':'var(--teal)'};border-radius:4px;transition:width .3s"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px">
+          ${tasks.map(t => `
+            <div onclick="togglePastPostTask(${id},'${t.id}')" style="
+              display:flex;align-items:center;gap:8px;padding:8px 12px;
+              border-radius:8px;cursor:pointer;transition:all .15s;
+              background:${done.includes(t.id)?'var(--teal-light)':'var(--card2)'};
+              border:1.5px solid ${done.includes(t.id)?'var(--teal)':'var(--border2)'};
+            ">
+              <div style="
+                width:22px;height:22px;border-radius:5px;flex-shrink:0;
+                background:${done.includes(t.id)?'var(--teal)':'transparent'};
+                border:2px solid ${done.includes(t.id)?'var(--teal)':'var(--border2)'};
+                display:flex;align-items:center;justify-content:center;
+                font-size:12px;color:#fff;font-weight:700;
+              ">${done.includes(t.id)?'✓':''}</div>
+              <span style="font-size:12px;font-weight:600;color:${done.includes(t.id)?'var(--teal)':'var(--ink2)'}">${t.icon} ${t.label}</span>
+            </div>
+          `).join('')}
+        </div>
       </div>
+
+      ${!hasContent ? `
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;color:var(--ink3);margin-bottom:16px">
+          <div style="font-size:32px;margin-bottom:8px">📭</div>
+          <div style="font-size:14px;font-weight:600;color:var(--ink2);margin-bottom:4px">Content not saved for this post</div>
+          <div style="font-size:13px">This was generated before full content saving was added. Future posts will show all content here.</div>
+        </div>` : ''
+      }
 
       <!-- Content sections -->
       ${buildPastPostSection('📝 Blog Post', [
-        {label:'Title', content: c.blog_meta_title},
-        {label:'Excerpt', content: c.blog_excerpt},
-        {label:'SEO Meta Description', content: c.blog_meta_description},
-        {label:'Focus Keyword', content: c.blog_focus_keyword},
-        {label:'Tags', content: c.blog_tags},
-        {label:'Alt Text', content: c.blog_alt_text},
-        {label:'Blog HTML', content: c.blog_html},
+        {label:'① Title',                content: c.blog_meta_title},
+        {label:'② Blog HTML',             content: c.blog_html},
+        {label:'③ Excerpt',               content: c.blog_excerpt},
+        {label:'④ SEO Meta Title',         content: c.blog_meta_title},
+        {label:'⑤ SEO Meta Description',  content: c.blog_meta_description},
+        {label:'⑥ Focus Keyword',          content: c.blog_focus_keyword},
+        {label:'⑦ Tags',                  content: c.blog_tags},
+        {label:'⑧ Image Alt Text',         content: c.blog_alt_text},
       ])}
       ${buildPastPostSection('📍 Google Business Posts', [
-        {label:'Chapeltown Road', content: c.gbp_chapeltown},
-        {label:'Roundhay Road', content: c.gbp_roundhay},
-        {label:'City Centre', content: c.gbp_city_centre},
+        {label:'Chapeltown Road (LS7)', content: c.gbp_chapeltown},
+        {label:'Roundhay Road (LS8)',   content: c.gbp_roundhay},
+        {label:'City Centre',           content: c.gbp_city_centre},
       ])}
       ${buildPastPostSection('📸 Social Media', [
-        {label:'Instagram Caption', content: c.instagram_caption},
-        {label:'Instagram Hashtags', content: c.instagram_hashtags},
-        {label:'Facebook Post', content: c.facebook_post},
+        {label:'Instagram Caption',   content: c.instagram_caption},
+        {label:'Instagram Hashtags',  content: c.instagram_hashtags},
+        {label:'Facebook Post',       content: c.facebook_post},
       ])}
       ${buildPastPostSection('⭐ Review Request', [
-        {label:'WhatsApp Message', content: c.review_request_whatsapp},
-        {label:'In-Store Script', content: c.review_request_instore},
-        {label:'QR Card Text', content: c.qr_card_text},
+        {label:'WhatsApp Message',     content: c.review_request_whatsapp},
+        {label:'In-Store Script',      content: c.review_request_instore},
+        {label:'QR Card Text',         content: c.qr_card_text},
       ])}
+
     </div>
   `;
 }
+
+// ── RELOAD PAST POST INTO TOOL ────────────────────────────────────
+function reloadIntoTool() {
+  const entry = window._pastPostEntry;
+  if (!entry || !entry.content) return;
+
+  // Reconstruct product object
+  selectedProduct = {
+    id: entry.productId,
+    title: entry.productTitle,
+    price: entry.productPrice || '',
+    image: entry.productImage || '',
+    vendor: entry.vendor || '',
+    productType: entry.productType || '',
+    handle: entry.productHandle || '',
+    tags: '',
+    description: '',
+  };
+
+  // Restore content
+  generatedContent = entry.content;
+
+  // Close past posts modal
+  closePastPosts();
+
+  // Show the selected bar
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('selectedBar').style.display = 'flex';
+  const img = document.getElementById('selImg');
+  if (img) { img.src = entry.productImage || ''; img.style.display = entry.productImage ? 'block' : 'none'; }
+  const nameEl = document.getElementById('selName');
+  if (nameEl) nameEl.textContent = entry.productTitle;
+  const priceEl = document.getElementById('selPrice');
+  if (priceEl) priceEl.textContent = entry.productPrice || '';
+
+  // Show checklist with saved content
+  showChecklist(entry.content);
+
+  // Scroll to top
+  window.scrollTo({top:0, behavior:'smooth'});
+  toast('Post loaded — carry on where you left off ✓', 'success');
+}
+
 
 function buildPastPostSection(title, fields) {
-  const hasContent = fields.some(f => f.content && f.content.trim());
-  if (!hasContent) return '';
-  return `
-    <div style="background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:16px;overflow:hidden">
-      <div style="
-        padding:13px 18px;background:var(--teal-light);
-        border-bottom:1px solid var(--teal);
-        font-size:12px;font-weight:700;text-transform:uppercase;
-        letter-spacing:.8px;color:var(--teal);
-      ">${title}</div>
-      ${fields.filter(f=>f.content&&f.content.trim()).map(f=>`
-        <div style="padding:14px 18px;border-bottom:1px solid var(--border)">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);margin-bottom:8px">${f.label}</div>
-          <div style="
-            font-size:13px;color:var(--ink2);line-height:1.7;
-            background:var(--bg);border-radius:8px;padding:10px 12px;
-            max-height:200px;overflow-y:auto;white-space:pre-wrap;
-            font-family:'DM Mono',monospace;border:1px solid var(--border);
-          ">${(f.content||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-          <button onclick="navigator.clipboard.writeText(${JSON.stringify(f.content||'')}).then(()=>toast('Copied ✓','success'))"
-            style="
-              margin-top:7px;background:var(--teal);color:#fff;border:none;
-              border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;
-              cursor:pointer;font-family:inherit;
-            ">⎘ Copy ${f.label}</button>
-        </div>
-      `).join('')}
-    </div>
-  `;
+  const visible = fields.filter(f => f.content && String(f.content).trim());
+  if (!visible.length) return '';
+  if (!window._ppContent) window._ppContent = {};
+  return '<div style="background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:16px;overflow:hidden">' +
+    '<div style="padding:13px 18px;background:var(--teal-light);border-bottom:1px solid var(--teal);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--teal)">' + title + '</div>' +
+    visible.map(function(f) {
+      var safeId = 'pp' + Math.random().toString(36).substr(2,9);
+      window._ppContent[safeId] = f.content || '';
+      var escaped = (f.content||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      var lbl = f.label.replace(/[①②③④⑤⑥⑦⑧]/g,'').trim();
+      return '<div style="padding:14px 18px;border-bottom:1px solid var(--border)">' +
+        '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);margin-bottom:8px">' + f.label + '</div>' +
+        '<div style="font-size:13px;color:var(--ink2);line-height:1.75;background:var(--bg);border-radius:8px;padding:11px 13px;max-height:220px;overflow-y:auto;white-space:pre-wrap;font-family:DM Mono,monospace;border:1px solid var(--border2)">' + escaped + '</div>' +
+        '<button data-ppid="' + safeId + '" onclick="copyPPC(this)" style="margin-top:8px;background:var(--teal);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">⎘ Copy ' + lbl + '</button>' +
+        '</div>';
+    }).join('') +
+  '</div>';
 }
 
-function togglePastPostTask(id, taskId) {
-  const log = getPostLog();
-  const entry = log.find(e => e.id === id);
-  if (!entry) return;
-  if (!entry.tasksCompleted) entry.tasksCompleted = [];
-  const idx = entry.tasksCompleted.indexOf(taskId);
-  if (idx > -1) entry.tasksCompleted.splice(idx, 1);
-  else entry.tasksCompleted.push(taskId);
-  localStorage.setItem('cc_post_log', JSON.stringify(log));
-  openPostDetail(id); // re-render
+function copyPPC(btn) {
+  var id = btn.getAttribute('data-ppid');
+  var text = (window._ppContent || {})[id] || '';
+  if (!text) { toast('Nothing to copy','error'); return; }
+  navigator.clipboard.writeText(text).then(function() {
+    var orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    btn.style.background = 'var(--green)';
+    setTimeout(function() { btn.textContent = orig; btn.style.background = 'var(--teal)'; }, 2000);
+  }).catch(function() { toast('Copy failed','error'); });
 }
 
-function deletePastPost(id) {
-  if (!confirm('Delete this post from the log?')) return;
-  const log = getPostLog().filter(e => e.id !== id);
-  localStorage.setItem('cc_post_log', JSON.stringify(log));
-  _currentPostId = null;
-  document.getElementById('pastPostDetail').innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--ink3);font-size:14px">Post deleted</div>';
-  renderPastPostsList(log);
-  toast('Post deleted');
-}
 
 function copyShareLink(url) {
   navigator.clipboard.writeText(url).then(() => toast('Link copied! Share with staff 🔗','success'));
