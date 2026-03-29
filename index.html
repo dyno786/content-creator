@@ -1273,6 +1273,13 @@ async function downloadShopifyImage(imgUrl, seoBase) {
   } catch(e){}
   window.open(imgUrl,'_blank'); toast('Opened in new tab — right-click → Save as: '+filename);
 }
+function downloadB64(filename) {
+  // Download AI image from post log entry
+  const entry = window._pastPostEntry;
+  if (!entry || !entry.aiImage) { toast('No AI image saved for this post','error'); return; }
+  downloadBase64Image(entry.aiImage, filename);
+}
+
 function downloadBase64Image(dataUrl, filename) {
   if(!dataUrl) { toast('No image yet'); return; }
   const a=document.createElement('a'); a.href=dataUrl; a.download=filename||'cc-product.png';
@@ -1369,6 +1376,19 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
     const imgSrc = 'data:image/png;base64,'+b64;
     window._aiImageData = imgSrc;
     dbg('AI_IMAGE_OK', seoFilename);
+
+    // Save AI image to post log entry
+    if (product && product.id) {
+      const log = getPostLog();
+      const entry = log.find(e => e.productId == product.id);
+      if (entry) {
+        entry.aiImage = imgSrc;
+        entry.aiImageFilename = seoFilename;
+        entry.aiImageSetting = settingInfo.label;
+        localStorage.setItem('cc_post_log', JSON.stringify(log));
+        dbg('AI_IMAGE_SAVED', 'Saved to post log');
+      }
+    }
 
     area.innerHTML = `
       <div>
@@ -1833,6 +1853,30 @@ function openPostDetail(id) {
     ).join('') +
     '</div></div>' +
     (!hasContent ? '<div style="background:var(--card2);border-radius:10px;padding:20px;text-align:center;color:var(--ink3);margin-bottom:16px"><div style="font-size:32px;margin-bottom:8px">📭</div><div style="font-size:14px;font-weight:600;color:var(--ink2);margin-bottom:4px">Content not available</div><div style="font-size:13px">Generated before full content saving. Future posts show everything here.</div></div>' : '') +
+    // Images section
+    '<div style="background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:16px;overflow:hidden">' +
+    '<div style="padding:13px 18px;background:var(--teal-light);border-bottom:1px solid var(--teal);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--teal)">🖼 Product Images</div>' +
+    '<div style="padding:16px 18px;display:flex;gap:16px;flex-wrap:wrap">' +
+    // Shopify product image
+    (entry.productImage ? 
+      '<div style="flex:1;min-width:160px">' +
+      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);margin-bottom:8px">Shopify Product Photo</div>' +
+      '<img src="' + entry.productImage + '" style="width:100%;border-radius:10px;aspect-ratio:1;object-fit:cover;border:2px solid var(--border);cursor:pointer;display:block" onclick="window.open(this.src,'_blank')" title="Click to open full size">' +
+      '<a href="' + entry.productImage + '" download target="_blank" style="display:block;margin-top:8px;background:var(--teal);color:#fff;border:none;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;text-align:center">⬇ Download Original</a>' +
+      '</div>'
+      : '<div style="flex:1;min-width:160px;background:var(--bg);border-radius:10px;padding:20px;text-align:center;color:var(--ink3);font-size:13px">No product image saved</div>') +
+    // AI generated image
+    (entry.aiImage ?
+      '<div style="flex:1;min-width:160px">' +
+      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);margin-bottom:8px">AI Generated — ' + (entry.aiImageSetting||'') + '</div>' +
+      '<img src="' + entry.aiImage + '" style="width:100%;border-radius:10px;aspect-ratio:1;object-fit:cover;border:2px solid var(--teal);cursor:pointer;display:block" onclick="window.open(this.src,'_blank')" title="Click to open full size">' +
+      '<button onclick="downloadB64('' + (entry.aiImageFilename||'cc-ai-image.png') + '')" style="width:100%;margin-top:8px;background:var(--teal);color:#fff;border:none;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">⬇ Download AI Image</button>' +
+      '</div>'
+      : '<div style="flex:1;min-width:160px;background:var(--bg);border-radius:10px;padding:20px;text-align:center;color:var(--ink3);font-size:13px">' +
+        (entry.productImage ? '🤖 AI image not generated for this post' : 'No images available') +
+        '</div>') +
+    '</div></div>' +
+
     // Content sections
     buildPPS('📝 Blog Post', [{label:'Title', content:c.blog_meta_title},{label:'Blog HTML', content:c.blog_html},{label:'Excerpt', content:c.blog_excerpt},{label:'SEO Meta Description', content:c.blog_meta_description},{label:'Focus Keyword', content:c.blog_focus_keyword},{label:'Tags', content:c.blog_tags},{label:'Alt Text', content:c.blog_alt_text}]) +
     buildPPS('📍 Google Business Posts', [{label:'Chapeltown Road', content:c.gbp_chapeltown},{label:'Roundhay Road', content:c.gbp_roundhay},{label:'City Centre', content:c.gbp_city_centre}]) +
