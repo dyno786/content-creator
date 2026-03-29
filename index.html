@@ -573,14 +573,20 @@ const debugLogs = [];
 
 // ── SETTINGS ───────────────────────────────────────────────────────
 function cfg() {
+  const g = k => localStorage.getItem(k) || '';
   return {
-    apiKey:      localStorage.getItem('cc_api_key') || '',
-    shopDomain:  localStorage.getItem('cc_shop_domain') || 'cchairandbeauty.myshopify.com',
-    shopToken:   localStorage.getItem('cc_shop_token') || '',
-    openaiKey:   localStorage.getItem('cc_openai_key') || '',
-    revChap:     localStorage.getItem('cc_rev_chap') || '',
-    revRound:    localStorage.getItem('cc_rev_round') || '',
-    revCity:     localStorage.getItem('cc_rev_city') || '',
+    apiKey:     g('cc_api_key'),
+    shopDomain: g('cc_shop_domain') || 'cchairandbeauty.myshopify.com',
+    shopToken:  g('cc_shop_token'),
+    openaiKey:  g('cc_openai_key'),
+    revChap:    g('cc_rev_chap')   || 'https://www.google.com/search?q=CC+Hair+Beauty+Chapeltown+Road+Leeds+LS7',
+    revRound:   g('cc_rev_round')  || 'https://www.google.com/search?q=CC+Hair+Beauty+Roundhay+Road+Leeds+LS8',
+    revCity:    g('cc_rev_city')   || 'https://www.google.com/search?q=CC+Hair+Beauty+New+York+Street+Leeds',
+    facebook:   g('cc_facebook')   || 'https://www.facebook.com/cchairandbeauty',
+    instagram:  g('cc_instagram')  || 'https://www.instagram.com/cchairandbeauty',
+    gbpChap:    g('cc_rev_chap')   || 'https://www.google.com/search?q=CC+Hair+Beauty+Chapeltown+Road+Leeds+LS7',
+    gbpRound:   g('cc_rev_round')  || 'https://www.google.com/search?q=CC+Hair+Beauty+Roundhay+Road+Leeds+LS8',
+    gbpCity:    g('cc_rev_city')   || 'https://www.google.com/search?q=CC+Hair+Beauty+New+York+Street+Leeds',
   };
 }
 function openSettings() {
@@ -592,6 +598,8 @@ function openSettings() {
   document.getElementById('s_revChap').value    = s.revChap;
   document.getElementById('s_revRound').value   = s.revRound;
   document.getElementById('s_revCity').value    = s.revCity;
+  const sf = document.getElementById('s_facebook'); if(sf) sf.value = s.facebook;
+  const si = document.getElementById('s_instagram'); if(si) si.value = s.instagram;
   document.getElementById('settingsModal').classList.add('open');
 }
 function closeSettings() { document.getElementById('settingsModal').classList.remove('open'); }
@@ -603,6 +611,8 @@ function saveSettings() {
   localStorage.setItem('cc_rev_chap',   document.getElementById('s_revChap').value.trim());
   localStorage.setItem('cc_rev_round',  document.getElementById('s_revRound').value.trim());
   localStorage.setItem('cc_rev_city',   document.getElementById('s_revCity').value.trim());
+  const sfEl = document.getElementById('s_facebook'); if(sfEl) localStorage.setItem('cc_facebook', sfEl.value.trim());
+  const siEl = document.getElementById('s_instagram'); if(siEl) localStorage.setItem('cc_instagram', siEl.value.trim());
   closeSettings();
   toast('Settings saved ✓', 'success');
   loadProducts();
@@ -613,8 +623,8 @@ let _theme = localStorage.getItem('cc_theme') || 'dark';
 function applyTheme(t) {
   _theme = t;
   localStorage.setItem('cc_theme', t);
-  document.body.className = t === 'light' ? 'light' : '';
-  document.getElementById('themeBtn').textContent = t === 'light' ? '🌙 Dark' : '☀ Light';
+  document.body.className = t === 'dark' ? 'dark' : '';
+  document.getElementById('themeBtn').textContent = t === 'dark' ? '☀ Light' : '🌙 Dark';
 }
 function toggleTheme() { applyTheme(_theme === 'dark' ? 'light' : 'dark'); }
 
@@ -1137,16 +1147,15 @@ function renderTaskList(containerId, tasks, isBonus) {
        ${t.openUrl?`<a href="${t.openUrl}" target="_blank" class="open-btn">${t.openLabel||'Open ↗'}</a>`:''}
        <button class="copy-btn" onclick="expandTask('${t.id}',event)">View</button>`;
     item.innerHTML = `
-      <div class="task-row">
-        <div class="task-check" onclick="toggleTask('${t.id}',event)"></div>
+      <div class="task-hdr" onclick="expandTask('${tid}',event)">
+        <div class="task-check" onclick="toggleTask('${tid}',event);event.stopPropagation()"></div>
         <div class="task-info">
-          <div class="task-name">${t.name}</div>
+          <div class="task-name">${t.name} <span class="task-time">${t.time||''}</span></div>
           <div class="task-hint">${t.hint}</div>
         </div>
-        <div class="task-time">${t.time}</div>
         <div class="task-btns">${btns}</div>
       </div>
-      <div class="task-content" id="content-${t.id}">
+      <div class="task-content" id="content-${tid}">
         ${t.isImage ? buildImageSection() : ''}
         ${t.isTags ? `<div class="tag-pills">${(t.tags||[]).map(tg=>`<div class="tag-pill">${tg}</div>`).join('')}</div>` : ''}
         ${(t.sections||[]).map((sec,si)=>`
@@ -1198,7 +1207,7 @@ function buildImageSection() {
 
 function expandTask(id, e) {
   if(e) e.stopPropagation();
-  document.getElementById(`content-${id}`)?.classList.toggle('vis');
+  document.getElementById(`content-${id}`)?.classList.toggle('open');
 }
 function copyEncoded(btn) {
   const text = decodeURIComponent(btn.getAttribute('data-copy')||'');
@@ -1591,11 +1600,12 @@ function renderSection(containerId, tasks, isBonus) {
     const item = document.createElement('div');
     item.className = 'task-row'; item.id = 'task-' + t.id;
 
+    const tid = t.id;
     const btns = t.isImage
-      ? '<button class="copy-btn" onclick="expandTask('' + t.id + '',event)">View</button>'
-      : (t.sections && t.sections.length ? '<button class="copy-btn" onclick="copyTaskAll('' + t.id + '',event)">Copy All</button>' : '') +
-        (t.openUrl ? '<a href="' + t.openUrl + '" target="_blank" class="open-btn">' + (t.openLabel||'Open ↗') + '</a>' : '') +
-        '<button class="copy-btn" onclick="expandTask('' + t.id + '',event)">View</button>';
+      ? `<button class="copy-btn" onclick="expandTask('${tid}',event)">View</button>`
+      : (t.sections && t.sections.length ? `<button class="copy-btn" onclick="copyTaskAll('${tid}',event)">Copy All</button>` : '') +
+        (t.openUrl ? `<a href="${t.openUrl}" target="_blank" class="open-btn">${t.openLabel||'Open ↗'}</a>` : '') +
+        `<button class="copy-btn" onclick="expandTask('${tid}',event)">View</button>`;
 
     const tagsHtml = t.isTags
       ? '<div class="tag-pills">' + (Array.isArray(t.tags) ? t.tags : String(t.tags).split(','))
@@ -1616,15 +1626,15 @@ function renderSection(containerId, tasks, isBonus) {
     }).join('');
 
     item.innerHTML =
-      '<div class="task-hdr" onclick="expandTask('' + t.id + '',event)">' +
-        '<div class="task-check" onclick="toggleTask('' + t.id + '',event)"></div>' +
+      `<div class="task-hdr" onclick="expandTask('${tid}',event)">` +
+        `<div class="task-check" onclick="toggleTask('${tid}',event)"></div>` +
         '<div class="task-info">' +
           '<div class="task-name">' + t.name + ' <span class="task-time">' + (t.time||'') + '</span></div>' +
           '<div class="task-hint">' + t.hint + '</div>' +
         '</div>' +
         '<div class="task-btns">' + btns + '</div>' +
       '</div>' +
-      '<div class="task-content" id="content-' + t.id + '">' +
+      `<div class="task-content" id="content-${tid}">` +
         (t.isImage ? buildImageSection() : '') +
         tagsHtml + sectionsHtml +
       '</div>';
@@ -1940,7 +1950,6 @@ function checkUrlHash() {
 }
 
 // ── UPDATED addToPostLog (save full content) ──────────────────────────────────
-const _origAddToPostLog = typeof addToPostLog === 'function' ? addToPostLog : null;
 function addToPostLog(product, content) {
   const log = getPostLog();
   const id = Date.now();
