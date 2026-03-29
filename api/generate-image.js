@@ -1,168 +1,138 @@
 import OpenAI from "openai";
-
-// ── SETTING PROMPTS ────────────────────────────────────────────────────────
-const SETTINGS = {
-  bathroom: {
-    label: 'Bathroom Shelf',
-    prompt: 'Place this exact product on a clean marble bathroom shelf. Soft warm lighting from the side. White and grey tones. A folded white towel in the background, slightly out of focus. The product label must be clearly visible and unaltered. No people, no faces. Photorealistic, professional product photography.',
-  },
-  barber: {
-    label: 'Barber Counter',
-    prompt: 'Place this exact product on a barbershop counter. Dark wood surface, chrome accents, a mirror reflection visible in the background, slightly out of focus. Barbershop aesthetic, professional lighting. The product label must be clearly visible and unaltered. No people, no faces. Photorealistic.',
-  },
-  bedroom: {
-    label: 'Bedroom Dressing Table',
-    prompt: 'Place this exact product on a bedroom vanity dressing table. Warm soft lighting, a round mirror partially visible in the background. Luxurious feminine aesthetic. The product label must be clearly visible and unaltered. No people, no faces. Photorealistic, professional product photography.',
-  },
-  salon: {
-    label: 'Beauty Salon Station',
-    prompt: 'Place this exact product on a professional beauty salon counter. Clean salon aesthetic, good lighting, styling tools softly visible in the background. The product label must be clearly visible and unaltered. No people, no faces. Photorealistic.',
-  },
-  natural: {
-    label: 'Natural & Spa',
-    prompt: 'Place this exact product on a wooden surface surrounded by natural botanicals — eucalyptus leaves, dried flowers, a small stone. Soft natural window lighting. Spa and wellness aesthetic. The product label must be clearly visible and unaltered. No people, no faces. Photorealistic.',
-  },
-  studio: {
-    label: 'Clean Studio',
-    prompt: 'Place this exact product on a clean white studio surface with a soft grey gradient background. Professional studio lighting from above and left. The product label must be clearly visible and unaltered. No people. Photorealistic, commercial product photography.',
-  },
-  hands: {
-    label: 'Hands Holding Product',
-    prompt: 'Show a pair of well-manicured hands gently holding this exact product at a slight angle. Clean neutral background. The product label must be clearly visible. No faces, only hands from mid-forearm down. Photorealistic, lifestyle product photography.',
-  },
-  flatlay: {
-    label: 'Flatlay Overhead',
-    prompt: 'Flat lay overhead shot of this exact product on a light marble or pastel surface. Arrange small complementary beauty accessories around it — a comb, small flowers, a mirror — all slightly out of focus. The product must be the clear focus. No people, no faces. Photorealistic, professional beauty flatlay photography.',
-  },
-};
+import { toFile } from "openai";
 
 export const config = { api: { bodyParser: { sizeLimit: '10mb' } } };
+
+const SETTINGS = {
+  studio:   { label:'Clean Studio',         prompt:'Clean white studio background, professional lighting from top-left, soft shadow underneath. Product label must be clearly visible. No people, no faces. Photorealistic commercial product photography.' },
+  bathroom: { label:'Bathroom Shelf',       prompt:'On a clean marble bathroom shelf. Soft warm lighting from the side. White folded towel blurred in background. Product label clearly visible. No people, no faces. Photorealistic.' },
+  barber:   { label:'Barber Counter',       prompt:'On a barbershop counter. Dark wood surface, chrome accents, mirror reflection blurred in background. Product label clearly visible. No people, no faces. Photorealistic.' },
+  bedroom:  { label:'Bedroom Vanity',       prompt:'On a bedroom vanity dressing table. Warm soft lighting, round mirror partially visible. Product label clearly visible. No people, no faces. Photorealistic.' },
+  salon:    { label:'Beauty Salon',         prompt:'On a professional beauty salon station. Clean lighting, styling tools softly visible in background. Product label clearly visible. No people, no faces. Photorealistic.' },
+  natural:  { label:'Natural & Spa',        prompt:'On a wooden surface surrounded by eucalyptus leaves, dried flowers, a small stone. Soft natural window lighting. Product label clearly visible. No people, no faces. Photorealistic.' },
+  hands:    { label:'Hands Holding',        prompt:'Held gently in well-manicured hands at a slight angle. Clean neutral background. Product label clearly visible. Hands from mid-forearm only, no faces. Photorealistic lifestyle photography.' },
+  flatlay:  { label:'Flatlay Overhead',     prompt:'Flat lay overhead shot on a light marble surface. Small beauty accessories softly arranged around — comb, flowers, mirror. Product is the clear focus. No people, no faces. Photorealistic.' },
+};
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method === 'GET' && req.query.settings === '1') {
-    // Return available settings to the frontend
-    return res.status(200).json({
-      settings: Object.entries(SETTINGS).map(([key, val]) => ({
-        key,
-        label: val.label,
-      })),
-    });
-  }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { productImageUrl, productName, productType, setting = 'studio', apiKey, textOnly, prompt: customPrompt } = req.body;
+  const {
+    productImageUrl,
+    productName = 'hair and beauty product',
+    productType = 'beauty product',
+    setting = 'studio',
+    apiKey,
+  } = req.body;
 
   const key = apiKey || process.env.OPENAI_API_KEY;
   if (!key) return res.status(400).json({ error: 'Missing OpenAI API key — add it in Settings' });
-  if (!productImageUrl) return res.status(400).json({ error: 'Missing product image URL' });
 
   const settingConfig = SETTINGS[setting] || SETTINGS.studio;
+
+  const fullPrompt = [
+    `Product: ${productName}. Type: ${productType}.`,
+    settingConfig.prompt,
+    `CRITICAL: Keep the original product packaging exactly as-is — same label, same colours, same shape. Only change the background/setting.`,
+    `Add a subtle watermark: small semi-transparent white text "cchairandbeauty.com" at the very bottom edge.`,
+    `No human faces. Square 1:1 format. High detail, photorealistic.`,
+  ].join(' ');
 
   try {
     const openai = new OpenAI({ apiKey: key });
 
-    // TEXT-ONLY MODE (no input image available)
-    if (textOnly || !productImageUrl) {
-      const prompt = customPrompt || [
-        `Professional product photography for social media marketing.`,
-        `Product: ${productName || 'hair care product'}.`,
-        `Type: ${productType || 'beauty product'}.`,
-        (SETTINGS[setting] || SETTINGS.studio).prompt,
-        `No people, no faces. Square format. Photorealistic.`,
-        `Add subtle watermark: small semi-transparent white text 'cchairandbeauty.com' at the bottom edge of the image.`,
-      ].join(' ');
+    // MODE 1: Image edit (with real product photo)
+    if (productImageUrl) {
+      let imageBuffer;
+      try {
+        const imgResp = await fetch(productImageUrl);
+        if (!imgResp.ok) throw new Error(`HTTP ${imgResp.status}`);
+        const arrayBuffer = await imgResp.arrayBuffer();
+        imageBuffer = Buffer.from(arrayBuffer);
+      } catch (e) {
+        console.error('Image fetch error:', e.message);
+        // Fall through to text-only mode
+        imageBuffer = null;
+      }
 
-      const result = await openai.images.generate({
-        model: 'gpt-image-1-mini',
-        prompt,
-        n: 1,
-        size: '1024x1024',
-        quality: 'medium',
-      });
+      if (imageBuffer) {
+        try {
+          // Use toFile from openai package - handles Node.js compatibility
+          const imageFile = await toFile(imageBuffer, 'product.png', { type: 'image/png' });
 
-      const imageBase64 = result.data?.[0]?.b64_json;
-      if (!imageBase64) throw new Error('No image data returned');
+          const result = await openai.images.edit({
+            model: 'gpt-image-1',
+            image: imageFile,
+            prompt: fullPrompt,
+            n: 1,
+            size: '1024x1024',
+          });
 
-      return res.status(200).json({
-        success: true,
-        image_b64: imageBase64,
-        model: 'gpt-image-1-mini (text only)',
-        setting: (SETTINGS[setting] || SETTINGS.studio).label,
-        estimated_cost: '~$0.02 (~1.5p)',
-      });
+          const b64 = result.data?.[0]?.b64_json;
+          if (!b64) throw new Error('No image data in edit response');
+
+          return res.status(200).json({
+            success: true,
+            image_b64: b64,
+            model: 'gpt-image-1 edit',
+            setting: settingConfig.label,
+            estimated_cost: '~5p',
+          });
+        } catch (editErr) {
+          console.error('Edit failed, trying generate:', editErr.message);
+          // Fall through to generate mode
+        }
+      }
     }
 
-    // Step 1: Fetch the Shopify product image as a buffer
-    let imageBuffer;
-    try {
-      const imgResp = await fetch(productImageUrl);
-      if (!imgResp.ok) throw new Error(`Could not fetch product image: ${imgResp.status}`);
-      const arrayBuffer = await imgResp.arrayBuffer();
-      imageBuffer = Buffer.from(arrayBuffer);
-    } catch (e) {
-      return res.status(400).json({ error: `Could not load product image: ${e.message}` });
-    }
-
-    // Step 2: Create a File object from the buffer for the OpenAI SDK
-    const { Blob } = await import('buffer');
-    const imageFile = new File(
-      [imageBuffer],
-      'product.jpg',
-      { type: 'image/jpeg' }
-    );
-
-    // Step 3: Build the full prompt
-    const fullPrompt = [
-      `Product: ${productName || 'hair and beauty product'}.`,
-      `Type: ${productType || 'beauty product'}.`,
+    // MODE 2: Text-only generation (no image or edit failed)
+    const textPrompt = [
+      `Professional product photography for: ${productName} by CC Hair & Beauty Leeds.`,
+      `Type: ${productType}.`,
       settingConfig.prompt,
-      `This is for CC Hair & Beauty Leeds social media marketing.`,
-      `CRITICAL: Keep the original product exactly as it is — same packaging, same label, same colours. Only change the background and setting. The product must look identical to the input image.`,
-      `No text overlays. No logos added. No human faces. Square 1:1 format.`,
+      `No human faces. Square format. Photorealistic. High quality.`,
+      `Add subtle watermark: small semi-transparent white text "cchairandbeauty.com" at bottom edge.`,
     ].join(' ');
 
-    console.log(`Generating image: ${productName} in ${settingConfig.label}`);
-
-    // Step 4: Call the image edit endpoint with the product photo
-    const result = await openai.images.edit({
+    const result = await openai.images.generate({
       model: 'gpt-image-1',
-      image: imageFile,
-      prompt: fullPrompt,
+      prompt: textPrompt,
       n: 1,
       size: '1024x1024',
+      quality: 'medium',
     });
 
-    const imageBase64 = result.data?.[0]?.b64_json;
-    if (!imageBase64) throw new Error('No image data returned');
+    const b64 = result.data?.[0]?.b64_json;
+    if (!b64) throw new Error('No image data in generate response');
 
     return res.status(200).json({
       success: true,
-      image_b64: imageBase64,
-      model: 'gpt-image-1 (edit)',
+      image_b64: b64,
+      model: 'gpt-image-1 generate',
       setting: settingConfig.label,
-      estimated_cost: '~$0.05-0.07 (~4-5p)',
+      estimated_cost: '~3p',
     });
 
   } catch (err) {
-    console.error('Image generation error:', err);
+    console.error('OpenAI error:', err);
     let message = err.message || 'Unknown error';
 
     if (message.includes('billing') || message.includes('quota') || message.includes('hard limit')) {
-      message = 'OpenAI billing limit reached — go to platform.openai.com/settings/billing to top up';
+      message = 'OpenAI billing limit reached — top up at platform.openai.com/settings/billing';
     } else if (message.includes('invalid_api_key') || message.includes('Incorrect API key')) {
       message = 'Invalid OpenAI API key — check Settings';
     } else if (message.includes('organization') || message.includes('verification')) {
-      message = 'Organization verification needed — see platform.openai.com/settings/organization';
+      message = 'Organisation verification needed — platform.openai.com/settings/organization';
     } else if (message.includes('content_policy') || message.includes('safety')) {
-      message = 'Blocked by content policy — try a different setting or product';
-    } else if (message.includes('Could not fetch') || message.includes('Could not load')) {
-      message = message; // Pass through image fetch errors as-is
+      message = 'Blocked by content policy — try a different setting';
+    } else if (message.includes('model') || message.includes('not found')) {
+      message = 'Model not available on your account — may need organisation verification for gpt-image-1';
     }
 
-    return res.status(500).json({ error: message });
+    return res.status(500).json({ error: message, raw: err.message });
   }
 }
