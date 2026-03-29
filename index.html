@@ -1124,62 +1124,7 @@ URL: https://cchairandbeauty.com/products/${selectedProduct.handle}`;
 }
 
 // ── CHECKLIST ──────────────────────────────────────────────────────
-function showChecklist(c) {
-  document.getElementById('loadingPanel').style.display='none';
-  document.getElementById('checklistPanel').style.display='block';
-  document.getElementById('clProduct').textContent = selectedProduct.title;
-  document.getElementById('clTime').textContent = '⏰ '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  tasksDone.clear(); updateProgress(); showHistory();
 
-  const s = cfg();
-  const tasks = [
-    {id:'blog', name:'1. Shopify Blog Post', hint:'Click <> in toolbar → paste HTML. Fill meta title, description, tags.', time:'~2 min',
-      openUrl:'https://admin.shopify.com/store/cchairandbeauty/articles/new', openLabel:'Open Shopify ↗',
-      sections:[
-        {label:'① Title', content:c.blog_meta_title, badge:`${(c.blog_meta_title||'').length} chars`},
-        {label:'② Blog HTML (click <> icon then paste)', content:c.blog_html},
-        {label:'③ Excerpt', content:c.blog_excerpt},
-        {label:'④ SEO Page Title', content:c.blog_meta_title, badge:`${(c.blog_meta_title||'').length}/70`},
-        {label:'⑤ SEO Meta Description', content:c.blog_meta_description, badge:`${(c.blog_meta_description||'').length}/160`},
-        {label:'⑥ Tags', content:c.blog_tags},
-        {label:'⑦ Image Alt Text', content:c.blog_alt_text},
-      ]},
-    {id:'gbp1', name:'2. GBP — Chapeltown Road', hint:'Search "CC Hair Beauty Chapeltown Leeds" on Google → Your Business → Posts → Add update', time:'~30 sec',
-      openUrl:'https://www.google.com/search?q=CC+Hair+%26+Beauty+Chapeltown+Road+Leeds+LS7', openLabel:'Open Google ↗',
-      sections:[{label:'Post text', content:c.gbp_chapeltown, badge:`${(c.gbp_chapeltown||'').length}/1500`}]},
-    {id:'gbp2', name:'3. GBP — Roundhay Road', hint:'Search "CC Hair Beauty Roundhay Leeds" on Google → Your Business → Posts → Add update', time:'~30 sec',
-      openUrl:'https://www.google.com/search?q=CC+Hair+%26+Beauty+Roundhay+Road+Leeds+LS8', openLabel:'Open Google ↗',
-      sections:[{label:'Post text', content:c.gbp_roundhay, badge:`${(c.gbp_roundhay||'').length}/1500`}]},
-    {id:'gbp3', name:'4. GBP — City Centre', hint:'Search "CC Hair Beauty City Centre Leeds" on Google → Your Business → Posts → Add update', time:'~30 sec',
-      openUrl:'https://www.google.com/search?q=CC+Hair+%26+Beauty+New+York+Street+Leeds', openLabel:'Open Google ↗',
-      sections:[{label:'Post text', content:c.gbp_city_centre, badge:`${(c.gbp_city_centre||'').length}/1500`}]},
-    {id:'instagram', name:'5. Instagram', hint:'+ New Post → add image → paste caption → paste hashtags in first comment', time:'~1 min',
-      openUrl:'https://www.instagram.com', openLabel:'Open Instagram ↗',
-      sections:[{label:'Caption (no URL)', content:c.instagram_caption},{label:'Hashtags', content:c.instagram_hashtags}]},
-    {id:'facebook', name:'6. Facebook', hint:'Create Post → paste text → add image → post', time:'~30 sec',
-      openUrl:'https://www.facebook.com/cchairandbeauty', openLabel:'Open Facebook ↗',
-      sections:[{label:'Post text', content:c.facebook_post}]},
-  ];
-
-  const bonus = [
-    {id:'image', name:'7. Product Image', hint:'Download and use for all posts above.', time:'~30 sec', isImage:true, sections:[]},
-    {id:'review_wp', name:'8. WhatsApp Review Request', hint:'Send to customers who bought this product', time:'~1 min',
-      sections:[{label:'WhatsApp message', content:(c.review_request_whatsapp||'').replace('[GOOGLE_REVIEW_LINK]', s.revChap||'[Add Google review link in Settings]')}]},
-    {id:'review_instore', name:'9. In-Store Script', hint:'Say this at the till after a positive interaction', time:'~5 sec',
-      sections:[{label:'What to say at the till', content:c.review_request_instore},{label:'QR card text', content:c.qr_card_text}]},
-    {id:'tags', name:'10. Check Shopify Tags', hint:'Verify these tags are applied in Shopify for correct collections', time:'~1 min', isTags:true, sections:[], tags:c.menu_tags||[]},
-  ];
-
-  renderTaskList('taskList', tasks, false);
-  renderTaskList('bonusList', bonus, true);
-
-  setTimeout(()=>{
-    const b=document.getElementById('content-blog');
-    if(b) b.classList.add('vis');
-    const imgArea=document.getElementById('aiImageArea');
-    // image section shows placeholder while generating
-  }, 150);
-}
 
 function renderTaskList(containerId, tasks, isBonus) {
   const c = document.getElementById(containerId);
@@ -1276,13 +1221,7 @@ function toggleTask(id, e) {
   else { tasksDone.add(id); item.classList.add('done'); updatePostLogTasks(selectedProduct?.id, id); dbg('TASK_DONE', id); }
   updateProgress();
 }
-function updateProgress() {
-  const main = ['blog','gbp1','gbp2','gbp3','instagram','facebook'];
-  const done = [...tasksDone].filter(id=>main.includes(id)).length;
-  const pct = Math.round(done/6*100);
-  document.getElementById('progressFill').style.width = pct+'%';
-  document.getElementById('progressText').textContent = `${done} of 6 done${done===6?' — 🎉 Complete!':''}`;
-}
+
 
 // ── COPY UTILITIES ─────────────────────────────────────────────────
 function copyToClipboard(text, btn) {
@@ -1328,16 +1267,6 @@ function downloadBase64Image(dataUrl, filename) {
 }
 
 // ── AI IMAGE SETTINGS ──────────────────────────────────────────────
-const IMG_SETTINGS=[
-  {key:'studio',  emoji:'📦', label:'Clean Studio',           hint:'Any product'},
-  {key:'bathroom',emoji:'🛁', label:'Bathroom Shelf',         hint:'Shampoo, conditioner, skin'},
-  {key:'barber',  emoji:'💈', label:'Barber Counter',         hint:'Clippers, edge control, men\'s'},
-  {key:'bedroom', emoji:'🛏', label:'Bedroom Vanity',         hint:'Wigs, makeup, serums'},
-  {key:'salon',   emoji:'💅', label:'Beauty Salon',           hint:'Relaxers, dye, treatments'},
-  {key:'natural', emoji:'🌿', label:'Natural & Spa',          hint:'Oils, shea butter'},
-  {key:'hands',   emoji:'✋', label:'Hands Holding',          hint:'Any product, shows scale'},
-  {key:'flatlay', emoji:'🪞', label:'Flatlay Overhead',       hint:'Extensions, accessories'},
-];
 const SETTING_PROMPTS={
   studio:'Clean white studio surface, soft grey gradient background, professional lighting from above.',
   bathroom:'Clean marble bathroom shelf, soft warm lighting, white towels slightly out of focus in background.',
@@ -1363,7 +1292,7 @@ function autoPickSetting(p) {
 function renderSettingPills(currentSetting) {
   const el = document.getElementById('settingPills');
   if(!el) return;
-  el.innerHTML = IMG_SETTINGS.map(s=>`
+  el.innerHTML = IMAGE_SETTINGS.map(s=>`
     <button class="setting-pill ${s.key===currentSetting?'active':''}" 
       title="${s.hint}"
       onclick="generateAIImageAuto(selectedProduct, generatedContent, '${s.key}')">
@@ -1375,7 +1304,7 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
   const s = cfg();
   if(!s.openaiKey) return;
   const setting = settingOverride || autoPickSetting(product);
-  const settingInfo = IMG_SETTINGS.find(x=>x.key===setting)||IMG_SETTINGS[0];
+  const settingInfo = IMAGE_SETTINGS.find(x=>x.key===setting)||IMAGE_SETTINGS[0];
   const seoBase = (product.title||'').toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').substring(0,55).replace(/-$/,'') + '-cc-hair-beauty-leeds';
   const seoFilename = seoBase+'.png';
   window._aiImageFilename = seoFilename;
@@ -1448,15 +1377,7 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
 
 // ── POST LOG ────────────────────────────────────────────────────────
 function getPostLog() { try { return JSON.parse(localStorage.getItem('cc_post_log')||'[]'); } catch { return []; } }
-function addToPostLog(product, c) {
-  const log = getPostLog();
-  log.unshift({id:Date.now(), date:new Date().toISOString(), productId:product.id, productTitle:product.title, productPrice:product.price, productHandle:product.handle, productType:product.productType||'', vendor:product.vendor||'', blogTitle:c.blog_meta_title||'', blogMetaDesc:c.blog_meta_description||'', tasksCompleted:[]});
-  if(log.length>365) log.pop();
-  localStorage.setItem('cc_post_log', JSON.stringify(log));
-  dbg('LOG_SAVED','Post logged: '+product.title);
-  const el=document.getElementById('logCount');
-  if(el) el.textContent = getPostLog().length+' entries';
-}
+
 function updatePostLogTasks(productId, taskId) {
   const log=getPostLog();
   const e=log.find(x=>x.productId==productId);
@@ -1557,30 +1478,9 @@ const IMAGE_SETTINGS = [
   {key:'flatlay',  emoji:'🪞', label:'Flatlay Overhead'},
 ];
 
-const SETTING_PROMPTS = {
-  studio:   'Clean white studio background, professional lighting. Product label clearly visible.',
-  bathroom: 'Marble bathroom shelf, soft warm lighting, white towel blurred in background.',
-  barber:   'Barbershop counter, dark wood, chrome accents, mirror reflection blurred.',
-  bedroom:  'Bedroom vanity table, warm lighting, round mirror partially visible.',
-  salon:    'Beauty salon station, professional lighting, styling tools softly visible.',
-  natural:  'Wooden surface, eucalyptus leaves, dried flowers, soft natural light.',
-  hands:    'Held in well-manicured hands, clean neutral background, forearm only.',
-  flatlay:  'Flat lay overhead on marble surface, beauty accessories softly arranged around.',
-};
 
 // ── EXTENDED cfg() ────────────────────────────────────────────────────────────
-const _cfgBase = cfg;
-function cfg() {
-  const base = _cfgBase();
-  const g = (a,b) => localStorage.getItem(a) || localStorage.getItem(b) || '';
-  return Object.assign(base, {
-    facebook:  g('cc_facebook','cc_facebook') || DEFAULTS.facebook,
-    instagram: g('cc_instagram','cc_instagram') || DEFAULTS.instagram,
-    gbpChap:   g('cc_rev_chap','cc_review_chapeltown') || DEFAULTS.revChap,
-    gbpRound:  g('cc_rev_round','cc_review_roundhay') || DEFAULTS.revRound,
-    gbpCity:   g('cc_rev_city','cc_review_citycentre') || DEFAULTS.revCity,
-  });
-}
+
 
 // ── SHOW CHECKLIST (sectioned) ────────────────────────────────────────────────
 function showChecklist(content) {
@@ -2101,6 +2001,15 @@ function toggleCollapse(id, render) {
   }
 }
 
+
+function migrateSettings() {
+  [['cc_shopify_domain','cc_shop_domain'],['cc_shopify_token','cc_shop_token'],
+   ['cc_review_chapeltown','cc_rev_chap'],['cc_review_roundhay','cc_rev_round'],
+   ['cc_review_citycentre','cc_rev_city']].forEach(([o,n]) => {
+    const v = localStorage.getItem(o);
+    if (v && !localStorage.getItem(n)) localStorage.setItem(n,v);
+  });
+}
 migrateSettings();
 applyTheme(localStorage.getItem('cc_theme')||'light');
 loadProducts();
