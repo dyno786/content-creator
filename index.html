@@ -2,108 +2,51 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CC Hair & Beauty — Content Studio</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>CC Hair &amp; Beauty — Content Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ── DESIGN TOKENS ─ Teal/White/Yellow app style ─────────────────── */
-:root {
-  --bg:       #F2F4F7;
-  --card:     #FFFFFF;
-  --card2:    #F7F9FC;
-  --teal:     #00B894;
-  --teal2:    #00A381;
-  --teal-bg:  rgba(0,184,148,0.10);
-  --teal-light: #E8F8F5;
-  --yellow:   #FDCB6E;
-  --yellow2:  #F9B44A;
-  --yellow-bg:rgba(253,203,110,0.15);
-  --ink:      #2D3436;
-  --ink2:     #636E72;
-  --ink3:     #B2BEC3;
-  --green:    #00B894;
-  --green-bg: rgba(0,184,148,0.10);
-  --red:      #D63031;
-  --border:   #EEF0F3;
-  --border2:  #DFE3E8;
-  --shadow:   0 2px 12px rgba(0,0,0,0.07);
-  --shadow2:  0 4px 24px rgba(0,0,0,0.10);
-  --r:        12px;
-  --r2:       16px;
-  --r3:       20px;
-
-  /* ── Aliases so component CSS works without full rewrite ── */
-  --bg:       #F2F4F7;   /* already set above */
-  --s1:       #FFFFFF;
-  --s2:       #F4FBF9;
-  --s3:       #E8F5F1;
-  --s4:       #D0EDE5;
-  --b1:       rgba(0,184,148,0.07);
-  --b2:       rgba(0,184,148,0.16);
-  --t1:       #2D3436;
-  --t2:       #636E72;
-  --t3:       #B2BEC3;
-  --blue:     #00B894;
-  --blue2:    #00A381;
-  --blue-bg:  rgba(0,184,148,0.10);
-  --green-bg: rgba(0,184,148,0.10);
+/* ── TOKENS ─ Teal/White/Yellow theme ─────────────────────────────── */
+:root{
+  --bg:#F2F4F7;--card:#FFFFFF;--card2:#F7F9FC;
+  --teal:#00B894;--teal2:#00A381;--teal-light:rgba(0,184,148,0.10);
+  --yellow:#FDCB6E;--yellow2:#F9B44A;--yellow-bg:rgba(253,203,110,0.15);
+  --ink:#2D3436;--ink2:#636E72;--ink3:#B2BEC3;
+  --green:#00B894;--green-bg:rgba(0,184,148,0.10);--red:#D63031;
+  --border:#EEF0F3;--border2:#DFE3E8;
+  --shadow:0 2px 12px rgba(0,0,0,0.07);--shadow2:0 4px 24px rgba(0,0,0,0.10);
+  --r:12px;--r2:16px;--r3:20px;
 }
-body.dark {
-  --bg:       #1A1F2E;
-  --card:     #242B3D;
-  --card2:    #1E2537;
-  --ink:      #ECEFF4;
-  --ink2:     #9BA3B8;
-  --ink3:     #4A5568;
-  --border:   rgba(255,255,255,0.07);
-  --border2:  rgba(255,255,255,0.12);
-  --shadow:   0 2px 12px rgba(0,0,0,0.3);
-  --shadow2:  0 4px 24px rgba(0,0,0,0.4);
-  --teal-light: rgba(0,184,148,0.12);
-  --yellow-bg: rgba(253,203,110,0.10);
+body.dark{
+  --bg:#1A1F2E;--card:#242B3D;--card2:#1E2537;
+  --ink:#ECEFF4;--ink2:#9BA3B8;--ink3:#4A5568;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --shadow:0 2px 12px rgba(0,0,0,0.3);--shadow2:0 4px 24px rgba(0,0,0,0.4);
+  --teal-light:rgba(0,184,148,0.12);--yellow-bg:rgba(253,203,110,0.10);
 }
-
-/* ── RESET ───────────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.55;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
 
-/* ── HEADER ──────────────────────────────────────────────────────── */
-.hdr{
-  background:var(--teal);
-  padding:0 24px;height:60px;
-  display:flex;align-items:center;justify-content:space-between;gap:16px;
-  position:sticky;top:0;z-index:50;
-}
+/* HEADER */
+.hdr{background:var(--teal);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:50}
 .brand{display:flex;align-items:center;gap:12px}
-.brand-mark{
-  width:36px;height:36px;border-radius:10px;
-  background:rgba(255,255,255,0.25);
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
+.brand-mark{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .brand-mark svg{width:20px;height:20px;stroke:white;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .brand-name{font-size:16px;font-weight:700;color:#fff;letter-spacing:-.2px}
 .brand-sub{font-size:10px;color:rgba(255,255,255,0.75);margin-top:1px}
 .hdr-r{display:flex;align-items:center;gap:8px}
 
-/* ── BUTTONS ─────────────────────────────────────────────────────── */
+/* BUTTONS */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:var(--r);font-family:inherit;font-weight:600;cursor:pointer;transition:all .15s;border:none;white-space:nowrap;text-decoration:none;font-size:14px}
 .btn-ghost{background:rgba(255,255,255,0.2);color:#fff;padding:7px 14px;border:1px solid rgba(255,255,255,0.3)}
 .btn-ghost:hover{background:rgba(255,255,255,0.35)}
-.btn-ghost-dark{background:var(--card2);color:var(--ink2);padding:7px 14px;border:1px solid var(--border2)}
-.btn-ghost-dark:hover{background:var(--card);color:var(--ink);border-color:var(--teal)}
+.btn-ghost-dk{background:var(--card2);color:var(--ink2);padding:7px 14px;border:1px solid var(--border2)}
+.btn-ghost-dk:hover{background:var(--card);color:var(--ink);border-color:var(--teal)}
 .btn-teal{background:var(--teal);color:#fff;padding:10px 20px;font-weight:700}
 .btn-teal:hover{background:var(--teal2);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,184,148,.35)}
 .btn-teal:active{transform:translateY(0)}
 .btn-teal:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
-.btn-yellow{background:var(--yellow);color:var(--ink);padding:10px 20px;font-weight:700}
-.btn-yellow:hover{background:var(--yellow2);transform:translateY(-1px)}
-.btn-cta{
-  width:100%;background:var(--teal);color:#fff;
-  font-size:17px;font-weight:700;
-  padding:18px 24px;border-radius:var(--r2);
-  display:flex;flex-direction:column;align-items:center;
-  border:none;cursor:pointer;font-family:inherit;transition:all .2s;
-}
+.btn-cta{width:100%;background:var(--teal);color:#fff;font-size:17px;font-weight:700;padding:18px 24px;border-radius:var(--r2);display:flex;flex-direction:column;align-items:center;border:none;cursor:pointer;font-family:inherit;transition:all .2s}
 .btn-cta:hover{background:var(--teal2);transform:translateY(-1px);box-shadow:0 6px 22px rgba(0,184,148,.4)}
 .btn-cta:active{transform:translateY(0)}
 .btn-cta:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
@@ -112,36 +55,35 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .copy-btn:hover{background:var(--teal-light);border-color:var(--teal);color:var(--teal)}
 .copy-btn.copied{background:var(--teal-light);border-color:var(--teal);color:var(--teal)}
 .open-btn{background:var(--yellow-bg);border:1.5px solid var(--yellow2);color:var(--ink);padding:8px 14px;font-size:13px;border-radius:var(--r);font-family:inherit;cursor:pointer;font-weight:600;white-space:nowrap;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
-.open-btn:hover{background:var(--yellow-bg);border-color:var(--yellow);transform:translateY(-1px)}
+.open-btn:hover{transform:translateY(-1px)}
 .copy-field-btn{width:100%;background:var(--teal);color:#fff;border:none;padding:11px 14px;font-size:13px;border-radius:var(--r);font-family:inherit;cursor:pointer;font-weight:700;margin-top:8px;transition:all .15s}
 .copy-field-btn:hover{background:var(--teal2)}
 .copy-field-btn.copied{background:var(--green);opacity:.8}
 .btn-sm{background:var(--card2);border:1.5px solid var(--border2);color:var(--ink2);padding:6px 12px;font-size:12px;border-radius:var(--r);font-family:inherit;cursor:pointer;font-weight:600;white-space:nowrap;transition:all .15s}
 .btn-sm:hover{background:var(--teal-light);border-color:var(--teal);color:var(--teal)}
 
-/* ── LAYOUT ──────────────────────────────────────────────────────── */
+/* LAYOUT */
 .page{max-width:1100px;width:100%;margin:0 auto;padding:24px 20px}
 
-/* ── STEP PILLS ──────────────────────────────────────────────────── */
+/* STEP PILLS */
 .step-pills{display:flex;background:var(--card);border-radius:var(--r2);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
 .step-pill{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 16px;font-size:14px;font-weight:600;color:var(--ink3);border-right:1px solid var(--border);cursor:default;transition:all .2s}
 .step-pill:last-child{border-right:none}
-.step-num{width:26px;height:26px;border-radius:50%;background:var(--border2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .2s}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--border2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .2s}
 .step-pill.active{color:var(--teal);background:var(--teal-light)}
 .step-pill.active .step-num{background:var(--teal);color:#fff}
-.step-pill.done{color:var(--teal)}
-.step-pill.done .step-num{background:var(--teal);color:#fff}
+.step-pill.done{color:var(--green)}
+.step-pill.done .step-num{background:var(--green);color:#fff}
 
-/* ── WEEK ROW ────────────────────────────────────────────────────── */
-.week-row{display:flex;align-items:center;gap:14px;background:var(--card);border-radius:var(--r2);box-shadow:var(--shadow);padding:14px 18px;margin-bottom:16px}
+/* WEEK BAR */
+.week-row{display:flex;align-items:center;gap:14px;background:var(--card);border-radius:var(--r2);box-shadow:var(--shadow);padding:13px 18px;margin-bottom:16px}
 .week-lbl{font-size:13px;color:var(--ink2);white-space:nowrap;font-weight:500}
 .week-bar-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
 .week-bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--yellow));border-radius:3px;transition:width .4s}
 .week-num{font-size:14px;font-weight:700;color:var(--ink);white-space:nowrap}
 .week-plan-btn{background:var(--yellow-bg);border:1.5px solid var(--yellow2);color:var(--ink);border-radius:var(--r);padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;font-weight:600}
-.week-plan-btn:hover{background:var(--yellow-bg);border-color:var(--yellow)}
 
-/* ── HISTORY ─────────────────────────────────────────────────────── */
+/* HISTORY */
 .history-strip{display:none;background:var(--card);border-radius:var(--r2);box-shadow:var(--shadow);padding:11px 16px;margin-bottom:12px}
 .history-inner{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .history-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--red);white-space:nowrap}
@@ -149,14 +91,14 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .chip{font-size:11px;background:var(--teal-light);border:1px solid var(--teal);color:var(--teal);border-radius:20px;padding:2px 10px;font-weight:600}
 .chip-day{display:none}
 
-/* ── SECTION LABEL ───────────────────────────────────────────────── */
+/* SECTION LABEL */
 .sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--ink3);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
 
-/* ── SUGGESTED CARDS ─────────────────────────────────────────────── */
+/* SUGGESTED */
 .sug-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
 .sug-card{background:var(--card);border-radius:var(--r2);box-shadow:var(--shadow);padding:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px;border:2px solid transparent}
-.sug-card:hover{transform:translateY(-2px);box-shadow:var(--shadow2);border-color:var(--teal)}
-.sug-card.sel{border-color:var(--teal);background:var(--teal-light)}
+.sug-card:hover,.sug-card.sel{transform:translateY(-2px);box-shadow:var(--shadow2);border-color:var(--teal)}
+.sug-card.sel{background:var(--teal-light)}
 .sug-img{width:52px;height:52px;border-radius:10px;object-fit:cover;background:var(--bg);flex-shrink:0}
 .sug-img-ph{width:52px;height:52px;border-radius:10px;background:var(--teal-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px}
 .sug-info{flex:1;min-width:0}
@@ -164,14 +106,14 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .sug-price{font-size:13px;color:var(--teal);margin-top:2px;font-weight:700}
 .sug-badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#fff;background:var(--yellow2);border-radius:20px;padding:2px 8px;margin-top:4px}
 
-/* ── SEARCH ──────────────────────────────────────────────────────── */
+/* SEARCH */
 .search-wrap{position:relative;margin-bottom:10px}
 .search-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink3);font-size:16px;pointer-events:none}
 .search-inp{width:100%;background:var(--card);border:2px solid var(--border2);border-radius:var(--r2);color:var(--ink);font-size:15px;font-family:inherit;padding:13px 14px 13px 42px;outline:none;transition:border-color .15s;box-shadow:var(--shadow)}
 .search-inp:focus{border-color:var(--teal)}
 .search-inp::placeholder{color:var(--ink3)}
 
-/* ── PRODUCT GRID ────────────────────────────────────────────────── */
+/* PRODUCT GRID */
 .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:8px;max-height:280px;overflow-y:auto;margin-bottom:10px;padding-right:2px}
 .prod-grid::-webkit-scrollbar{width:4px}
 .prod-grid::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
@@ -182,13 +124,13 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .p-name{font-size:11px;color:var(--ink);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:500}
 .p-price{font-size:12px;color:var(--teal);margin-top:3px;font-weight:700}
 
-/* ── URL INPUT ───────────────────────────────────────────────────── */
+/* URL INPUT */
 .url-row{display:flex;gap:8px;margin-bottom:6px}
 .url-inp{flex:1;background:var(--card);border:2px solid var(--border2);border-radius:var(--r);color:var(--ink);font-size:14px;font-family:inherit;padding:11px 14px;outline:none;box-shadow:var(--shadow);transition:border-color .15s}
 .url-inp:focus{border-color:var(--teal)}
 .url-inp::placeholder{color:var(--ink3)}
 
-/* ── SELECTED BAR ────────────────────────────────────────────────── */
+/* SELECTED BAR */
 .sel-bar{display:none;background:var(--card);border:2px solid var(--teal);border-radius:var(--r2);padding:16px 18px;align-items:center;gap:16px;margin-bottom:12px;box-shadow:var(--shadow2)}
 .sel-bar-img{width:58px;height:58px;border-radius:12px;object-fit:cover;background:var(--bg);flex-shrink:0}
 .sel-bar-info{flex:1;min-width:0}
@@ -196,12 +138,12 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .sel-bar-price{font-size:14px;color:var(--teal);margin-top:3px;font-weight:700}
 .sel-bar-hint{font-size:12px;color:var(--ink2);margin-top:4px}
 
-/* ── PRE AI ROW ──────────────────────────────────────────────────── */
+/* PRE AI */
 .pre-ai-row{display:none;background:var(--yellow-bg);border:2px solid var(--yellow2);border-radius:var(--r2);padding:13px 18px;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
 .pre-ai-main{font-size:14px;font-weight:600;color:var(--ink)}
 .pre-ai-hint{font-size:12px;color:var(--ink2);margin-top:2px}
 
-/* ── LOADING ─────────────────────────────────────────────────────── */
+/* LOADING */
 .loading-box{display:none;background:var(--card);border-radius:var(--r2);box-shadow:var(--shadow2);padding:40px 24px;text-align:center;margin-bottom:16px}
 .spin{width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 20px}
 .inline-spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite}
@@ -212,10 +154,10 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .ls{font-size:14px;color:var(--ink3);transition:color .3s}
 .ls.active{color:var(--teal);font-weight:600}
 
-/* ── CHECKLIST ───────────────────────────────────────────────────── */
+/* CHECKLIST */
 .cl-panel{display:none;margin-bottom:16px;border-radius:var(--r3);overflow:hidden;box-shadow:var(--shadow2)}
-.cl-hdr{background:var(--teal);border-radius:var(--r3) var(--r3) 0 0;padding:20px 22px}
-.cl-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.7);margin-bottom:6px}
+.cl-hdr{background:var(--teal);padding:20px 22px}
+.cl-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.75);margin-bottom:6px}
 .cl-product{font-size:18px;font-weight:700;color:#fff;line-height:1.3}
 .cl-meta{display:flex;gap:16px;margin-top:10px;flex-wrap:wrap}
 .cl-meta-item{font-size:12px;color:rgba(255,255,255,0.75);display:flex;align-items:center;gap:5px}
@@ -224,24 +166,31 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .prog-fill{height:100%;background:var(--yellow);border-radius:3px;transition:width .4s}
 .prog-lbl{font-size:12px;color:rgba(255,255,255,0.75);margin-top:6px}
 
-/* ── TASK ROWS ───────────────────────────────────────────────────── */
-.task-wrap{background:var(--card);border-radius:0 0 var(--r3) var(--r3);box-shadow:var(--shadow2);overflow:hidden}
+/* TASK SECTION HEADERS */
+.task-sec-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--teal);background:var(--teal-light);border-top:2px solid var(--teal);cursor:pointer;user-select:none}
+.task-sec-hdr:hover{background:rgba(0,184,148,0.15)}
+.task-sec-body{background:var(--card);overflow:hidden}
+.task-sec-body.collapsed{display:none}
+.sec-arrow{font-size:12px;transition:transform .2s}
+.sec-arrow.collapsed{transform:rotate(180deg)}
+
+/* TASK ROWS */
 .task-row{border-bottom:1px solid var(--border);transition:background .15s}
 .task-row:last-child{border-bottom:none}
 .task-row.done{background:var(--teal-light)}
-.task-hdr{display:flex;align-items:center;gap:12px;padding:16px 18px;cursor:pointer}
+.task-hdr{display:flex;align-items:center;gap:12px;padding:16px 18px;cursor:pointer;flex-wrap:nowrap}
 .task-check{width:30px;height:30px;flex-shrink:0;border:2.5px solid var(--border2);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:16px}
 .task-check:hover{border-color:var(--teal);background:var(--teal-light)}
 .task-row.done .task-check{background:var(--teal);border-color:var(--teal);color:#fff}
-.task-info{flex:1;min-width:0}
+.task-info{flex:1;min-width:0;overflow:hidden}
 .task-name{font-size:15px;font-weight:700;color:var(--ink)}
-.task-time{font-size:10px;color:var(--ink2);background:var(--border);border-radius:20px;padding:1px 8px;white-space:nowrap;font-weight:600;margin-left:6px;vertical-align:middle;display:inline-block}
 .task-row.done .task-name{color:var(--ink3)}
+.task-time{font-size:10px;color:var(--ink2);background:var(--border);border-radius:20px;padding:1px 8px;white-space:nowrap;font-weight:600;margin-left:6px;vertical-align:middle;display:inline-block}
 .task-row.done .task-time{color:var(--teal);background:var(--teal-light)}
 .task-hint{font-size:13px;color:var(--ink2);margin-top:3px;line-height:1.4}
-.task-btns{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.task-btns{display:flex;gap:6px;align-items:center;flex-shrink:0;flex-wrap:wrap}
 
-/* ── TASK CONTENT ────────────────────────────────────────────────── */
+/* TASK CONTENT */
 .task-content{display:none;border-top:1px solid var(--border);padding:16px 18px;background:var(--card2)}
 .task-content.open{display:block}
 .content-section{margin-bottom:14px}
@@ -252,38 +201,17 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .content-box::-webkit-scrollbar{width:3px}
 .content-box::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 
-/* ── BONUS ───────────────────────────────────────────────────────── */
-.task-section-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 20px;font-size:13px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.8px;
-  color:var(--teal);background:var(--teal-light);
-  border-top:2px solid var(--teal);cursor:pointer;
-  user-select:none;
-}
-.task-section-header:first-child{border-top:none}
-.task-section-header:hover{background:rgba(0,184,148,0.15)}
-.task-section-body{background:var(--card);overflow:hidden}.task-section-body .task-row:last-child{border-bottom:none}
-.task-section-body.collapsed{display:none}
-.section-toggle{font-size:12px;transition:transform .2s}
-.section-toggle.collapsed{transform:rotate(180deg)}
-.bonus-strip{padding:13px 18px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--card2)}
-
-/* ── TAG PILLS ───────────────────────────────────────────────────── */
+/* TAG PILLS */
 .tag-pills{display:flex;flex-wrap:wrap;gap:5px;padding:4px 0}
 .tag-pill{font-size:12px;background:var(--teal-light);border:1px solid var(--teal);color:var(--teal);border-radius:20px;padding:3px 12px;font-weight:600}
 
-/* ── IMAGE SECTION ───────────────────────────────────────────────── */
+/* IMAGE SECTION */
 .img-section{display:flex;gap:18px;flex-wrap:wrap;padding:6px 0}
 .img-box{flex:1;min-width:180px}
 .img-box-header{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--border)}
-.img-box-body{padding:2px 0}
-.product-img{width:100%;border-radius:var(--r2);object-fit:cover;aspect-ratio:1;border:2px solid var(--border);cursor:pointer;margin-bottom:10px;background:var(--bg);transition:all .2s}
-.product-img:hover{border-color:var(--teal);transform:scale(1.01)}
+.product-img{width:100%;border-radius:var(--r2);object-fit:cover;aspect-ratio:1;border:2px solid var(--border);cursor:pointer;margin-bottom:10px;background:var(--bg)}
 .img-alt{background:var(--teal-light);border:1px solid var(--teal);border-radius:var(--r);padding:9px 12px;font-size:13px;color:var(--teal);line-height:1.5;margin-bottom:8px;font-weight:500}
 .img-filename{font-size:11px;color:var(--ink3);margin-top:6px;word-break:break-all;line-height:1.5}
-
-/* ── SETTING PILLS ───────────────────────────────────────────────── */
 .setting-pills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
 .setting-btn{background:var(--card);border:2px solid var(--border2);color:var(--ink2);border-radius:var(--r);padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap}
 .setting-btn:hover{border-color:var(--teal);color:var(--teal)}
@@ -291,11 +219,8 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .ai-status-box{background:var(--card2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:11px;border:2px dashed var(--border2)}
 .ai-status-text .t1{font-size:14px;font-weight:600;color:var(--ink)}
 .ai-status-text .t2{font-size:12px;color:var(--ink2);margin-top:2px}
-.ai-result-img{width:100%;border-radius:var(--r2);border:2px solid var(--teal);cursor:pointer;margin-bottom:8px;transition:all .2s}
-.ai-result-img:hover{transform:scale(1.01)}
-.ai-cost-note{font-size:11px;color:var(--ink3);text-align:center;margin-bottom:8px}
 
-/* ── COLLAPSE CARDS ──────────────────────────────────────────────── */
+/* COLLAPSE CARDS */
 .bottom-cards{margin-top:28px;display:flex;flex-direction:column;gap:10px}
 .collapse-card{background:var(--card);border-radius:var(--r2);box-shadow:var(--shadow);overflow:hidden}
 .collapse-hdr{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;cursor:pointer;user-select:none}
@@ -307,24 +232,22 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .mono-out{background:var(--bg);border:2px solid var(--border2);border-radius:var(--r);padding:12px 14px;font-family:'DM Mono',monospace;font-size:12px;color:var(--ink2);line-height:1.8;max-height:260px;overflow-y:auto}
 .debug-btns{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
 
-/* ── LOG ENTRIES ─────────────────────────────────────────────────── */
+/* LOG */
 .log-week-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;margin-top:14px}
 .log-week-header:first-child{margin-top:0}
 .log-week-label{font-size:14px;font-weight:700;color:var(--ink)}
-.log-week-count{font-size:12px;color:var(--ink2);font-weight:600;background:var(--teal-light);border-radius:20px;padding:2px 10px;color:var(--teal)}
-.log-entry{background:var(--bg);border:2px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:6px;transition:border-color .15s}
+.log-week-count{font-size:12px;font-weight:600;color:var(--teal);background:var(--teal-light);border-radius:20px;padding:2px 10px}
+.log-entry{background:var(--bg);border:2px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:6px}
 .log-entry:hover{border-color:var(--teal)}
 .log-entry-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .log-day-badge{font-size:10px;font-weight:700;text-transform:uppercase;color:#fff;background:var(--teal);border-radius:20px;padding:2px 8px}
 .log-ts{font-size:11px;color:var(--ink3)}
 .log-entry-title{font-size:14px;font-weight:700;color:var(--ink);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-top:4px}
-.log-entry-blog{font-size:12px;color:var(--ink2);margin-top:2px}
 .log-task-icons{display:flex;gap:3px;flex-shrink:0}
 .log-task-icon{font-size:14px;opacity:.15}
 .log-task-icon.done{opacity:1}
-.log-line{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
 
-/* ── MODAL ───────────────────────────────────────────────────────── */
+/* MODAL */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
 .modal-bg.open{display:flex}
 .modal{background:var(--card);border-radius:var(--r3);width:100%;max-width:500px;padding:28px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow2)}
@@ -335,44 +258,59 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .form-inp{width:100%;padding:11px 14px;background:var(--bg);border:2px solid var(--border2);border-radius:var(--r);color:var(--ink);font-size:15px;font-family:inherit;outline:none;transition:border-color .15s}
 .form-inp:focus{border-color:var(--teal)}
 .form-hint{font-size:11px;color:var(--ink3);margin-top:4px}
-.form-section-title{font-size:13px;font-weight:700;color:var(--teal);margin:18px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--teal-light);text-transform:uppercase;letter-spacing:.5px}
+.form-sec-title{font-size:13px;font-weight:700;color:var(--teal);margin:18px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--teal-light);text-transform:uppercase;letter-spacing:.5px}
 .modal-btns{display:flex;gap:8px;margin-top:22px}
 
-/* ── TOAST ───────────────────────────────────────────────────────── */
+/* TOAST */
 .toast{position:fixed;bottom:22px;right:22px;background:var(--card);border:2px solid var(--border2);border-radius:var(--r2);padding:12px 20px;font-size:14px;font-weight:600;color:var(--ink);z-index:200;transform:translateY(70px);opacity:0;transition:all .25s;max-width:320px;box-shadow:var(--shadow2)}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.success{border-color:var(--teal);color:var(--teal)}
 .toast.error{border-color:var(--red);color:var(--red)}
 
-/* ── MISC ────────────────────────────────────────────────────────── */
+/* MISC */
 .empty{text-align:center;padding:28px;font-size:15px;color:var(--ink3)}
 @media(max-width:600px){.hdr{padding:0 16px}.sug-grid{grid-template-columns:1fr 1fr}.week-row{flex-wrap:wrap;gap:10px}.task-btns{flex-wrap:wrap}.img-section{flex-direction:column}.page{padding:18px 12px}}
 </style>
+
 </head>
 <body>
+
+<!-- HEADER -->
 <header class="hdr">
   <div class="brand">
-    <div class="brand-mark"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-    <div><div class="brand-name">CC Hair &amp; Beauty</div><div class="brand-sub">Content Studio · Leeds Est. 1989</div></div>
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <div>
+      <div class="brand-name">CC Hair &amp; Beauty</div>
+      <div class="brand-sub">Content Studio · Leeds Est. 1989</div>
+    </div>
   </div>
   <div class="hdr-r">
     <button class="btn btn-ghost" onclick="loadProducts()">↻ Refresh</button>
     <button class="btn btn-ghost" id="pastPostsBtn" onclick="openPastPosts()">📋 Past Posts</button>
     <button class="btn btn-ghost" id="themeBtn" onclick="toggleTheme()">🌙 Dark</button>
-    <button class="btn btn-ghost-dark" onclick="openSettings()">⚙ Settings</button>
+    <button class="btn btn-ghost-dk" onclick="openSettings()">⚙ Settings</button>
   </div>
 </header>
+
 <div class="page">
+
+  <!-- STEP PILLS -->
   <div class="step-pills">
     <div class="step-pill active" id="sp1"><div class="step-num">1</div>Pick a Product</div>
     <div class="step-pill" id="sp2"><div class="step-num">2</div>Generate &amp; Publish</div>
   </div>
+
+  <!-- WEEK BAR -->
   <div class="week-row">
     <span class="week-lbl">This week</span>
     <div class="week-bar-wrap"><div class="week-bar-fill" id="weekGrid" style="width:0%"></div></div>
     <span class="week-num" id="weekCounter">0 / 7 blogs</span>
     <button class="week-plan-btn" onclick="generateWeekSchedule()">📅 Plan week</button>
   </div>
+
+  <!-- HISTORY -->
   <div class="history-strip" id="historyBar">
     <div class="history-inner">
       <span class="history-label">Done this week</span>
@@ -380,29 +318,41 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
       <span id="historyCount" style="font-size:12px;color:var(--ink3);white-space:nowrap"></span>
     </div>
   </div>
+
+  <!-- STEP 1 -->
   <div id="step1">
     <div class="sec-lbl" id="todayLabel">Suggested Today</div>
     <div class="sug-grid" id="sugGrid"><div class="empty">Loading products…</div></div>
-    <div class="sec-lbl" style="margin-top:6px">All Products <span style="font-size:11px;color:var(--ink3);font-weight:400;text-transform:none;letter-spacing:0">Active only · Newest first</span></div>
+
+    <div class="sec-lbl" style="margin-top:6px">
+      All Products
+      <span style="font-size:11px;color:var(--ink3);font-weight:400;text-transform:none;letter-spacing:0">Active only · Newest first</span>
+    </div>
     <div class="search-wrap">
       <span class="search-ico">🔍</span>
       <input class="search-inp" id="searchInput" type="text" placeholder="Search by product name or brand…" oninput="filterProducts(this.value)">
     </div>
     <div class="prod-grid" id="productGrid"><div class="empty">Loading…</div></div>
-    <div style="text-align:center;margin-bottom:22px"><button class="btn btn-ghost-dark" onclick="loadMoreProducts()">Load more products ↓</button></div>
+    <div style="text-align:center;margin-bottom:22px">
+      <button class="btn btn-ghost-dk" onclick="loadMoreProducts()">Load more products ↓</button>
+    </div>
+
     <div class="sec-lbl">Or Paste a Product URL</div>
     <div class="url-row">
       <input class="url-inp" id="urlInput" type="text" placeholder="https://cchairandbeauty.com/products/…">
       <button class="btn btn-teal" onclick="loadFromUrl()">Load</button>
     </div>
     <p style="font-size:13px;color:var(--ink3);margin-bottom:24px">Paste any product URL — we'll load the details automatically</p>
+
     <div style="display:flex;gap:7px;flex-wrap:wrap">
       <button class="btn-sm" onclick="runDebug()">Test Connection</button>
       <button class="btn-sm" onclick="clearCache()">⟳ Reload Products</button>
       <button class="btn-sm" onclick="testGenerate()">Test API</button>
     </div>
-    <div id="debugOutput" style="display:none;margin-top:10px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--r);padding:12px 14px;font-size:12px;font-family:'DM Mono',monospace;color:var(--ink2);line-height:1.7;max-height:180px;overflow-y:auto;white-space:pre-wrap"></div>
+    <div id="debugOutput" style="display:none;margin-top:10px;background:var(--bg);border:2px solid var(--border2);border-radius:var(--r);padding:12px 14px;font-size:12px;font-family:DM Mono,monospace;color:var(--ink2);line-height:1.7;max-height:180px;overflow-y:auto;white-space:pre-wrap"></div>
   </div>
+
+  <!-- SELECTED BAR -->
   <div class="sel-bar" id="selectedBar">
     <img class="sel-bar-img" id="selImg" src="" alt="">
     <div class="sel-bar-info">
@@ -410,28 +360,39 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
       <div class="sel-bar-price" id="selPrice"></div>
       <div class="sel-bar-hint">Ready to generate content for this product</div>
     </div>
-    <button class="btn btn-ghost-dark" onclick="changeProduct()">Change</button>
+    <button class="btn btn-ghost-dk" onclick="changeProduct()">Change</button>
   </div>
+
+  <!-- PRE AI IMAGE -->
   <div class="pre-ai-row" id="preAiBtn">
-    <div><div class="pre-ai-main">✦ Start AI image now — it'll be ready by Task 5</div><div class="pre-ai-hint">Runs in background · ~15 sec · ~4p per image</div></div>
-    <button class="btn btn-yellow" onclick="preGenerateAI()">✦ Generate Image</button>
+    <div>
+      <div class="pre-ai-main">✦ Generate AI image now — ready by Task 3</div>
+      <div class="pre-ai-hint">Runs in background · ~15 sec · ~4p per image</div>
+    </div>
+    <button class="btn btn-ghost-dk" onclick="preGenerateAI()">Generate Image</button>
   </div>
+
+  <!-- GENERATE BUTTON -->
   <button class="btn-cta" id="genBtn" onclick="generateContent()" style="display:none;margin-bottom:10px">
     Generate Today's Content
     <span class="cta-sub">Blog · 3 GBP posts · Instagram · Facebook · Review request</span>
   </button>
+
+  <!-- LOADING -->
   <div class="loading-box" id="loadingPanel">
     <div class="spin"></div>
     <div class="load-title">Generating your content…</div>
-    <div class="load-sub">Takes about 30–45 seconds</div>
+    <div class="load-sub">Takes about 20–30 seconds</div>
     <div class="load-steps">
-      <div class="ls" id="ls1">Writing 1,200+ word SEO blog post…</div>
+      <div class="ls" id="ls1">Writing SEO blog post…</div>
       <div class="ls" id="ls2">Creating 3 GBP posts — Chapeltown, Roundhay, City Centre…</div>
       <div class="ls" id="ls3">Writing Instagram &amp; Facebook posts…</div>
       <div class="ls" id="ls4">Generating WhatsApp review request…</div>
       <div class="ls" id="ls5">Tagging product categories…</div>
     </div>
   </div>
+
+  <!-- CHECKLIST -->
   <div class="cl-panel" id="checklistPanel">
     <div class="cl-hdr">
       <div class="cl-eyebrow">Step 2 — Work through this list</div>
@@ -445,38 +406,41 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
         <div class="prog-lbl" id="progressText">0 of 8 done</div>
       </div>
     </div>
-    <!-- SECTION: BLOG -->
-    <div class="task-section-header" onclick="toggleSection('blogSection')">
+
+    <!-- BLOG SECTION -->
+    <div class="task-sec-hdr" onclick="toggleSection('blogSec')">
       <span>📝 Shopify Blog Post</span>
-      <span class="section-toggle" id="blogSection-arrow">▼</span>
+      <span class="sec-arrow" id="blogSec-arrow">▼</span>
     </div>
-    <div class="task-section-body" id="blogSection"><div id="taskList"></div></div>
+    <div class="task-sec-body" id="blogSec"><div id="taskList"></div></div>
 
-    <!-- SECTION: GBP -->
-    <div class="task-section-header" onclick="toggleSection('gbpSection')">
+    <!-- GBP SECTION -->
+    <div class="task-sec-hdr" onclick="toggleSection('gbpSec')">
       <span>📍 Google Business Profile — All 3 Branches</span>
-      <span class="section-toggle" id="gbpSection-arrow">▼</span>
+      <span class="sec-arrow" id="gbpSec-arrow">▼</span>
     </div>
-    <div class="task-section-body" id="gbpSection"><div id="gbpList"></div></div>
+    <div class="task-sec-body" id="gbpSec"><div id="gbpList"></div></div>
 
-    <!-- SECTION: SOCIAL + IMAGE + VIDEO -->
-    <div class="task-section-header" onclick="toggleSection('socialSection')">
+    <!-- SOCIAL SECTION -->
+    <div class="task-sec-hdr" onclick="toggleSection('socialSec')">
       <span>📸 Social Media, Images &amp; Video</span>
-      <span class="section-toggle" id="socialSection-arrow">▼</span>
+      <span class="sec-arrow" id="socialSec-arrow">▼</span>
     </div>
-    <div class="task-section-body" id="socialSection"><div id="socialList"></div></div>
+    <div class="task-sec-body" id="socialSec"><div id="socialList"></div></div>
 
-    <!-- SECTION: REVIEW + TAGS -->
-    <div class="task-section-header" onclick="toggleSection('reviewSection')">
+    <!-- REVIEW SECTION -->
+    <div class="task-sec-hdr" onclick="toggleSection('reviewSec')">
       <span>⭐ Reviews &amp; Tags</span>
-      <span class="section-toggle" id="reviewSection-arrow">▼</span>
+      <span class="sec-arrow" id="reviewSec-arrow">▼</span>
     </div>
-    <div class="task-section-body" id="reviewSection"><div id="reviewList"></div></div>
+    <div class="task-sec-body" id="reviewSec"><div id="reviewList"></div></div>
 
     <div style="padding:14px 18px;border-top:1px solid var(--border);background:var(--card);border-radius:0 0 var(--r3) var(--r3)">
-      <button class="btn btn-ghost-dark" onclick="resetToStep1()" style="width:100%;font-size:14px">← Generate content for a different product</button>
+      <button class="btn btn-ghost-dk" onclick="resetToStep1()" style="width:100%;font-size:14px">← Generate content for a different product</button>
     </div>
   </div>
+
+  <!-- BOTTOM PANELS -->
   <div class="bottom-cards">
     <div class="collapse-card">
       <div class="collapse-hdr" onclick="toggleCollapse('logBody',true)">
@@ -501,7 +465,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
         </div>
       </div>
       <div class="collapse-body" id="debugBody">
-        <p style="font-size:14px;color:var(--ink3);margin-bottom:12px">If something goes wrong, copy these logs and paste them for help.</p>
+        <p style="font-size:14px;color:var(--ink3);margin-bottom:12px">If something goes wrong, copy these logs and paste them here for help.</p>
         <div class="mono-out" id="debugConsoleOutput">No logs yet</div>
         <div class="debug-btns">
           <button class="btn-sm" onclick="runDebug()">Test Shopify</button>
@@ -511,48 +475,26 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
       </div>
     </div>
   </div>
+
 </div>
+
 <!-- PAST POSTS MODAL -->
 <div class="modal-bg" id="pastPostsModal" style="align-items:flex-start;padding:0">
-  <div style="
-    background:var(--bg);width:100%;max-width:100%;height:100vh;
-    display:flex;flex-direction:column;overflow:hidden;
-  ">
-    <!-- Header -->
-    <div style="
-      background:var(--teal);padding:16px 24px;
-      display:flex;align-items:center;justify-content:space-between;
-      flex-shrink:0;
-    ">
+  <div style="background:var(--bg);width:100%;max-width:100%;height:100vh;display:flex;flex-direction:column;overflow:hidden">
+    <div style="background:var(--teal);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
       <div>
         <div style="font-size:18px;font-weight:700;color:#fff">📋 Past Posts</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:2px">
-          All generated content — click any post to view and share with staff
-        </div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:2px">Click any post to view, copy content, or continue in tool</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
-        <input type="text" id="postSearch" placeholder="Search posts…"
-          oninput="filterPastPosts(this.value)"
-          style="padding:8px 14px;border-radius:20px;border:none;font-size:14px;
-                 font-family:inherit;width:220px;outline:none;background:rgba(255,255,255,0.2);
-                 color:#fff;::placeholder:{color:rgba(255,255,255,0.6)}">
-        <button onclick="closePastPosts()" style="
-          background:rgba(255,255,255,0.2);border:none;color:#fff;
-          border-radius:8px;padding:8px 16px;font-size:14px;
-          font-weight:600;cursor:pointer;font-family:inherit;
-        ">✕ Close</button>
+        <input type="text" id="postSearch" placeholder="Search posts…" oninput="filterPastPosts(this.value)"
+          style="padding:8px 14px;border-radius:20px;border:none;font-size:14px;font-family:inherit;width:200px;outline:none;background:rgba(255,255,255,0.2);color:#fff">
+        <button onclick="closePastPosts()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:8px;padding:8px 16px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">✕ Close</button>
       </div>
     </div>
-    <!-- Body -->
     <div style="display:flex;flex:1;overflow:hidden">
-      <!-- LEFT: Post list -->
-      <div style="
-        width:340px;flex-shrink:0;
-        border-right:1px solid var(--border);
-        overflow-y:auto;background:var(--card);
-      " id="pastPostsList"></div>
-      <!-- RIGHT: Post detail -->
-      <div style="flex:1;overflow-y:auto;padding:24px;" id="pastPostDetail">
+      <div style="width:340px;flex-shrink:0;border-right:1px solid var(--border);overflow-y:auto;background:var(--card)" id="pastPostsList"></div>
+      <div style="flex:1;overflow-y:auto;padding:24px" id="pastPostDetail">
         <div style="text-align:center;padding:60px 20px;color:var(--ink3)">
           <div style="font-size:48px;margin-bottom:16px">📄</div>
           <div style="font-size:16px;font-weight:600;color:var(--ink2);margin-bottom:8px">Select a post to view</div>
@@ -563,36 +505,64 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
   </div>
 </div>
 
+<!-- SETTINGS MODAL -->
 <div class="modal-bg" id="settingsModal">
   <div class="modal">
-    <div class="modal-title">Settings</div>
-    <div class="form-grp"><label class="form-lbl">Anthropic API Key</label><input class="form-inp" type="password" id="s_apiKey" placeholder="sk-ant-…"></div>
-    <div class="form-grp"><label class="form-lbl">Shopify Store Domain</label><input class="form-inp" type="text" id="s_shopDomain" placeholder="cchairandbeauty.myshopify.com"></div>
-    <div class="form-grp"><label class="form-lbl">Shopify Access Token</label><input class="form-inp" type="password" id="s_shopToken" placeholder="shpat_…"></div>
-    <div class="form-grp"><label class="form-lbl">OpenAI API Key <span style="font-weight:400;text-transform:none;letter-spacing:0">(AI images · ~4p each)</span></label><input class="form-inp" type="password" id="s_openaiKey" placeholder="sk-…"><div class="form-hint">Placed in styled scenes — barber, bathroom, bedroom etc</div></div>
-    <div class="form-grp"><label class="form-lbl">Google Review Link — Chapeltown</label><input class="form-inp" type="text" id="s_revChap" placeholder="https://g.page/r/…"></div>
-    <div class="form-grp"><label class="form-lbl">Google Review Link — Roundhay</label><input class="form-inp" type="text" id="s_revRound" placeholder="https://g.page/r/…"></div>
-    <div class="form-grp"><label class="form-lbl">Google Review Link — City Centre</label><input class="form-inp" type="text" id="s_revCity" placeholder="https://g.page/r/…"></div>
-    <div style="border-top:1px solid var(--border2);margin:18px 0 14px;padding-top:18px">
-      <div style="font-size:13px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Branch Links</div>
-      <div class="form-grp"><label class="form-lbl">GBP — Chapeltown Road</label><input class="form-inp" type="text" id="s_gbpChap" placeholder="https://g.page/r/… or Google Maps link"></div>
-      <div class="form-grp"><label class="form-lbl">GBP — Roundhay Road</label><input class="form-inp" type="text" id="s_gbpRound" placeholder="https://g.page/r/…"></div>
-      <div class="form-grp"><label class="form-lbl">GBP — City Centre</label><input class="form-inp" type="text" id="s_gbpCity" placeholder="https://g.page/r/…"></div>
+    <div class="modal-title">⚙ Settings</div>
+    <div class="modal-sub">Saved in this browser only</div>
+    <div class="form-sec-title">🤖 AI Keys</div>
+    <div class="form-grp">
+      <label class="form-lbl">Anthropic API Key (Claude)</label>
+      <input class="form-inp" type="password" id="s_apiKey" placeholder="sk-ant-…">
     </div>
-    <div style="border-top:1px solid var(--border2);margin-bottom:14px;padding-top:14px">
-      <div style="font-size:13px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Social Media Links</div>
-      <div class="form-grp"><label class="form-lbl">Instagram Profile URL</label><input class="form-inp" type="text" id="s_instagram" placeholder="https://www.instagram.com/cchairandbeauty"></div>
-      <div class="form-grp"><label class="form-lbl">Facebook Page URL</label><input class="form-inp" type="text" id="s_facebook" placeholder="https://www.facebook.com/cchairandbeauty"></div>
+    <div class="form-grp">
+      <label class="form-lbl">OpenAI API Key (AI images · ~4p each)</label>
+      <input class="form-inp" type="password" id="s_openaiKey" placeholder="sk-…">
+      <div class="form-hint">Generates styled product photos — barber, bathroom, bedroom etc</div>
+    </div>
+    <div class="form-sec-title">🛍 Shopify</div>
+    <div class="form-grp">
+      <label class="form-lbl">Store Domain</label>
+      <input class="form-inp" type="text" id="s_shopDomain" placeholder="cchairandbeauty.myshopify.com">
+    </div>
+    <div class="form-grp">
+      <label class="form-lbl">Access Token</label>
+      <input class="form-inp" type="password" id="s_shopToken" placeholder="shpat_…">
+    </div>
+    <div class="form-sec-title">📱 Social Media</div>
+    <div class="form-grp">
+      <label class="form-lbl">Facebook Page URL</label>
+      <input class="form-inp" type="text" id="s_facebook" placeholder="https://www.facebook.com/cchairandbeauty">
+    </div>
+    <div class="form-grp">
+      <label class="form-lbl">Instagram Profile URL</label>
+      <input class="form-inp" type="text" id="s_instagram" placeholder="https://www.instagram.com/cchairandbeauty">
+    </div>
+    <div class="form-sec-title">⭐ Google Review Links</div>
+    <div class="form-hint" style="margin-bottom:10px">Pre-filled — replace with your actual GBP review links for better results</div>
+    <div class="form-grp">
+      <label class="form-lbl">📍 Chapeltown Road (LS7)</label>
+      <input class="form-inp" type="text" id="s_revChap" placeholder="https://g.page/r/…">
+    </div>
+    <div class="form-grp">
+      <label class="form-lbl">📍 Roundhay Road (LS8)</label>
+      <input class="form-inp" type="text" id="s_revRound" placeholder="https://g.page/r/…">
+    </div>
+    <div class="form-grp">
+      <label class="form-lbl">📍 City Centre — New York Street</label>
+      <input class="form-inp" type="text" id="s_revCity" placeholder="https://g.page/r/…">
     </div>
     <div class="modal-btns">
-      <button class="btn btn-ghost" onclick="closeSettings()" style="font-size:15px;padding:11px 20px">Cancel</button>
+      <button class="btn btn-ghost-dk" onclick="closeSettings()" style="font-size:15px;padding:11px 20px">Cancel</button>
       <button class="btn btn-teal" onclick="saveSettings()" style="flex:1;font-size:15px;padding:11px">Save Settings</button>
     </div>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
 
 <script>
+
 
 // ── STATE ──────────────────────────────────────────────────────────
 let allProducts = [], filteredProducts = [], selectedProduct = null;
@@ -602,48 +572,16 @@ const PAGE = 50;
 const debugLogs = [];
 
 // ── SETTINGS ───────────────────────────────────────────────────────
-// Hardcoded defaults — always work even if Settings not filled in
-const DEFAULTS = {
-  shopDomain: 'cchairandbeauty.myshopify.com',
-  gbpChap:    'https://www.google.com/search?q=CC+Hair+Beauty+Chapeltown+Road+Leeds+LS7',
-  gbpRound:   'https://www.google.com/search?q=CC+Hair+Beauty+Roundhay+Road+Leeds+LS8',
-  gbpCity:    'https://www.google.com/search?q=CC+Hair+Beauty+New+York+Street+Leeds',
-  instagram:  'https://www.instagram.com/cchairandbeauty',
-  facebook:   'https://www.facebook.com/cchairandbeauty',
-  revChap:    'https://www.google.com/search?q=CC+Hair+Beauty+Chapeltown+Road+Leeds+LS7',
-  revRound:   'https://www.google.com/search?q=CC+Hair+Beauty+Roundhay+Road+Leeds+LS8',
-  revCity:    'https://www.google.com/search?q=CC+Hair+Beauty+New+York+Street+Leeds',
-};
-
 function cfg() {
-  // Read from both old key names (cc_shopify_*) and new (cc_shop_*)
-  // so existing saved settings continue to work after the redesign
-  const get = (newKey, oldKey) => localStorage.getItem(newKey) || localStorage.getItem(oldKey) || '';
   return {
-    apiKey:     get('cc_api_key', 'cc_api_key'),
-    shopDomain: get('cc_shop_domain', 'cc_shopify_domain') || 'cchairandbeauty.myshopify.com',
-    shopToken:  get('cc_shop_token', 'cc_shopify_token'),
-    openaiKey:  get('cc_openai_key', 'cc_openai_key'),
-    revChap:    get('cc_rev_chap', 'cc_review_chapeltown'),
-    revRound:   get('cc_rev_round', 'cc_review_roundhay'),
-    revCity:    get('cc_rev_city', 'cc_review_citycentre'),
+    apiKey:      localStorage.getItem('cc_api_key') || '',
+    shopDomain:  localStorage.getItem('cc_shop_domain') || 'cchairandbeauty.myshopify.com',
+    shopToken:   localStorage.getItem('cc_shop_token') || '',
+    openaiKey:   localStorage.getItem('cc_openai_key') || '',
+    revChap:     localStorage.getItem('cc_rev_chap') || '',
+    revRound:    localStorage.getItem('cc_rev_round') || '',
+    revCity:     localStorage.getItem('cc_rev_city') || '',
   };
-}
-// Migrate old keys to new keys on first load
-function migrateSettings() {
-  const migrations = [
-    ['cc_shopify_domain', 'cc_shop_domain'],
-    ['cc_shopify_token',  'cc_shop_token'],
-    ['cc_review_chapeltown', 'cc_rev_chap'],
-    ['cc_review_roundhay',   'cc_rev_round'],
-    ['cc_review_citycentre', 'cc_rev_city'],
-  ];
-  migrations.forEach(([oldKey, newKey]) => {
-    const val = localStorage.getItem(oldKey);
-    if (val && !localStorage.getItem(newKey)) {
-      localStorage.setItem(newKey, val);
-    }
-  });
 }
 function openSettings() {
   const s = cfg();
@@ -665,36 +603,18 @@ function saveSettings() {
   localStorage.setItem('cc_rev_chap',   document.getElementById('s_revChap').value.trim());
   localStorage.setItem('cc_rev_round',  document.getElementById('s_revRound').value.trim());
   localStorage.setItem('cc_rev_city',   document.getElementById('s_revCity').value.trim());
-  localStorage.setItem('cc_facebook',   document.getElementById('s_facebook').value.trim());
-  localStorage.setItem('cc_instagram',  document.getElementById('s_instagram').value.trim());
-  const gbpC = document.getElementById('s_gbpChap'); if(gbpC) localStorage.setItem('cc_gbp_chap', gbpC.value.trim());
-  const gbpR = document.getElementById('s_gbpRound'); if(gbpR) localStorage.setItem('cc_gbp_round', gbpR.value.trim());
-  const gbpCi = document.getElementById('s_gbpCity'); if(gbpCi) localStorage.setItem('cc_gbp_city', gbpCi.value.trim());
-  const ig = document.getElementById('s_instagram'); if(ig) localStorage.setItem('cc_instagram', ig.value.trim());
-  const fb = document.getElementById('s_facebook'); if(fb) localStorage.setItem('cc_facebook', fb.value.trim());
   closeSettings();
   toast('Settings saved ✓', 'success');
   loadProducts();
 }
 
 // ── THEME ──────────────────────────────────────────────────────────
-let _theme = localStorage.getItem('cc_theme') || 'light';
-// 3 themes: dark → light → gmail → dark
-const THEMES = ['dark','light','gmail'];
-const THEME_LABELS = { dark:'☀ Light', light:'🔵 Gmail', gmail:'🌙 Dark' };
-const THEME_NAMES  = { dark:'Dark', light:'Light', gmail:'Gmail Blue' };
-
+let _theme = localStorage.getItem('cc_theme') || 'dark';
 function applyTheme(t) {
   _theme = t;
   localStorage.setItem('cc_theme', t);
-  document.body.className = t === 'dark' ? 'dark' : '';
-  const btn = document.getElementById('themeBtn');
-  if (btn) btn.textContent = THEME_LABELS[t] || '☀ Light';
-}
-function toggleTheme() {
-  const idx = THEMES.indexOf(_theme);
-  const next = THEMES[(idx + 1) % THEMES.length];
-  applyTheme(next);
+  document.body.className = t === 'light' ? 'light' : '';
+  document.getElementById('themeBtn').textContent = t === 'light' ? '🌙 Dark' : '☀ Light';
 }
 function toggleTheme() { applyTheme(_theme === 'dark' ? 'light' : 'dark'); }
 
@@ -727,12 +647,12 @@ function copyDebugLogs() {
 }
 function toggleDebugPanel() {
   const b = document.getElementById('debugBody');
-  b.classList.toggle('open');
+  b.classList.toggle('vis');
   if (b.classList.contains('vis')) renderDebugLog();
 }
 function toggleLogPanel() {
   const b = document.getElementById('logBody');
-  b.classList.toggle('open');
+  b.classList.toggle('vis');
   if (b.classList.contains('vis')) renderPostLog();
 }
 async function runDebug() {
@@ -768,7 +688,7 @@ async function testGenerate() {
     const txt = d.content?.[0]?.text || '';
     dbg(txt.includes('WORKING')?'API_OK':'TEST_WARN','Response: "'+txt+'"');
   } catch(e) { dbg('TEST_ERROR', e.message); }
-  document.getElementById('debugBody').classList.add('open');
+  document.getElementById('debugBody').classList.add('vis');
   renderDebugLog();
 }
 
@@ -814,17 +734,17 @@ function todayFocus() {
 }
 
 // ── PRODUCT LOADING ─────────────────────────────────────────────────
-let _loadingProducts = false;
+let _loadProductsRunning = false;
 async function loadProducts() {
-  if (_loadingProducts) { dbg('LOAD','Already loading — skipped'); return; }
-  _loadingProducts = true;
+  if (_loadProductsRunning) { dbg("LOAD","Already loading — skipped"); return; }
+  _loadProductsRunning = true;
   const s = cfg();
   const cacheKey = 'cc_products', cacheTime = 'cc_products_time';
   const cached = localStorage.getItem(cacheKey);
   const cachedAt = localStorage.getItem(cacheTime);
-  const SEVEN_DAYS = 7*24*60*60*1000;
+  const THREE_DAYS = 7*24*60*60*1000;
 
-  if (cached && cachedAt && (Date.now()-parseInt(cachedAt)) < SEVEN_DAYS) {
+  if (cached && cachedAt && (Date.now()-parseInt(cachedAt)) < THREE_DAYS) {
     allProducts = JSON.parse(cached);
     dbg('CACHE', `Loaded ${allProducts.length} products from cache`);
     renderProducts(); renderSuggested(); showHistory(); return;
@@ -956,17 +876,15 @@ function renderSuggested() {
   if(s3) suggestions.push({...s3, badge:'Latest added'});
 
   g.innerHTML = suggestions.length ? suggestions.map(p => `
-    <div class="sug-card ${p.selected ? 'sel' : ''}" data-id="${p.id}" onclick='selectProduct(${JSON.stringify(p).replace(/'/g,"&#39;")})'>
-      ${p.image
-        ? `<img class="sug-img" src="${p.image}" alt="${p.title}" onerror="this.style.display='none'">`
-        : `<div class="sug-img-ph">✂</div>`}
-      <div class="sug-info" style="flex:1;min-width:0">
-        <div class="sug-name">${p.title}</div>
+    <div class="sug-card" data-id="${p.id}" onclick='selectProduct(${JSON.stringify(p).replace(/'/g,"&#39;")})'>
+      ${p.image ? `<img class="sug-img" src="${p.image}" alt="${p.title}" onerror="this.style.display='none'">` : `<div class="sug-img-placeholder">✂</div>`}
+      <div>
+        <div class="sug-title">${p.title}</div>
         <div class="sug-price">${p.price}</div>
         <div class="sug-badge">${p.badge}</div>
       </div>
     </div>
-  `).join('') : '<div class="empty">No products — check Settings ⚙</div>';
+  `).join('') : '<div class="empty">Loading…</div>';
 }
 
 // ── SELECT PRODUCT ─────────────────────────────────────────────────
@@ -1107,7 +1025,7 @@ GENDER TARGETING:
 BRAND VOICE: Warm, community-focused, knowledgeable about afro hair. Never corporate. References Chapeltown community naturally.
 
 SEO RULES:
-- Blog minimum 1,200 words, proper HTML (h2, h3, p, strong, ul, li)
+- Blog 500-700 words, concise and focused, proper HTML (h2, h3, p, strong, ul, li)
 - Blog includes 2 internal links to cchairandbeauty.com collections
 - Meta title max 60 chars
 - Meta description max 155 chars
@@ -1152,12 +1070,12 @@ Description: ${selectedProduct.description}
 URL: https://cchairandbeauty.com/products/${selectedProduct.handle}`;
 
   dbg('START', `Generating: ${selectedProduct.title}`);
-  dbg('API', `Model: claude-sonnet-4-20250514, max_tokens: 8000`);
+  dbg('API', `Model: claude-sonnet-4-20250514, max_tokens: 4000`);
 
   try {
     const r = await fetch('/api/claude', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:8000, apiKey:s.apiKey, system:SYSTEM, messages:[{role:'user',content:USER}]})
+      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:4000, apiKey:s.apiKey, system:SYSTEM, messages:[{role:'user',content:USER}]})
     });
     clearInterval(iv);
     dbg('HTTP', `${r.status} ${r.statusText}`);
@@ -1206,259 +1124,136 @@ URL: https://cchairandbeauty.com/products/${selectedProduct.handle}`;
 }
 
 // ── CHECKLIST ──────────────────────────────────────────────────────
-function showChecklist(content) {
-  tasksDone = new Set();
-  document.getElementById('loadingPanel').style.display = 'none';
-  document.getElementById('checklistPanel').style.display = 'block';
+function showChecklist(c) {
+  document.getElementById('loadingPanel').style.display='none';
+  document.getElementById('checklistPanel').style.display='block';
   document.getElementById('clProduct').textContent = selectedProduct.title;
-  document.getElementById('clTime').textContent = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  setStep(1);
-  document.getElementById('sp2').className = 'step-pill active';
+  document.getElementById('clTime').textContent = '⏰ '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  tasksDone.clear(); updateProgress(); showHistory();
 
   const s = cfg();
-
-  // ── SECTION 1: SHOPIFY BLOG ─────────────────────────────────────
-  const blogTasks = [
-    {id:'blog', name:'1. Shopify Blog Post', hint:'Open Shopify → Blog Posts → Add Blog Post → follow the steps below', time:'~3 min',
+  const tasks = [
+    {id:'blog', name:'1. Shopify Blog Post', hint:'Click <> in toolbar → paste HTML. Fill meta title, description, tags.', time:'~2 min',
       openUrl:'https://admin.shopify.com/store/cchairandbeauty/articles/new', openLabel:'Open Shopify ↗',
       sections:[
-        {label:'① Title — paste into the Title field at top',           content:content.blog_meta_title,        badge:`${(content.blog_meta_title||'').length}/70`},
-        {label:'② Content — click the <> HTML icon then paste all of this', content:content.blog_html},
-        {label:'③ Excerpt — paste into the Excerpt box',                content:content.blog_excerpt},
-        {label:'④ SEO Title — click "Edit website SEO" → Page title',   content:content.blog_meta_title,        badge:`${(content.blog_meta_title||'').length}/70`},
-        {label:'⑤ SEO Description — Edit website SEO → Description',   content:content.blog_meta_description,  badge:`${(content.blog_meta_description||'').length}/160`},
-        {label:'⑥ Focus Keyword',                                       content:content.blog_focus_keyword},
-        {label:'⑦ Tags — paste into the Tags field (right sidebar)',    content:content.blog_tags},
-        {label:'⑧ Image Alt Text — upload featured image then set alt', content:content.blog_alt_text},
+        {label:'① Title', content:c.blog_meta_title, badge:`${(c.blog_meta_title||'').length} chars`},
+        {label:'② Blog HTML (click <> icon then paste)', content:c.blog_html},
+        {label:'③ Excerpt', content:c.blog_excerpt},
+        {label:'④ SEO Page Title', content:c.blog_meta_title, badge:`${(c.blog_meta_title||'').length}/70`},
+        {label:'⑤ SEO Meta Description', content:c.blog_meta_description, badge:`${(c.blog_meta_description||'').length}/160`},
+        {label:'⑥ Tags', content:c.blog_tags},
+        {label:'⑦ Image Alt Text', content:c.blog_alt_text},
       ]},
+    {id:'gbp1', name:'2. GBP — Chapeltown Road', hint:'Search "CC Hair Beauty Chapeltown Leeds" on Google → Your Business → Posts → Add update', time:'~30 sec',
+      openUrl:'https://www.google.com/search?q=CC+Hair+%26+Beauty+Chapeltown+Road+Leeds+LS7', openLabel:'Open Google ↗',
+      sections:[{label:'Post text', content:c.gbp_chapeltown, badge:`${(c.gbp_chapeltown||'').length}/1500`}]},
+    {id:'gbp2', name:'3. GBP — Roundhay Road', hint:'Search "CC Hair Beauty Roundhay Leeds" on Google → Your Business → Posts → Add update', time:'~30 sec',
+      openUrl:'https://www.google.com/search?q=CC+Hair+%26+Beauty+Roundhay+Road+Leeds+LS8', openLabel:'Open Google ↗',
+      sections:[{label:'Post text', content:c.gbp_roundhay, badge:`${(c.gbp_roundhay||'').length}/1500`}]},
+    {id:'gbp3', name:'4. GBP — City Centre', hint:'Search "CC Hair Beauty City Centre Leeds" on Google → Your Business → Posts → Add update', time:'~30 sec',
+      openUrl:'https://www.google.com/search?q=CC+Hair+%26+Beauty+New+York+Street+Leeds', openLabel:'Open Google ↗',
+      sections:[{label:'Post text', content:c.gbp_city_centre, badge:`${(c.gbp_city_centre||'').length}/1500`}]},
+    {id:'instagram', name:'5. Instagram', hint:'+ New Post → add image → paste caption → paste hashtags in first comment', time:'~1 min',
+      openUrl:'https://www.instagram.com', openLabel:'Open Instagram ↗',
+      sections:[{label:'Caption (no URL)', content:c.instagram_caption},{label:'Hashtags', content:c.instagram_hashtags}]},
+    {id:'facebook', name:'6. Facebook', hint:'Create Post → paste text → add image → post', time:'~30 sec',
+      openUrl:'https://www.facebook.com/cchairandbeauty', openLabel:'Open Facebook ↗',
+      sections:[{label:'Post text', content:c.facebook_post}]},
   ];
 
-  // ── SECTION 2: GOOGLE BUSINESS PROFILE ─────────────────────────
-  const gbpTasks = [
-    {id:'gbp_chap', name:'2a. GBP — Chapeltown Road',
-      hint:'Google → Search "CC Hair Beauty Chapeltown" → Your Business → Posts → Add update',
-      time:'~30 sec', openUrl: s.revChap || DEFAULTS.revChap, openLabel:'Open Google ↗',
-      sections:[{label:'Post text (max 1,500 chars)', content:content.gbp_chapeltown, badge:`${(content.gbp_chapeltown||'').length}/1500`}]},
-    {id:'gbp_round', name:'2b. GBP — Roundhay Road',
-      hint:'Google → Search "CC Hair Beauty Roundhay" → Your Business → Posts → Add update',
-      time:'~30 sec', openUrl: s.revRound || DEFAULTS.revRound, openLabel:'Open Google ↗',
-      sections:[{label:'Post text (max 1,500 chars)', content:content.gbp_roundhay, badge:`${(content.gbp_roundhay||'').length}/1500`}]},
-    {id:'gbp_city', name:'2c. GBP — City Centre',
-      hint:'Google → Search "CC Hair Beauty New York Street Leeds" → Your Business → Posts → Add update',
-      time:'~30 sec', openUrl: s.revCity || DEFAULTS.revCity, openLabel:'Open Google ↗',
-      sections:[{label:'Post text (max 1,500 chars)', content:content.gbp_city_centre, badge:`${(content.gbp_city_centre||'').length}/1500`}]},
+  const bonus = [
+    {id:'image', name:'7. Product Image', hint:'Download and use for all posts above.', time:'~30 sec', isImage:true, sections:[]},
+    {id:'review_wp', name:'8. WhatsApp Review Request', hint:'Send to customers who bought this product', time:'~1 min',
+      sections:[{label:'WhatsApp message', content:(c.review_request_whatsapp||'').replace('[GOOGLE_REVIEW_LINK]', s.revChap||'[Add Google review link in Settings]')}]},
+    {id:'review_instore', name:'9. In-Store Script', hint:'Say this at the till after a positive interaction', time:'~5 sec',
+      sections:[{label:'What to say at the till', content:c.review_request_instore},{label:'QR card text', content:c.qr_card_text}]},
+    {id:'tags', name:'10. Check Shopify Tags', hint:'Verify these tags are applied in Shopify for correct collections', time:'~1 min', isTags:true, sections:[], tags:c.menu_tags||[]},
   ];
 
-  // ── SECTION 3: SOCIAL MEDIA + IMAGE ────────────────────────────
-  const socialTasks = [
-    {id:'image', name:'3. Product Image',
-      hint:'Download the original Shopify image + AI-styled version for all posts',
-      time:'~5 sec', isImage:true, sections:[]},
-    {id:'instagram', name:'4. Instagram',
-      hint:'+ New Post → upload image → paste caption → paste hashtags as first comment',
-      time:'~1 min', openUrl: s.instagram || DEFAULTS.instagram, openLabel:'Open Instagram ↗',
-      sections:[
-        {label:'Caption', content:content.instagram_caption},
-        {label:'Hashtags (post as first comment)', content:content.instagram_hashtags},
-      ]},
-    {id:'facebook', name:'5. Facebook',
-      hint:'Create Post → paste text → add image → publish',
-      time:'~30 sec', openUrl: s.facebook || DEFAULTS.facebook, openLabel:'Open Facebook ↗',
-      sections:[{label:'Post text', content:content.facebook_post}]},
-    {id:'tiktok', name:'6. TikTok / Video Script',
-      hint:'Use this script with Kling AI or HeyGen to create a short video',
-      time:'~2 min',
-      sections:[
-        {label:'🎬 Kling AI Prompt (image-to-video, realistic motion)', content:buildKlingScript(selectedProduct, content)},
-        {label:'🎭 HeyGen Script (funny/viral talking head version)',     content:buildHeyGenScript(selectedProduct, content)},
-        {label:'🗣 10-Second Voiceover',                                content:buildVoiceover(selectedProduct, content)},
-      ]},
-  ];
+  renderTaskList('taskList', tasks, false);
+  renderTaskList('bonusList', bonus, true);
 
-  // ── SECTION 4: REVIEW + TAGS ────────────────────────────────────
-  const reviewTasks = [
-    {id:'review', name:'7. WhatsApp Review Request',
-      hint:'Send to customers who bought this product — personalise the name if you can',
-      time:'~1 min', openUrl: s.revChap || DEFAULTS.revChap, openLabel:'Open Review Link ↗',
-      sections:[
-        {label:'WhatsApp Message', content:(content.review_request_whatsapp||'')},
-        {label:'In-Store Verbal Script (say at the till)', content:content.review_request_instore||''},
-        {label:'Counter QR Card Text', content:content.qr_card_text||''},
-      ]},
-    {id:'tags', name:'8. Shopify Tags',
-      hint:'Check these are applied in Shopify → Products → select product → Tags',
-      time:'~1 min', isTags:true, sections:[], tags:content.menu_tags||[]},
-  ];
-
-  // Render all sections
-  renderSection('taskList',     blogTasks,   'SHOPIFY BLOG',                '📝', false);
-  renderSection('gbpList',      gbpTasks,    'GOOGLE BUSINESS PROFILE',     '📍', false);
-  renderSection('socialList',   socialTasks, 'SOCIAL MEDIA & IMAGES',       '📸', false);
-  renderSection('reviewList',   reviewTasks, 'REVIEW & TAGS',               '⭐', true);
-
-  updateProgress();
-  window.scrollTo({top: document.getElementById('checklistPanel').offsetTop - 80, behavior:'smooth'});
-
-  // Auto-generate AI image in background
-  if (s.openaiKey && selectedProduct.image && !window._aiImageData) {
-    setTimeout(() => generateAIImageAuto(selectedProduct, content, autoPickSetting(selectedProduct)), 600);
-  }
+  setTimeout(()=>{
+    const b=document.getElementById('content-blog');
+    if(b) b.classList.add('vis');
+    const imgArea=document.getElementById('aiImageArea');
+    // image section shows placeholder while generating
+  }, 150);
 }
 
-
-function renderSection(containerId, tasks, sectionTitle, icon, isBonus) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  container.innerHTML = '';
+function renderTaskList(containerId, tasks, isBonus) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
   tasks.forEach(t => {
     const item = document.createElement('div');
-    item.className = 'task-row'; item.id = `task-${t.id}`;
-
-    const btns = t.isImage
-      ? `<button class="copy-btn" onclick="expandTask('${t.id}',event)">View</button>`
-      : `<div style="display:flex;gap:6px;flex-wrap:wrap">
-          ${t.sections?.length ? `<button class="copy-btn" onclick="copyTaskAll('${t.id}',event)">Copy All</button>` : ''}
-          ${t.openUrl ? `<a href="${t.openUrl}" target="_blank" class="open-btn">${t.openLabel||'Open ↗'}</a>` : ''}
-          <button class="copy-btn" onclick="expandTask('${t.id}',event)">View</button>
-        </div>`;
-
-    const sectionsHtml = (t.sections||[]).map((sec,si) => `
-      <div class="content-section">
-        <div class="content-label">
-          <span>${sec.label}</span>
-          ${sec.badge ? `<span class="content-badge">${sec.badge}</span>` : ''}
-        </div>
-        <div class="content-box" id="cb-${t.id}-${si}">${(sec.content||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-        <button class="copy-field-btn" data-copy="${encodeURIComponent(sec.content||'')}" onclick="copyEncoded(this)">⎘ Copy ${sec.label.replace(/[①②③④⑤⑥⑦⑧📍📌🎬🎭🗣]/g,'').split('(')[0].split('→')[0].trim()}</button>
-      </div>
-    `).join('');
-
-    const tagsHtml = t.isTags
-      ? `<div class="tag-pills">${(t.tags||[]).map ? (t.tags||[]).map(tg=>`<div class="tag-pill">${tg}</div>`).join('') : String(t.tags||'').split(',').map(tg=>`<div class="tag-pill">${tg.trim()}</div>`).join('')}</div>`
-      : '';
-
+    item.className='task-item'; item.id=`task-${t.id}`;
+    const btns = t.isImage ? `<button class="copy-btn" onclick="expandTask('${t.id}',event)">View</button>` :
+      `${t.sections?.length?`<button class="copy-btn" onclick="copyTaskAll('${t.id}',event)">Copy All</button>`:''}
+       ${t.openUrl?`<a href="${t.openUrl}" target="_blank" class="open-btn">${t.openLabel||'Open ↗'}</a>`:''}
+       <button class="copy-btn" onclick="expandTask('${t.id}',event)">View</button>`;
     item.innerHTML = `
-      <div class="task-hdr" onclick="expandTask('${t.id}',event)">
+      <div class="task-row">
         <div class="task-check" onclick="toggleTask('${t.id}',event)"></div>
         <div class="task-info">
-          <div class="task-name">${t.name} <span class="task-time">${t.time}</span></div>
+          <div class="task-name">${t.name}</div>
           <div class="task-hint">${t.hint}</div>
         </div>
+        <div class="task-time">${t.time}</div>
         <div class="task-btns">${btns}</div>
       </div>
       <div class="task-content" id="content-${t.id}">
         ${t.isImage ? buildImageSection() : ''}
-        ${tagsHtml}
-        ${sectionsHtml}
+        ${t.isTags ? `<div class="tag-pills">${(t.tags||[]).map(tg=>`<div class="tag-pill">${tg}</div>`).join('')}</div>` : ''}
+        ${(t.sections||[]).map((sec,si)=>`
+          <div class="content-section">
+            <div class="content-label">
+              <span>${sec.label}</span>
+              ${sec.badge?`<span class="content-badge">${sec.badge}</span>`:''}
+            </div>
+            <div class="content-box" id="cb-${t.id}-${si}">${(sec.content||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+            <button class="copy-field-btn" data-copy="${encodeURIComponent(sec.content||'')}" onclick="copyEncoded(this)">⎘ Copy ${sec.label.split('(')[0].split('→')[0].trim()}</button>
+          </div>
+        `).join('')}
       </div>`;
-    container.appendChild(item);
+    c.appendChild(item);
   });
 }
 
-// ── VIDEO SCRIPT BUILDERS ─────────────────────────────────────────
-function buildKlingScript(product, content) {
-  const title = product.title || 'product';
-  const setting = autoPickSetting(product);
-  const settingDesc = {
-    barber:   'barbershop counter with chrome accents and mirror background',
-    bathroom: 'marble bathroom shelf with white towels',
-    bedroom:  'bedroom vanity table with warm lighting',
-    salon:    'beauty salon station, professional lighting',
-    natural:  'wooden surface surrounded by botanicals and flowers',
-    hands:    'held in manicured hands, clean neutral background',
-    flatlay:  'flat lay on marble surface with beauty accessories',
-    studio:   'clean white studio with professional lighting',
-  }[setting] || 'clean studio';
-
-  return `Kling AI Image-to-Video Prompt:
-
-"Camera slowly pushes in towards the ${title} on a ${settingDesc}. The product label is clearly visible. A hand reaches in from the right, picks up the bottle/product, turns it slowly to face camera, then gently places it back down. Soft bokeh background. Cinematic luxury product feel. 10 seconds. No faces."
-
-Settings: Professional Mode · 10 seconds · 1080p
-Cost: ~70 credits (~£0.70)
-Source image: Use the Shopify product image or AI generated image from Task 3`;
-}
-
-function buildHeyGenScript(product, content) {
-  const title = product.title || 'product';
-  const price = product.price || '';
-  const vendor = product.vendor || 'CC Hair & Beauty';
-  const tags = (product.tags || '').toLowerCase();
-  const isMens = tags.includes('men') || tags.includes('barber') || tags.includes('wave');
-
-  return `HeyGen Talking Head Script (funny/viral):
-
-[HOOK - say with energy, pointing to camera]
-"Okay, we need to talk about ${title}... because ${isMens ? 'the guys' : 'ladies'}, this is RIDICULOUS."
-
-[MIDDLE - hold up product or show it on screen]
-"This is ${vendor}'s ${title}. ${content.blog_excerpt ? content.blog_excerpt.split('.')[0]+'.' : 'And honestly? It just works.'}"
-
-[CALL TO ACTION - big energy]
-"You can get it right now at CC Hair and Beauty — Chapeltown, Roundhay, City Centre Leeds — or online at CC Hair and Beauty dot com. Link in bio. Go. Seriously."
-
-Avatar tip: Use a confident avatar, informal clothing, casual background
-Tone: Surprised/impressed, friendly, fun — NOT salesy
-Length: ~25-30 seconds
-Platform: TikTok / Instagram Reels`;
-}
-
-function buildVoiceover(product, content) {
-  const title = product.title || 'product';
-  const price = product.price || '';
-  const vendor = product.vendor || '';
-  return `10-Second Voiceover Script:
-
-"This is the ${vendor} ${title.split(' ').slice(0,4).join(' ')}. Available now at CC Hair and Beauty, Leeds — Chapeltown, Roundhay, City Centre. Shop online at cchairandbeauty.com."
-
-Word count: ~30 words · Spoken pace: normal
-Use with: Kling video, HeyGen, or record yourself
-Add: trending TikTok audio underneath at low volume`;
-}
-
-
 function buildImageSection() {
   if(!selectedProduct) return '';
-  const img = selectedProduct.image;
-  const title = selectedProduct.title || '';
+  const img=selectedProduct.image, title=selectedProduct.title||'', handle=selectedProduct.handle||String(selectedProduct.id||'');
   const seoBase = title.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').substring(0,55).replace(/-$/,'') + '-cc-hair-beauty-leeds';
-  const altText = (generatedContent?.blog_alt_text) || title + ' — CC Hair & Beauty Leeds';
-  const autoSetting = autoPickSetting(selectedProduct);
-
-  return `<div class="img-section">
-    <div class="img-box">
-      <div class="img-box-header">Shopify Product Photo</div>
-      <div class="img-box-body">
-        ${img
-          ? `<img class="product-img" src="${img}" alt="${title}" onclick="window.open('${img}','_blank')" title="Click to open full size">
-             <div class="img-alt"><strong>Alt text:</strong> ${altText}</div>
-             <button class="copy-field-btn" onclick="downloadShopifyImage('${img}','${seoBase}')">⬇ Download — ${seoBase}.jpg</button>
-             <div class="img-filename">Saves as: ${seoBase}.jpg</div>`
-          : `<div style="background:var(--s3);border-radius:var(--r2);aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--ink3);margin-bottom:8px;padding:20px;text-align:center">No image in Shopify — load real products in ⚙ Settings</div>`
-        }
-      </div>
-    </div>
-    <div class="img-box">
-      <div class="img-box-header">AI Generated Image — ChatGPT</div>
-      <div class="img-box-body">
-        <div class="setting-pills" id="settingPills">
-          ${IMAGE_SETTINGS.map(s=>`<button class="setting-btn${s.key===autoSetting?' active':''}" data-key="${s.key}" onclick="generateAIImageAuto(selectedProduct,generatedContent,'${s.key}')">${s.emoji} ${s.label}</button>`).join('')}
+  const altText = (generatedContent?.blog_alt_text)||title+' — CC Hair & Beauty Leeds';
+  return `
+    <div class="img-section">
+      ${img ? `
+      <div class="img-box" style="flex:1;min-width:160px">
+        <div class="img-box-header">Shopify Product Image</div>
+        <div class="img-box-body">
+          <img class="product-img" src="${img}" alt="${title}" onclick="window.open('${img}','_blank')" title="Click for full size">
+          <div class="img-alt"><strong style="color:var(--c-gold)">Alt text:</strong> ${altText}</div>
+          <button class="copy-field-btn" onclick="downloadShopifyImage('${img}','${seoBase}')">⬇ Download Product Image</button>
+          <div class="img-filename">Saves as: ${seoBase}.jpg</div>
         </div>
-        <div id="aiImageArea">
-          ${cfg().openaiKey
-            ? `<div class="ai-status-box"><span class="inline-spinner"></span><div class="ai-status-text"><div class="t1">Generating AI image…</div><div class="t2">~15 sec · ~4p · no faces · Google-safe</div></div></div>`
-            : `<div class="ai-status-box"><div class="ai-status-text"><div class="t1" style="color:var(--ink3)">Add OpenAI key in ⚙ Settings to enable AI images</div><div class="t2">~4p per image · styled scenes · Google-safe</div></div></div>`
-          }
+      </div>` : `<div class="img-box" style="flex:1"><div class="img-box-body" style="color:var(--c-text3);font-size:12px">No product image in Shopify</div></div>`}
+      <div class="img-box" style="flex:1;min-width:160px">
+        <div class="img-box-header">AI Generated Image (ChatGPT)</div>
+        <div class="img-box-body">
+          <div class="setting-pills" id="settingPills"></div>
+          <div id="aiImageArea">
+            ${cfg().openaiKey
+              ? `<div style="background:var(--c-surface3);border-radius:var(--radius);padding:12px;display:flex;align-items:center;gap:8px"><div class="inline-spinner"></div><div style="font-size:12px;color:var(--c-text2)">Generating…</div></div>`
+              : `<div style="font-size:12px;color:var(--c-text3);padding:8px 0">Add OpenAI key in <button onclick="openSettings()" style="background:none;border:none;color:var(--c-gold);cursor:pointer;font-weight:700;font-family:inherit;padding:0">⚙ Settings</button> to enable AI images (~4p each)</div>`
+            }
+          </div>
         </div>
       </div>
-    </div>
-  </div>`;
+    </div>`;
 }
-
 
 function expandTask(id, e) {
   if(e) e.stopPropagation();
-  document.getElementById(`content-${id}`)?.classList.toggle('open');
+  document.getElementById(`content-${id}`)?.classList.toggle('vis');
 }
 function copyEncoded(btn) {
   const text = decodeURIComponent(btn.getAttribute('data-copy')||'');
@@ -1470,24 +1265,23 @@ function copyTaskAll(id, e) {
   const btns = task.querySelectorAll('[data-copy]');
   const combined = Array.from(btns).map(b=>decodeURIComponent(b.getAttribute('data-copy')||'')).filter(Boolean).join('\n\n');
   if(combined) {
-    document.getElementById(`content-${id}`)?.classList.add('open');
+    document.getElementById(`content-${id}`)?.classList.add('vis');
     copyToClipboard(combined, e?.target);
   }
 }
 function toggleTask(id, e) {
   if(e) e.stopPropagation();
   const item = document.getElementById(`task-${id}`);
-  const check = item.querySelector('.task-check');
-  if(tasksDone.has(id)) { tasksDone.delete(id); item.classList.remove('done'); if(check) check.textContent=''; }
-  else { tasksDone.add(id); item.classList.add('done'); if(check) check.textContent='✓'; updatePostLogTasks(selectedProduct?.id, id); dbg('TASK_DONE', id); }
+  if(tasksDone.has(id)) { tasksDone.delete(id); item.classList.remove('done'); }
+  else { tasksDone.add(id); item.classList.add('done'); updatePostLogTasks(selectedProduct?.id, id); dbg('TASK_DONE', id); }
   updateProgress();
 }
 function updateProgress() {
-  const main = ['blog','gbp_chap','gbp_round','gbp_city','instagram','facebook','image','review'];
+  const main = ['blog','gbp1','gbp2','gbp3','instagram','facebook'];
   const done = [...tasksDone].filter(id=>main.includes(id)).length;
-  const pct = Math.round(done/8*100);
+  const pct = Math.round(done/6*100);
   document.getElementById('progressFill').style.width = pct+'%';
-  document.getElementById('progressText').textContent = `${done} of 8 done${done===6?' — 🎉 Complete!':''}`;
+  document.getElementById('progressText').textContent = `${done} of 6 done${done===6?' — 🎉 Complete!':''}`;
 }
 
 // ── COPY UTILITIES ─────────────────────────────────────────────────
@@ -1534,7 +1328,7 @@ function downloadBase64Image(dataUrl, filename) {
 }
 
 // ── AI IMAGE SETTINGS ──────────────────────────────────────────────
-const IMAGE_SETTINGS=[
+const IMG_SETTINGS=[
   {key:'studio',  emoji:'📦', label:'Clean Studio',           hint:'Any product'},
   {key:'bathroom',emoji:'🛁', label:'Bathroom Shelf',         hint:'Shampoo, conditioner, skin'},
   {key:'barber',  emoji:'💈', label:'Barber Counter',         hint:'Clippers, edge control, men\'s'},
@@ -1581,7 +1375,7 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
   const s = cfg();
   if(!s.openaiKey) return;
   const setting = settingOverride || autoPickSetting(product);
-  const settingInfo = IMAGE_SETTINGS.find(x=>x.key===setting)||IMAGE_SETTINGS[0];
+  const settingInfo = IMG_SETTINGS.find(x=>x.key===setting)||IMG_SETTINGS[0];
   const seoBase = (product.title||'').toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').substring(0,55).replace(/-$/,'') + '-cc-hair-beauty-leeds';
   const seoFilename = seoBase+'.png';
   window._aiImageFilename = seoFilename;
@@ -1592,16 +1386,16 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
 
   renderSettingPills(setting);
   area.innerHTML = `
-    <div style="background:var(--card2);border-radius:var(--r);padding:12px;display:flex;align-items:center;gap:8px">
+    <div style="background:var(--c-surface3);border-radius:var(--radius);padding:12px;display:flex;align-items:center;gap:8px">
       <div class="inline-spinner"></div>
       <div>
-        <div style="font-size:12px;font-weight:600;color:var(--ink)">${settingInfo.emoji} ${settingInfo.label}</div>
-        <div style="font-size:11px;color:var(--ink3);margin-top:2px">~15 seconds · no faces · Google safe ✓</div>
+        <div style="font-size:12px;font-weight:600;color:var(--c-text)">${settingInfo.emoji} ${settingInfo.label}</div>
+        <div style="font-size:11px;color:var(--c-text3);margin-top:2px">~15 seconds · no faces · Google safe ✓</div>
       </div>
     </div>`;
 
   if(!product.image) {
-    area.innerHTML=`<div style="font-size:12px;color:var(--ink3);padding:8px 0">No product image — load real Shopify products for AI editing</div>`;
+    area.innerHTML=`<div style="font-size:12px;color:var(--c-text3);padding:8px 0">No product image — load real Shopify products for AI editing</div>`;
     return;
   }
 
@@ -1618,17 +1412,13 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
   dbg('AI_IMAGE', `${settingInfo.label} — ${seoFilename}`);
 
   try {
-    // 55 second timeout (Vercel function is set to 60s)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 55000);
-
+    const _ctrl = new AbortController();
+    const _tid = setTimeout(()=>_ctrl.abort(), 55000);
     const r = await fetch('/api/generate-image', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      signal: controller.signal,
+      method:'POST', headers:{'Content-Type':'application/json'}, signal:_ctrl.signal,
       body: JSON.stringify({productImageUrl:product.image, productName:product.title, productType:product.productType||'', setting, apiKey:s.openaiKey})
     });
-    clearTimeout(timeoutId);
+    clearTimeout(_tid);
     const d = await r.json();
     if(!r.ok||d.error) throw new Error(d.error||`Error ${r.status}`);
     const b64 = d.image_b64;
@@ -1639,24 +1429,18 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
 
     area.innerHTML = `
       <div>
-        <img src="${imgSrc}" style="width:100%;border-radius:var(--r);border:1px solid var(--border);display:block;cursor:pointer;margin-bottom:8px" onclick="window.open(this.src,'_blank')" title="Click for full size">
+        <img src="${imgSrc}" style="width:100%;border-radius:var(--radius);border:1px solid var(--c-border);display:block;cursor:pointer;margin-bottom:8px" onclick="window.open(this.src,'_blank')" title="Click for full size">
         <button class="copy-field-btn" onclick="downloadBase64Image(window._aiImageData,'${seoFilename}')">⬇ Download AI Image</button>
         <div class="img-filename" style="margin-top:4px">Saves as: ${seoFilename}</div>
-        <div style="font-size:10px;color:var(--ink3);margin-top:4px">${d.estimated_cost||'~4p'} · ${settingInfo.label}</div>
+        <div style="font-size:10px;color:var(--c-text3);margin-top:4px">${d.estimated_cost||'~4p'} · ${settingInfo.label}</div>
       </div>`;
     showToast && toast('✓ AI image ready in Task 7','success');
   } catch(e) {
-    const isTimeout = e.name === 'AbortError' || e.message.includes('abort');
-    const errMsg = isTimeout
-      ? 'Request timed out — image generation takes ~20 seconds. Click Try Again.'
-      : e.message;
-    dbg('AI_IMAGE_ERROR', errMsg);
+    dbg('AI_IMAGE_ERROR', e.message);
     area.innerHTML=`
-      <div style="background:rgba(239,68,68,0.08);border:1.5px solid rgba(239,68,68,0.3);border-radius:var(--r);padding:14px">
-        <div style="font-size:14px;color:var(--red);font-weight:700;margin-bottom:6px">
-          ${isTimeout ? '⏱ Timed out' : '✗ AI image failed'}
-        </div>
-        <div style="font-size:12px;color:var(--ink3);margin-bottom:10px;word-break:break-all">${errMsg}</div>
+      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius);padding:10px">
+        <div style="font-size:12px;color:var(--c-red);font-weight:600;margin-bottom:4px">AI image failed</div>
+        <div style="font-size:11px;color:var(--c-text3);margin-bottom:8px;word-break:break-all">${e.message}</div>
         <button class="btn-sm" onclick="generateAIImageAuto(selectedProduct,generatedContent,'${setting}')">↻ Try Again</button>
       </div>`;
   }
@@ -1664,49 +1448,14 @@ async function generateAIImageAuto(product, parsedContent, settingOverride) {
 
 // ── POST LOG ────────────────────────────────────────────────────────
 function getPostLog() { try { return JSON.parse(localStorage.getItem('cc_post_log')||'[]'); } catch { return []; } }
-function addToPostLog(product, content) {
+function addToPostLog(product, c) {
   const log = getPostLog();
-  const id = Date.now();
-  const entry = {
-    id,
-    shareId: btoa(String(id)).replace(/=/g,''),  // short shareable ID
-    date: new Date().toISOString(),
-    productId: product.id,
-    productTitle: product.title,
-    productPrice: product.price || '',
-    productHandle: product.handle || '',
-    productImage: product.image || '',
-    productType: product.productType || '',
-    vendor: product.vendor || '',
-    // Full content saved for sharing
-    content: {
-      blog_meta_title:       content.blog_meta_title || '',
-      blog_meta_description: content.blog_meta_description || '',
-      blog_focus_keyword:    content.blog_focus_keyword || '',
-      blog_excerpt:          content.blog_excerpt || '',
-      blog_tags:             content.blog_tags || '',
-      blog_alt_text:         content.blog_alt_text || '',
-      blog_html:             content.blog_html || '',
-      gbp_chapeltown:        content.gbp_chapeltown || '',
-      gbp_roundhay:          content.gbp_roundhay || '',
-      gbp_city_centre:       content.gbp_city_centre || '',
-      instagram_caption:     content.instagram_caption || '',
-      instagram_hashtags:    content.instagram_hashtags || '',
-      facebook_post:         content.facebook_post || '',
-      review_request_whatsapp: content.review_request_whatsapp || '',
-      review_request_instore:  content.review_request_instore || '',
-      qr_card_text:          content.qr_card_text || '',
-      menu_tags:             content.menu_tags || '',
-      shopify_tags:          content.shopify_tags || '',
-    },
-    tasksCompleted: [],
-  };
-  log.unshift(entry);
-  if (log.length > 365) log.pop();
+  log.unshift({id:Date.now(), date:new Date().toISOString(), productId:product.id, productTitle:product.title, productPrice:product.price, productHandle:product.handle, productType:product.productType||'', vendor:product.vendor||'', blogTitle:c.blog_meta_title||'', blogMetaDesc:c.blog_meta_description||'', tasksCompleted:[]});
+  if(log.length>365) log.pop();
   localStorage.setItem('cc_post_log', JSON.stringify(log));
-  dbg('LOG_SAVED', product.title + ' — shareId: ' + entry.shareId);
-  const el = document.getElementById('logCount');
-  if (el) el.textContent = getPostLog().length + ' entries';
+  dbg('LOG_SAVED','Post logged: '+product.title);
+  const el=document.getElementById('logCount');
+  if(el) el.textContent = getPostLog().length+' entries';
 }
 function updatePostLogTasks(productId, taskId) {
   const log=getPostLog();
@@ -1736,7 +1485,7 @@ function renderPostLog() {
             <div class="log-task-icons">${Object.entries(icons).map(([tid,ico])=>`<span class="log-task-icon" style="opacity:${tasks.includes(tid)?1:0.2}" title="${tid}">${ico}</span>`).join('')}</div>
           </div>
           <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-            <a href="https://cchairandbeauty.com/products/${e.productHandle}" target="_blank" style="font-size:11px;color:var(--teal);text-decoration:none">View product ↗</a>
+            <a href="https://cchairandbeauty.com/products/${e.productHandle}" target="_blank" style="font-size:11px;color:var(--c-gold);text-decoration:none">View product ↗</a>
           </div>
         </div>`;
       }).join('');
@@ -1764,7 +1513,7 @@ function toggleWeekGrid() {
   g.style.display='grid';
   g.innerHTML=days.map((d,i)=>{
     const p=allProducts[Math.floor(Math.random()*allProducts.length)];
-    return `<div class="day-card ${i===today?'today':''}"><div class="day-nm">${d}</div><div class="day-product">${p.title.substring(0,20)}…</div><div style="font-size:9px;color:var(--ink3);margin-top:2px">${focuses[i]}</div></div>`;
+    return `<div class="day-card ${i===today?'today':''}"><div class="day-nm">${d}</div><div class="day-product">${p.title.substring(0,20)}…</div><div style="font-size:9px;color:var(--c-text3);margin-top:2px">${focuses[i]}</div></div>`;
   }).join('');
 }
 
@@ -1779,45 +1528,291 @@ function toast(msg, type='') {
 // ── INIT ────────────────────────────────────────────────────────────
 try { const saved=JSON.parse(localStorage.getItem('cc_debug')||'[]'); debugLogs.push(...saved); } catch{}
 applyTheme(_theme);
-function toggleCollapse(id, render) {
-  const b = document.getElementById(id);
-  if(!b) return;
-  const opening = b.classList.toggle('open');
-  if(opening && render) {
-    if(id === 'debugBody') renderDebugLog();
-    if(id === 'logBody') { renderPostLog(); const lc=document.getElementById('logCount'); if(lc) lc.textContent=getPostLog().length+' entries'; }
+loadProducts();
+const lc=document.getElementById('logCount');
+if(lc) lc.textContent=getPostLog().length+' entries';
+
+
+// ── CONSTANTS ────────────────────────────────────────────────────────────────
+const DEFAULTS = {
+  shopDomain: 'cchairandbeauty.myshopify.com',
+  revChap:    'https://www.google.com/search?q=CC+Hair+Beauty+Chapeltown+Road+Leeds+LS7',
+  revRound:   'https://www.google.com/search?q=CC+Hair+Beauty+Roundhay+Road+Leeds+LS8',
+  revCity:    'https://www.google.com/search?q=CC+Hair+Beauty+New+York+Street+Leeds',
+  gbpChap:    'https://www.google.com/search?q=CC+Hair+Beauty+Chapeltown+Road+Leeds+LS7',
+  gbpRound:   'https://www.google.com/search?q=CC+Hair+Beauty+Roundhay+Road+Leeds+LS8',
+  gbpCity:    'https://www.google.com/search?q=CC+Hair+Beauty+New+York+Street+Leeds',
+  facebook:   'https://www.facebook.com/cchairandbeauty',
+  instagram:  'https://www.instagram.com/cchairandbeauty',
+};
+
+const IMAGE_SETTINGS = [
+  {key:'studio',   emoji:'📦', label:'Clean Studio'},
+  {key:'bathroom', emoji:'🛁', label:'Bathroom Shelf'},
+  {key:'barber',   emoji:'💈', label:'Barber Counter'},
+  {key:'bedroom',  emoji:'🛏', label:'Bedroom Vanity'},
+  {key:'salon',    emoji:'💅', label:'Beauty Salon'},
+  {key:'natural',  emoji:'🌿', label:'Natural & Spa'},
+  {key:'hands',    emoji:'✋', label:'Hands Holding'},
+  {key:'flatlay',  emoji:'🪞', label:'Flatlay Overhead'},
+];
+
+const SETTING_PROMPTS = {
+  studio:   'Clean white studio background, professional lighting. Product label clearly visible.',
+  bathroom: 'Marble bathroom shelf, soft warm lighting, white towel blurred in background.',
+  barber:   'Barbershop counter, dark wood, chrome accents, mirror reflection blurred.',
+  bedroom:  'Bedroom vanity table, warm lighting, round mirror partially visible.',
+  salon:    'Beauty salon station, professional lighting, styling tools softly visible.',
+  natural:  'Wooden surface, eucalyptus leaves, dried flowers, soft natural light.',
+  hands:    'Held in well-manicured hands, clean neutral background, forearm only.',
+  flatlay:  'Flat lay overhead on marble surface, beauty accessories softly arranged around.',
+};
+
+// ── EXTENDED cfg() ────────────────────────────────────────────────────────────
+const _cfgBase = cfg;
+function cfg() {
+  const base = _cfgBase();
+  const g = (a,b) => localStorage.getItem(a) || localStorage.getItem(b) || '';
+  return Object.assign(base, {
+    facebook:  g('cc_facebook','cc_facebook') || DEFAULTS.facebook,
+    instagram: g('cc_instagram','cc_instagram') || DEFAULTS.instagram,
+    gbpChap:   g('cc_rev_chap','cc_review_chapeltown') || DEFAULTS.revChap,
+    gbpRound:  g('cc_rev_round','cc_review_roundhay') || DEFAULTS.revRound,
+    gbpCity:   g('cc_rev_city','cc_review_citycentre') || DEFAULTS.revCity,
+  });
+}
+
+// ── SHOW CHECKLIST (sectioned) ────────────────────────────────────────────────
+function showChecklist(content) {
+  tasksDone = new Set();
+  document.getElementById('loadingPanel').style.display = 'none';
+  document.getElementById('checklistPanel').style.display = 'block';
+  document.getElementById('clProduct').textContent = selectedProduct.title;
+  document.getElementById('clTime').textContent = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  setStep(1);
+  const sp2 = document.getElementById('sp2');
+  if (sp2) sp2.className = 'step-pill active';
+
+  const s = cfg();
+
+  const blogTasks = [{
+    id:'blog', name:'1. Shopify Blog Post',
+    hint:'Open Shopify → Blog Posts → Add Blog Post → follow the steps below',
+    time:'~3 min',
+    openUrl:'https://admin.shopify.com/store/cchairandbeauty/articles/new',
+    openLabel:'Open Shopify ↗',
+    sections:[
+      {label:'① Title — paste into Title field',                    content: content.blog_meta_title,        badge:`${(content.blog_meta_title||'').length}/70`},
+      {label:'② Content — click <> icon then paste all HTML',       content: content.blog_html},
+      {label:'③ Excerpt — paste into Excerpt box',                  content: content.blog_excerpt},
+      {label:'④ SEO Title — Edit website SEO → Page title',         content: content.blog_meta_title,        badge:`${(content.blog_meta_title||'').length}/70`},
+      {label:'⑤ SEO Description — Edit website SEO → Description',  content: content.blog_meta_description,  badge:`${(content.blog_meta_description||'').length}/160`},
+      {label:'⑥ Focus Keyword',                                      content: content.blog_focus_keyword},
+      {label:'⑦ Tags — paste into Tags field (right sidebar)',       content: content.blog_tags},
+      {label:'⑧ Image Alt Text — set when uploading featured image', content: content.blog_alt_text},
+    ]
+  }];
+
+  const gbpTasks = [
+    {id:'gbp_chap', name:'2a. GBP — Chapeltown Road', time:'~30 sec',
+     hint:'Google → Your Business → Posts → Add update',
+     openUrl: s.gbpChap || DEFAULTS.gbpChap, openLabel:'Open Google ↗',
+     sections:[{label:'Post text (max 1,500 chars)', content: content.gbp_chapeltown, badge:`${(content.gbp_chapeltown||'').length}/1500`}]},
+    {id:'gbp_round', name:'2b. GBP — Roundhay Road', time:'~30 sec',
+     hint:'Google → Your Business → Posts → Add update',
+     openUrl: s.gbpRound || DEFAULTS.gbpRound, openLabel:'Open Google ↗',
+     sections:[{label:'Post text (max 1,500 chars)', content: content.gbp_roundhay, badge:`${(content.gbp_roundhay||'').length}/1500`}]},
+    {id:'gbp_city', name:'2c. GBP — City Centre', time:'~30 sec',
+     hint:'Google → Your Business → Posts → Add update',
+     openUrl: s.gbpCity || DEFAULTS.gbpCity, openLabel:'Open Google ↗',
+     sections:[{label:'Post text (max 1,500 chars)', content: content.gbp_city_centre, badge:`${(content.gbp_city_centre||'').length}/1500`}]},
+  ];
+
+  const socialTasks = [
+    {id:'image', name:'3. Product Image', time:'~5 sec',
+     hint:'Download Shopify image + AI-styled version for all posts',
+     isImage:true, sections:[]},
+    {id:'instagram', name:'4. Instagram', time:'~1 min',
+     hint:'+ New Post → upload image → paste caption → hashtags as first comment',
+     openUrl: s.instagram || DEFAULTS.instagram, openLabel:'Open Instagram ↗',
+     sections:[
+       {label:'Caption', content: content.instagram_caption},
+       {label:'Hashtags (post as first comment)', content: content.instagram_hashtags},
+     ]},
+    {id:'facebook', name:'5. Facebook', time:'~30 sec',
+     hint:'Create Post → paste text → add image → publish',
+     openUrl: s.facebook || DEFAULTS.facebook, openLabel:'Open Facebook ↗',
+     sections:[{label:'Post text', content: content.facebook_post}]},
+    {id:'tiktok', name:'6. Video Script for TikTok', time:'~2 min',
+     hint:'Use with Kling AI (image-to-video) or HeyGen (talking head) to create a short video',
+     sections:[
+       {label:'🎬 Kling AI Prompt — image-to-video, realistic motion', content: buildKlingScript(selectedProduct, content)},
+       {label:'🎭 HeyGen Script — funny viral talking head',            content: buildHeyGenScript(selectedProduct, content)},
+       {label:'🗣 10-Second Voiceover Script',                          content: buildVoiceover(selectedProduct, content)},
+     ]},
+  ];
+
+  const reviewTasks = [
+    {id:'review', name:'7. Review Request', time:'~1 min',
+     hint:'Send WhatsApp to recent customers · use in-store script at the till',
+     openUrl: s.gbpChap || DEFAULTS.gbpChap, openLabel:'Open Review Link ↗',
+     sections:[
+       {label:'WhatsApp Message', content: content.review_request_whatsapp || ''},
+       {label:'In-Store Verbal Script', content: content.review_request_instore || ''},
+       {label:'Counter QR Card Text', content: content.qr_card_text || ''},
+     ]},
+    {id:'tags', name:'8. Shopify Tags', time:'~1 min',
+     hint:'Check these are applied in Shopify → Products → select product → Tags',
+     isTags:true, sections:[],
+     tags: content.menu_tags || []},
+  ];
+
+  renderSection('taskList',   blogTasks,   false);
+  renderSection('gbpList',    gbpTasks,    false);
+  renderSection('socialList', socialTasks, false);
+  renderSection('reviewList', reviewTasks, true);
+
+  updateProgress();
+  window.scrollTo({top: document.getElementById('checklistPanel').offsetTop - 80, behavior:'smooth'});
+
+  // Auto AI image in background
+  const sv = cfg();
+  if (sv.openaiKey && selectedProduct && selectedProduct.image && !window._aiImageData) {
+    setTimeout(() => generateAIImageAuto(selectedProduct, content, autoPickSetting(selectedProduct)), 600);
   }
 }
 
+// ── RENDER SECTION ────────────────────────────────────────────────────────────
+function renderSection(containerId, tasks, isBonus) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  tasks.forEach(t => {
+    const item = document.createElement('div');
+    item.className = 'task-row'; item.id = 'task-' + t.id;
 
+    const btns = t.isImage
+      ? '<button class="copy-btn" onclick="expandTask('' + t.id + '',event)">View</button>'
+      : (t.sections && t.sections.length ? '<button class="copy-btn" onclick="copyTaskAll('' + t.id + '',event)">Copy All</button>' : '') +
+        (t.openUrl ? '<a href="' + t.openUrl + '" target="_blank" class="open-btn">' + (t.openLabel||'Open ↗') + '</a>' : '') +
+        '<button class="copy-btn" onclick="expandTask('' + t.id + '',event)">View</button>';
+
+    const tagsHtml = t.isTags
+      ? '<div class="tag-pills">' + (Array.isArray(t.tags) ? t.tags : String(t.tags).split(','))
+          .filter(x=>x&&x.trim())
+          .map(tg => '<div class="tag-pill">' + tg.trim() + '</div>')
+          .join('') + '</div>'
+      : '';
+
+    const sectionsHtml = (t.sections||[]).map((sec,si) => {
+      const escaped = (sec.content||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const lbl = sec.label.replace(/[①②③④⑤⑥⑦⑧🎬🎭🗣📍]/g,'').split('(')[0].split('—')[0].trim();
+      return '<div class="content-section">' +
+        '<div class="content-label"><span>' + sec.label + '</span>' +
+        (sec.badge ? '<span class="content-badge">' + sec.badge + '</span>' : '') + '</div>' +
+        '<div class="content-box" id="cb-' + t.id + '-' + si + '">' + escaped + '</div>' +
+        '<button class="copy-field-btn" data-copy="' + encodeURIComponent(sec.content||'') + '" onclick="copyEncoded(this)">⎘ Copy ' + lbl + '</button>' +
+        '</div>';
+    }).join('');
+
+    item.innerHTML =
+      '<div class="task-hdr" onclick="expandTask('' + t.id + '',event)">' +
+        '<div class="task-check" onclick="toggleTask('' + t.id + '',event)"></div>' +
+        '<div class="task-info">' +
+          '<div class="task-name">' + t.name + ' <span class="task-time">' + (t.time||'') + '</span></div>' +
+          '<div class="task-hint">' + t.hint + '</div>' +
+        '</div>' +
+        '<div class="task-btns">' + btns + '</div>' +
+      '</div>' +
+      '<div class="task-content" id="content-' + t.id + '">' +
+        (t.isImage ? buildImageSection() : '') +
+        tagsHtml + sectionsHtml +
+      '</div>';
+    container.appendChild(item);
+  });
+}
+
+// ── VIDEO SCRIPT BUILDERS ─────────────────────────────────────────────────────
+function buildKlingScript(product, content) {
+  const title = product.title || 'product';
+  const setting = autoPickSetting(product);
+  const scenes = {
+    barber:'barbershop counter with chrome accents and mirror background',
+    bathroom:'marble bathroom shelf with white towels',
+    bedroom:'bedroom vanity table with warm lighting',
+    salon:'beauty salon station with professional lighting',
+    natural:'wooden surface surrounded by botanicals and flowers',
+    hands:'gently held in manicured hands, clean background',
+    flatlay:'flat lay on marble surface with beauty accessories',
+    studio:'clean white studio with professional lighting',
+  };
+  return 'Kling AI Image-to-Video Prompt:
+
+"Camera slowly pushes in towards the ' + title + ' on a ' + (scenes[setting]||scenes.studio) + '. The product label is clearly visible. A hand reaches in from the right, picks up the bottle/product, turns it slowly to face camera, then places it back down. Soft bokeh background. Cinematic luxury product feel. 10 seconds. No faces."
+
+Settings: Professional Mode · 10 seconds · 1080p · ~70 credits (~70p)
+Source image: Use the Shopify product image or AI generated image from Task 3';
+}
+
+function buildHeyGenScript(product, content) {
+  const title = product.title || 'product';
+  const vendor = product.vendor || 'CC Hair & Beauty';
+  const tags = (product.tags||'').toLowerCase();
+  const isMens = tags.includes('men') || tags.includes('barber') || tags.includes('wave');
+  return 'HeyGen Talking Head Script (funny/viral):
+
+[HOOK - energetic, pointing to camera]
+"Okay, we need to talk about ' + title + '... because ' + (isMens?'the guys':'ladies') + ', this is RIDICULOUS."
+
+[MIDDLE - hold up or show product on screen]
+"This is ' + vendor + ''s ' + title + '. ' + ((content.blog_excerpt||'').split('.')[0]+'.' || 'And honestly? It just works.') + '"
+
+[CALL TO ACTION - big energy]
+"Available now at CC Hair and Beauty — Chapeltown, Roundhay, City Centre Leeds — or online at CC Hair and Beauty dot com. Link in bio. Go."
+
+Avatar: confident, informal, casual background
+Tone: Surprised/impressed, friendly — NOT salesy
+Length: ~25 seconds · Platform: TikTok / Instagram Reels';
+}
+
+function buildVoiceover(product, content) {
+  const title = (product.title||'').split(' ').slice(0,5).join(' ');
+  return '10-Second Voiceover:
+
+"This is the ' + title + '. Available now at CC Hair and Beauty Leeds — Chapeltown, Roundhay, City Centre. Shop online at cchairandbeauty.com."
+
+~30 words · Normal speaking pace
+Use with: Kling video, HeyGen, or record yourself';
+}
+
+// ── UPDATE PROGRESS ───────────────────────────────────────────────────────────
+function updateProgress() {
+  const main = ['blog','gbp_chap','gbp_round','gbp_city','instagram','facebook','image','review'];
+  const done = [...tasksDone].filter(id => main.includes(id)).length;
+  const pct = Math.round(done / 8 * 100);
+  const fill = document.getElementById('progressFill');
+  const lbl = document.getElementById('progressText');
+  if (fill) fill.style.width = pct + '%';
+  if (lbl) lbl.textContent = done + ' of 8 done' + (done === 8 ? ' — All done! 🎉' : '');
+}
+
+// ── TOGGLE SECTION ────────────────────────────────────────────────────────────
 function toggleSection(id) {
   const body = document.getElementById(id);
-  const arrow = document.getElementById(id+'-arrow');
+  const arrow = document.getElementById(id + '-arrow');
   if (!body) return;
   body.classList.toggle('collapsed');
   if (arrow) arrow.classList.toggle('collapsed');
 }
 
-function generateWeekSchedule() {
-  const days=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  const types=['New Arrivals','Product Review','Buying Guide','Top Tips','Brand Spotlight','Leeds Local','Hair Routine'];
-  const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay()-1;
-  let msg='This week blog plan:\n';
-  days.forEach((d,i)=>msg+=d+': '+types[i]+(i===todayIdx?' ← TODAY':'')+' \n');
-  navigator.clipboard.writeText(msg).catch(()=>{});
-  toast('Week plan copied ✓','success');
-}
-
-// ── PAST POSTS ────────────────────────────────────────────────────
+// ── PAST POSTS ────────────────────────────────────────────────────────────────
 let _currentPostId = null;
 let _filteredPosts = [];
 
 function openPastPosts() {
-  const modal = document.getElementById('pastPostsModal');
-  modal.classList.add('open');
+  document.getElementById('pastPostsModal').classList.add('open');
+  _filteredPosts = [];
   renderPastPostsList(getPostLog());
-
-  // Check if URL has a shareId to auto-open
   const hash = window.location.hash.replace('#post-','');
   if (hash) {
     const entry = getPostLog().find(e => e.shareId === hash);
@@ -1827,19 +1822,15 @@ function openPastPosts() {
 
 function closePastPosts() {
   document.getElementById('pastPostsModal').classList.remove('open');
-  // Clean up URL hash
   history.replaceState(null, '', window.location.pathname);
 }
 
 function filterPastPosts(q) {
   const log = getPostLog();
-  const filtered = q
-    ? log.filter(e => 
-        (e.productTitle||'').toLowerCase().includes(q.toLowerCase()) ||
-        (e.vendor||'').toLowerCase().includes(q.toLowerCase()) ||
-        (e.content?.blog_meta_title||'').toLowerCase().includes(q.toLowerCase())
-      )
-    : log;
+  const filtered = q ? log.filter(e =>
+    (e.productTitle||'').toLowerCase().includes(q.toLowerCase()) ||
+    (e.vendor||'').toLowerCase().includes(q.toLowerCase())
+  ) : log;
   renderPastPostsList(filtered);
 }
 
@@ -1847,13 +1838,10 @@ function renderPastPostsList(posts) {
   _filteredPosts = posts;
   const container = document.getElementById('pastPostsList');
   if (!container) return;
-
   if (!posts.length) {
     container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--ink3);font-size:14px">No posts found</div>';
     return;
   }
-
-  // Group by week
   const groups = {};
   posts.forEach(e => {
     const d = new Date(e.date);
@@ -1862,52 +1850,28 @@ function renderPastPostsList(posts) {
     if (!groups[wk]) groups[wk] = [];
     groups[wk].push(e);
   });
-
-  container.innerHTML = Object.entries(groups).map(([week, entries]) => `
-    <div>
-      <div style="
-        padding:8px 16px;font-size:10px;font-weight:700;
-        text-transform:uppercase;letter-spacing:1px;
-        color:var(--ink3);background:var(--bg);
-        border-bottom:1px solid var(--border);
-        position:sticky;top:0;
-      ">Week of ${week}</div>
-      ${entries.map(e => {
-        const done = (e.tasksCompleted||[]).length;
-        const total = 8;
-        const pct = Math.round(done/total*100);
-        const isSelected = _currentPostId === e.id;
-        const day = new Date(e.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-        const time = new Date(e.date).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-        return `
-          <div onclick="openPostDetail(${e.id})" style="
-            padding:14px 16px;border-bottom:1px solid var(--border);
-            cursor:pointer;transition:background .15s;
-            background:${isSelected ? 'var(--teal-light)' : 'var(--card)'};
-            border-left:3px solid ${isSelected ? 'var(--teal)' : 'transparent'};
-          " onmouseover="this.style.background='var(--teal-light)'" onmouseout="this.style.background='${isSelected?'var(--teal-light)':'var(--card)'}'">
-            <div style="display:flex;align-items:flex-start;gap:10px">
-              ${e.productImage 
-                ? `<img src="${e.productImage}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--bg)">`
-                : `<div style="width:40px;height:40px;border-radius:8px;background:var(--teal-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px">✂</div>`
-              }
-              <div style="flex:1;min-width:0">
-                <div style="font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.productTitle||'Unknown product'}</div>
-                <div style="font-size:11px;color:var(--ink3);margin-top:2px">${e.vendor||''} · ${day} ${time}</div>
-                <div style="margin-top:6px;display:flex;align-items:center;gap:8px">
-                  <div style="flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden">
-                    <div style="width:${pct}%;height:100%;background:${pct===100?'var(--green)':'var(--teal)'};border-radius:2px"></div>
-                  </div>
-                  <span style="font-size:10px;font-weight:700;color:${pct===100?'var(--green)':'var(--ink3)'}">
-                    ${pct===100?'✓ Done':done+'/'+total}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>`;
-      }).join('')}
-    </div>
-  `).join('');
+  container.innerHTML = Object.entries(groups).map(([week, entries]) =>
+    '<div>' +
+    '<div style="padding:8px 16px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:0">Week of ' + week + '</div>' +
+    entries.map(e => {
+      const done = (e.tasksCompleted||[]).length;
+      const pct = Math.round(done/8*100);
+      const sel = _currentPostId === e.id;
+      const day = new Date(e.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+      const time = new Date(e.date).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+      return '<div onclick="openPostDetail(' + e.id + ')" style="padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;background:' + (sel?'var(--teal-light)':'var(--card)') + ';border-left:3px solid ' + (sel?'var(--teal)':'transparent') + '">' +
+        '<div style="display:flex;align-items:flex-start;gap:10px">' +
+        (e.productImage ? '<img src="' + e.productImage + '" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0">' :
+          '<div style="width:40px;height:40px;border-radius:8px;background:var(--teal-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px">✂</div>') +
+        '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:13px;font-weight:700;color:var(--ink);overflow:hidden;white-space:nowrap;text-overflow:ellipsis">' + (e.productTitle||'Unknown') + '</div>' +
+        '<div style="font-size:11px;color:var(--ink3);margin-top:2px">' + (e.vendor||'') + ' · ' + day + ' ' + time + '</div>' +
+        '<div style="margin-top:6px;display:flex;align-items:center;gap:8px">' +
+        '<div style="flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden"><div style="width:' + pct + '%;height:100%;background:' + (pct===100?'var(--green)':'var(--teal)') + ';border-radius:2px"></div></div>' +
+        '<span style="font-size:10px;font-weight:700;color:' + (pct===100?'var(--green)':'var(--ink3)') + '">' + (pct===100?'✓ Done':done+'/8') + '</span>' +
+        '</div></div></div></div>';
+    }).join('') + '</div>'
+  ).join('');
 }
 
 function openPostDetail(id) {
@@ -1915,196 +1879,80 @@ function openPostDetail(id) {
   const log = getPostLog();
   const entry = log.find(e => e.id === id);
   if (!entry) return;
-
-  // Ensure shareId exists (old entries won't have one)
   if (!entry.shareId) {
     entry.shareId = btoa(String(id)).replace(/=/g,'');
     localStorage.setItem('cc_post_log', JSON.stringify(log));
   }
-
   const shareUrl = window.location.origin + window.location.pathname + '#post-' + entry.shareId;
   history.replaceState(null, '', '#post-' + entry.shareId);
   renderPastPostsList(_filteredPosts.length ? _filteredPosts : log);
 
+  window._pastPostEntry = entry;
   const detail = document.getElementById('pastPostDetail');
   const done = entry.tasksCompleted || [];
   const c = entry.content || {};
-
   const tasks = [
     {id:'blog',      label:'Blog Post',       icon:'📝'},
-    {id:'gbp_chap',  label:'GBP Chapeltown',   icon:'📍'},
-    {id:'gbp_round', label:'GBP Roundhay',      icon:'📍'},
-    {id:'gbp_city',  label:'GBP City Centre',   icon:'📍'},
-    {id:'instagram', label:'Instagram',         icon:'📸'},
-    {id:'facebook',  label:'Facebook',          icon:'👍'},
-    {id:'image',     label:'Product Image',     icon:'🖼'},
-    {id:'review',    label:'Review Request',    icon:'⭐'},
+    {id:'gbp_chap',  label:'GBP Chapeltown',  icon:'📍'},
+    {id:'gbp_round', label:'GBP Roundhay',    icon:'📍'},
+    {id:'gbp_city',  label:'GBP City Centre', icon:'📍'},
+    {id:'instagram', label:'Instagram',        icon:'📸'},
+    {id:'facebook',  label:'Facebook',         icon:'👍'},
+    {id:'image',     label:'Product Image',   icon:'🖼'},
+    {id:'review',    label:'Review Request',  icon:'⭐'},
   ];
-
-  const doneCnt = done.length;
-  const total = tasks.length;
-  const pct = Math.round(doneCnt / total * 100);
+  const hasContent = Object.values(c).some(v => v && String(v).trim());
   const day = new Date(entry.date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const hasContent = Object.values(c).some(v => v && v.trim && v.trim());
+  const pct = Math.round(done.length/8*100);
 
-  // Store content in window for re-use buttons (safe, no JSON in onclick)
-  window._pastPostEntry = entry;
-
-  detail.innerHTML = `
-    <div style="max-width:840px">
-
-      <!-- Product header -->
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap">
-        <div style="display:flex;align-items:center;gap:14px">
-          ${entry.productImage
-            ? `<img src="${entry.productImage}" style="width:68px;height:68px;border-radius:12px;object-fit:cover;border:2px solid var(--teal);flex-shrink:0">`
-            : `<div style="width:68px;height:68px;border-radius:12px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0">✂</div>`
-          }
-          <div>
-            <div style="font-size:20px;font-weight:700;color:var(--ink);line-height:1.2">${entry.productTitle || 'Unknown product'}</div>
-            <div style="font-size:13px;color:var(--ink2);margin-top:4px">${entry.vendor || ''} ${entry.productPrice ? '· '+entry.productPrice : ''}</div>
-            <div style="font-size:12px;color:var(--ink3);margin-top:3px">${day}</div>
-          </div>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          ${hasContent ? `
-            <button onclick="reloadIntoTool()" style="
-              background:var(--teal);color:#fff;border:none;border-radius:8px;
-              padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;
-              font-family:inherit;display:flex;align-items:center;gap:6px;
-            ">▶ Continue in Tool</button>` : ''}
-          <button onclick="copyShareLink('${shareUrl}')" style="
-            background:var(--card2);color:var(--ink);border:1px solid var(--border2);
-            border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;
-            cursor:pointer;font-family:inherit;
-          ">🔗 Share Link</button>
-          <button onclick="deletePastPost(${id})" style="
-            background:transparent;border:1px solid var(--border2);color:var(--ink3);
-            border-radius:8px;padding:10px 12px;font-size:13px;cursor:pointer;font-family:inherit;
-          ">🗑</button>
-        </div>
-      </div>
-
-      <!-- Share link -->
-      <div style="background:var(--teal-light);border:1px solid var(--teal);border-radius:10px;padding:11px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span style="font-size:12px;font-weight:700;color:var(--teal);white-space:nowrap">🔗 Staff link:</span>
-        <span style="font-size:12px;color:var(--ink2);flex:1;word-break:break-all;font-family:monospace">${shareUrl}</span>
-        <button onclick="copyShareLink('${shareUrl}')" style="background:var(--teal);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Copy</button>
-      </div>
-
-      <!-- Progress bar -->
-      <div style="background:var(--card);border-radius:10px;border:1px solid var(--border);padding:14px 18px;margin-bottom:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <span style="font-size:13px;font-weight:700;color:var(--ink)">Task Progress</span>
-          <span style="font-size:13px;font-weight:700;color:${pct===100?'var(--green)':'var(--teal)'}">${pct===100?'✓ All done!':doneCnt+'/'+total+' done'}</span>
-        </div>
-        <div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px">
-          <div style="width:${pct}%;height:100%;background:${pct===100?'var(--green)':'var(--teal)'};border-radius:4px;transition:width .3s"></div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px">
-          ${tasks.map(t => `
-            <div onclick="togglePastPostTask(${id},'${t.id}')" style="
-              display:flex;align-items:center;gap:8px;padding:8px 12px;
-              border-radius:8px;cursor:pointer;transition:all .15s;
-              background:${done.includes(t.id)?'var(--teal-light)':'var(--card2)'};
-              border:1.5px solid ${done.includes(t.id)?'var(--teal)':'var(--border2)'};
-            ">
-              <div style="
-                width:22px;height:22px;border-radius:5px;flex-shrink:0;
-                background:${done.includes(t.id)?'var(--teal)':'transparent'};
-                border:2px solid ${done.includes(t.id)?'var(--teal)':'var(--border2)'};
-                display:flex;align-items:center;justify-content:center;
-                font-size:12px;color:#fff;font-weight:700;
-              ">${done.includes(t.id)?'✓':''}</div>
-              <span style="font-size:12px;font-weight:600;color:${done.includes(t.id)?'var(--teal)':'var(--ink2)'}">${t.icon} ${t.label}</span>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-
-      ${!hasContent ? `
-        <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;color:var(--ink3);margin-bottom:16px">
-          <div style="font-size:32px;margin-bottom:8px">📭</div>
-          <div style="font-size:14px;font-weight:600;color:var(--ink2);margin-bottom:4px">Content not saved for this post</div>
-          <div style="font-size:13px">This was generated before full content saving was added. Future posts will show all content here.</div>
-        </div>` : ''
-      }
-
-      <!-- Content sections -->
-      ${buildPastPostSection('📝 Blog Post', [
-        {label:'① Title',                content: c.blog_meta_title},
-        {label:'② Blog HTML',             content: c.blog_html},
-        {label:'③ Excerpt',               content: c.blog_excerpt},
-        {label:'④ SEO Meta Title',         content: c.blog_meta_title},
-        {label:'⑤ SEO Meta Description',  content: c.blog_meta_description},
-        {label:'⑥ Focus Keyword',          content: c.blog_focus_keyword},
-        {label:'⑦ Tags',                  content: c.blog_tags},
-        {label:'⑧ Image Alt Text',         content: c.blog_alt_text},
-      ])}
-      ${buildPastPostSection('📍 Google Business Posts', [
-        {label:'Chapeltown Road (LS7)', content: c.gbp_chapeltown},
-        {label:'Roundhay Road (LS8)',   content: c.gbp_roundhay},
-        {label:'City Centre',           content: c.gbp_city_centre},
-      ])}
-      ${buildPastPostSection('📸 Social Media', [
-        {label:'Instagram Caption',   content: c.instagram_caption},
-        {label:'Instagram Hashtags',  content: c.instagram_hashtags},
-        {label:'Facebook Post',       content: c.facebook_post},
-      ])}
-      ${buildPastPostSection('⭐ Review Request', [
-        {label:'WhatsApp Message',     content: c.review_request_whatsapp},
-        {label:'In-Store Script',      content: c.review_request_instore},
-        {label:'QR Card Text',         content: c.qr_card_text},
-      ])}
-
-    </div>
-  `;
+  detail.innerHTML =
+    '<div style="max-width:840px">' +
+    // Header
+    '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap">' +
+    '<div style="display:flex;align-items:center;gap:14px">' +
+    (entry.productImage ? '<img src="' + entry.productImage + '" style="width:68px;height:68px;border-radius:12px;object-fit:cover;border:2px solid var(--teal);flex-shrink:0">' :
+      '<div style="width:68px;height:68px;border-radius:12px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0">✂</div>') +
+    '<div>' +
+    '<div style="font-size:20px;font-weight:700;color:var(--ink);line-height:1.2">' + (entry.productTitle||'Unknown') + '</div>' +
+    '<div style="font-size:13px;color:var(--ink2);margin-top:4px">' + (entry.vendor||'') + (entry.productPrice?' · '+entry.productPrice:'') + '</div>' +
+    '<div style="font-size:12px;color:var(--ink3);margin-top:3px">' + day + '</div>' +
+    '</div></div>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+    (hasContent ? '<button onclick="reloadIntoTool()" style="background:var(--teal);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">▶ Continue in Tool</button>' : '') +
+    '<button onclick="copyShareLink('' + shareUrl + '')" style="background:var(--card2);color:var(--ink);border:1px solid var(--border2);border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">🔗 Share Link</button>' +
+    '<button onclick="deletePastPost(' + id + ')" style="background:transparent;border:1px solid var(--border2);color:var(--ink3);border-radius:8px;padding:10px 12px;font-size:13px;cursor:pointer;font-family:inherit">🗑</button>' +
+    '</div></div>' +
+    // Share link bar
+    '<div style="background:var(--teal-light);border:1px solid var(--teal);border-radius:10px;padding:11px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+    '<span style="font-size:12px;font-weight:700;color:var(--teal);white-space:nowrap">🔗 Staff link:</span>' +
+    '<span style="font-size:12px;color:var(--ink2);flex:1;word-break:break-all;font-family:monospace">' + shareUrl + '</span>' +
+    '<button onclick="copyShareLink('' + shareUrl + '')" style="background:var(--teal);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Copy</button>' +
+    '</div>' +
+    // Progress
+    '<div style="background:var(--card);border-radius:12px;border:1px solid var(--border);padding:16px 18px;margin-bottom:16px">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">' +
+    '<span style="font-size:14px;font-weight:700;color:var(--ink)">Task Progress</span>' +
+    '<span style="font-size:14px;font-weight:700;color:' + (pct===100?'var(--green)':'var(--teal)') + '">' + (pct===100?'✓ All done!':done.length+'/8 done') + '</span>' +
+    '</div>' +
+    '<div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:14px"><div style="width:' + pct + '%;height:100%;background:' + (pct===100?'var(--green)':'var(--teal)') + ';border-radius:4px;transition:width .3s"></div></div>' +
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px">' +
+    tasks.map(t =>
+      '<div onclick="togglePastPostTask(' + id + ','' + t.id + '')" style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;cursor:pointer;background:' + (done.includes(t.id)?'var(--teal-light)':'var(--card2)') + ';border:1.5px solid ' + (done.includes(t.id)?'var(--teal)':'var(--border2)') + '">' +
+      '<div style="width:22px;height:22px;border-radius:5px;flex-shrink:0;background:' + (done.includes(t.id)?'var(--teal)':'transparent') + ';border:2px solid ' + (done.includes(t.id)?'var(--teal)':'var(--border2)') + ';display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:700">' + (done.includes(t.id)?'✓':'') + '</div>' +
+      '<span style="font-size:12px;font-weight:600;color:' + (done.includes(t.id)?'var(--teal)':'var(--ink2)') + '">' + t.icon + ' ' + t.label + '</span>' +
+      '</div>'
+    ).join('') +
+    '</div></div>' +
+    (!hasContent ? '<div style="background:var(--card2);border-radius:10px;padding:20px;text-align:center;color:var(--ink3);margin-bottom:16px"><div style="font-size:32px;margin-bottom:8px">📭</div><div style="font-size:14px;font-weight:600;color:var(--ink2);margin-bottom:4px">Content not available</div><div style="font-size:13px">Generated before full content saving. Future posts show everything here.</div></div>' : '') +
+    // Content sections
+    buildPPS('📝 Blog Post', [{label:'Title', content:c.blog_meta_title},{label:'Blog HTML', content:c.blog_html},{label:'Excerpt', content:c.blog_excerpt},{label:'SEO Meta Description', content:c.blog_meta_description},{label:'Focus Keyword', content:c.blog_focus_keyword},{label:'Tags', content:c.blog_tags},{label:'Alt Text', content:c.blog_alt_text}]) +
+    buildPPS('📍 Google Business Posts', [{label:'Chapeltown Road', content:c.gbp_chapeltown},{label:'Roundhay Road', content:c.gbp_roundhay},{label:'City Centre', content:c.gbp_city_centre}]) +
+    buildPPS('📸 Social Media', [{label:'Instagram Caption', content:c.instagram_caption},{label:'Instagram Hashtags', content:c.instagram_hashtags},{label:'Facebook Post', content:c.facebook_post}]) +
+    buildPPS('⭐ Review Request', [{label:'WhatsApp Message', content:c.review_request_whatsapp},{label:'In-Store Script', content:c.review_request_instore},{label:'QR Card Text', content:c.qr_card_text}]) +
+    '</div>';
 }
 
-// ── RELOAD PAST POST INTO TOOL ────────────────────────────────────
-function reloadIntoTool() {
-  const entry = window._pastPostEntry;
-  if (!entry || !entry.content) return;
-
-  // Reconstruct product object
-  selectedProduct = {
-    id: entry.productId,
-    title: entry.productTitle,
-    price: entry.productPrice || '',
-    image: entry.productImage || '',
-    vendor: entry.vendor || '',
-    productType: entry.productType || '',
-    handle: entry.productHandle || '',
-    tags: '',
-    description: '',
-  };
-
-  // Restore content
-  generatedContent = entry.content;
-
-  // Close past posts modal
-  closePastPosts();
-
-  // Show the selected bar
-  document.getElementById('step1').style.display = 'none';
-  document.getElementById('selectedBar').style.display = 'flex';
-  const img = document.getElementById('selImg');
-  if (img) { img.src = entry.productImage || ''; img.style.display = entry.productImage ? 'block' : 'none'; }
-  const nameEl = document.getElementById('selName');
-  if (nameEl) nameEl.textContent = entry.productTitle;
-  const priceEl = document.getElementById('selPrice');
-  if (priceEl) priceEl.textContent = entry.productPrice || '';
-
-  // Show checklist with saved content
-  showChecklist(entry.content);
-
-  // Scroll to top
-  window.scrollTo({top:0, behavior:'smooth'});
-  toast('Post loaded — carry on where you left off ✓', 'success');
-}
-
-
-function buildPastPostSection(title, fields) {
+function buildPPS(title, fields) {
   const visible = fields.filter(f => f.content && String(f.content).trim());
   if (!visible.length) return '';
   if (!window._ppContent) window._ppContent = {};
@@ -2114,53 +1962,149 @@ function buildPastPostSection(title, fields) {
       var safeId = 'pp' + Math.random().toString(36).substr(2,9);
       window._ppContent[safeId] = f.content || '';
       var escaped = (f.content||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-      var lbl = f.label.replace(/[①②③④⑤⑥⑦⑧]/g,'').trim();
       return '<div style="padding:14px 18px;border-bottom:1px solid var(--border)">' +
         '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);margin-bottom:8px">' + f.label + '</div>' +
         '<div style="font-size:13px;color:var(--ink2);line-height:1.75;background:var(--bg);border-radius:8px;padding:11px 13px;max-height:220px;overflow-y:auto;white-space:pre-wrap;font-family:DM Mono,monospace;border:1px solid var(--border2)">' + escaped + '</div>' +
-        '<button data-ppid="' + safeId + '" onclick="copyPPC(this)" style="margin-top:8px;background:var(--teal);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">⎘ Copy ' + lbl + '</button>' +
+        '<button data-ppid="' + safeId + '" onclick="copyPPC(this)" style="margin-top:8px;background:var(--teal);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">⎘ Copy ' + f.label + '</button>' +
         '</div>';
-    }).join('') +
-  '</div>';
+    }).join('') + '</div>';
 }
 
 function copyPPC(btn) {
   var id = btn.getAttribute('data-ppid');
-  var text = (window._ppContent || {})[id] || '';
+  var text = (window._ppContent||{})[id] || '';
   if (!text) { toast('Nothing to copy','error'); return; }
   navigator.clipboard.writeText(text).then(function() {
     var orig = btn.textContent;
-    btn.textContent = '✓ Copied!';
-    btn.style.background = 'var(--green)';
-    setTimeout(function() { btn.textContent = orig; btn.style.background = 'var(--teal)'; }, 2000);
-  }).catch(function() { toast('Copy failed','error'); });
+    btn.textContent = '✓ Copied!'; btn.style.background = 'var(--green)';
+    setTimeout(function(){ btn.textContent = orig; btn.style.background = 'var(--teal)'; }, 2000);
+  }).catch(function(){ toast('Copy failed','error'); });
 }
 
+function togglePastPostTask(id, taskId) {
+  const log = getPostLog();
+  const entry = log.find(e => e.id === id);
+  if (!entry) return;
+  if (!entry.tasksCompleted) entry.tasksCompleted = [];
+  const idx = entry.tasksCompleted.indexOf(taskId);
+  if (idx > -1) entry.tasksCompleted.splice(idx, 1);
+  else entry.tasksCompleted.push(taskId);
+  localStorage.setItem('cc_post_log', JSON.stringify(log));
+  openPostDetail(id);
+}
+
+function deletePastPost(id) {
+  if (!confirm('Delete this post?')) return;
+  const log = getPostLog().filter(e => e.id !== id);
+  localStorage.setItem('cc_post_log', JSON.stringify(log));
+  _currentPostId = null;
+  document.getElementById('pastPostDetail').innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--ink3);font-size:14px">Post deleted</div>';
+  renderPastPostsList(log);
+  toast('Post deleted');
+}
 
 function copyShareLink(url) {
-  navigator.clipboard.writeText(url).then(() => toast('Link copied! Share with staff 🔗','success'));
+  navigator.clipboard.writeText(url).then(() => toast('Staff link copied! 🔗', 'success'));
 }
 
-// Auto-open if URL has a post hash on page load
+function reloadIntoTool() {
+  const entry = window._pastPostEntry;
+  if (!entry || !entry.content) return;
+  selectedProduct = {
+    id: entry.productId, title: entry.productTitle,
+    price: entry.productPrice||'', image: entry.productImage||'',
+    vendor: entry.vendor||'', productType: entry.productType||'',
+    handle: entry.productHandle||'', tags:'', description:'',
+  };
+  generatedContent = entry.content;
+  closePastPosts();
+  document.getElementById('step1').style.display = 'none';
+  const bar = document.getElementById('selectedBar');
+  if (bar) bar.style.display = 'flex';
+  const img = document.getElementById('selImg');
+  if (img) { img.src = entry.productImage||''; img.style.display = entry.productImage?'block':'none'; }
+  const nm = document.getElementById('selName'); if (nm) nm.textContent = entry.productTitle;
+  const pr = document.getElementById('selPrice'); if (pr) pr.textContent = entry.productPrice||'';
+  showChecklist(entry.content);
+  window.scrollTo({top:0, behavior:'smooth'});
+  toast('Post loaded — carry on where you left off ✓', 'success');
+}
+
 function checkUrlHash() {
   const hash = window.location.hash;
   if (hash && hash.startsWith('#post-')) {
     const shareId = hash.replace('#post-','');
     const entry = getPostLog().find(e => e.shareId === shareId);
-    if (entry) {
-      openPastPosts();
-      setTimeout(() => openPostDetail(entry.id), 100);
-    }
+    if (entry) { openPastPosts(); setTimeout(() => openPostDetail(entry.id), 100); }
+  }
+}
+
+// ── UPDATED addToPostLog (save full content) ──────────────────────────────────
+const _origAddToPostLog = typeof addToPostLog === 'function' ? addToPostLog : null;
+function addToPostLog(product, content) {
+  const log = getPostLog();
+  const id = Date.now();
+  log.unshift({
+    id, shareId: btoa(String(id)).replace(/=/g,''),
+    date: new Date().toISOString(),
+    productId: product.id, productTitle: product.title,
+    productPrice: product.price||'', productHandle: product.handle||'',
+    productImage: product.image||'', productType: product.productType||'',
+    vendor: product.vendor||'',
+    content: {
+      blog_meta_title: content.blog_meta_title||'',
+      blog_meta_description: content.blog_meta_description||'',
+      blog_focus_keyword: content.blog_focus_keyword||'',
+      blog_excerpt: content.blog_excerpt||'',
+      blog_tags: content.blog_tags||'',
+      blog_alt_text: content.blog_alt_text||'',
+      blog_html: content.blog_html||'',
+      gbp_chapeltown: content.gbp_chapeltown||'',
+      gbp_roundhay: content.gbp_roundhay||'',
+      gbp_city_centre: content.gbp_city_centre||'',
+      instagram_caption: content.instagram_caption||'',
+      instagram_hashtags: content.instagram_hashtags||'',
+      facebook_post: content.facebook_post||'',
+      review_request_whatsapp: content.review_request_whatsapp||'',
+      review_request_instore: content.review_request_instore||'',
+      qr_card_text: content.qr_card_text||'',
+      menu_tags: content.menu_tags||'',
+      shopify_tags: content.shopify_tags||'',
+    },
+    tasksCompleted: [],
+  });
+  if (log.length > 365) log.pop();
+  localStorage.setItem('cc_post_log', JSON.stringify(log));
+  const shareId = log[0].shareId;
+  dbg('LOG_SAVED', product.title + ' — shareId: ' + shareId);
+  const el = document.getElementById('logCount');
+  if (el) el.textContent = log.length + ' entries';
+}
+
+function generateWeekSchedule() {
+  const days=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const types=['New Arrivals','Product Review','Buying Guide','Top Tips','Brand Spotlight','Leeds Local','Hair Routine'];
+  const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay()-1;
+  let msg = 'This week blog plan:\n';
+  days.forEach((d,i) => msg += d + ': ' + types[i] + (i===todayIdx?' ← TODAY':'') + '\n');
+  navigator.clipboard.writeText(msg).catch(()=>{});
+  toast('Week plan copied ✓','success');
+}
+
+function toggleCollapse(id, render) {
+  const b = document.getElementById(id);
+  if (!b) return;
+  const opening = b.classList.toggle('open');
+  if (opening && render) {
+    if (id === 'debugBody') renderDebugLog();
+    if (id === 'logBody') { renderPostLog(); const lc=document.getElementById('logCount'); if(lc) lc.textContent=getPostLog().length+' entries'; }
   }
 }
 
 migrateSettings();
-if(typeof applyTheme==="function") applyTheme(_theme);
+applyTheme(localStorage.getItem('cc_theme')||'light');
 loadProducts();
 checkUrlHash();
-const lc=document.getElementById('logCount');
-if(lc) lc.textContent=getPostLog().length+' entries';
-
 </script>
 </body>
 </html>
